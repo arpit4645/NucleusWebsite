@@ -7,13 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <!-- Firebase SDK (compat v9) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-  <!-- Nucleus Cloud Config & Engine -->
-  <script src="assets/firebase-config.js"></script>
-  <script src="assets/cloud-sync.js"></script>
+  <!-- Nucleus Cloud Sync (GitHub backend) -->
+  <script src="assets/sync-config.js"></script>
+  <script src="assets/github-sync.js"></script>
   <style>
     :root {
       --ink: #0F2E0F; --green: #1A4A1A; --gold: #F0C040;
@@ -227,22 +223,59 @@
 </head>
 <body>
 
-<div id="loginGate" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;">
-  <div style="background:var(--paper);padding:40px;border-radius:12px;border:1px solid var(--line);width:100%;max-width:320px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.05);">
-    <div style="font-family:var(--serif);font-size:28px;color:var(--gold);margin-bottom:8px;">Nucleus Admin</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:24px;">Please enter your password to continue.</p>
-    <input type="password" id="adminPassword" placeholder="Password" style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:6px;margin-bottom:16px;font-size:14px;background:var(--bg);color:var(--ink);" onkeydown="if(event.key==='Enter') checkLogin()" />
-    <button class="btn btn-primary" id="loginButton" style="width:100%;" onclick="checkLogin()">Login →</button>
-    <script>
-      if (window.NUCLEUS_FIREBASE_CONFIG && window.NUCLEUS_FIREBASE_CONFIG.apiKey) {
-        const btn = document.getElementById('loginButton');
-        if (btn) {
-          btn.disabled = true;
-          btn.textContent = 'Connecting to Cloud...';
-        }
-      }
-    </script>
-    <p id="loginError" style="color:#d93025;font-size:12px;margin-top:12px;display:none;">Incorrect password.</p>
+<!-- Admin Login Gate (multi-step: password → optional GitHub token) -->
+<div id="loginGate" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;">
+
+  <!-- Step 1: Password -->
+  <div id="loginStep1" style="background:var(--paper);padding:40px;border-radius:16px;border:1px solid var(--line);width:100%;max-width:380px;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,0.08);">
+    <div style="font-family:var(--serif);font-size:30px;color:var(--gold);margin-bottom:4px;">Nucleus</div>
+    <div style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;">Admin Dashboard</div>
+    <input type="password" id="adminPassword" placeholder="Enter admin password" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:8px;margin-bottom:14px;font-size:14px;background:var(--bg);color:var(--ink);outline:none;transition:border .2s;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--line)'" onkeydown="if(event.key==='Enter') checkLogin()" />
+    <button class="btn btn-primary" id="loginButton" style="width:100%;padding:13px;" onclick="checkLogin()">Login →</button>
+    <p id="loginError" style="color:#d93025;font-size:12px;margin-top:12px;display:none;">Incorrect password. Please try again.</p>
+  </div>
+
+  <!-- Step 2: GitHub token (shown after correct password if token missing) -->
+  <div id="loginStep2" style="display:none;background:var(--paper);border-radius:16px;border:1px solid var(--line);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,0.08);">
+    <div style="padding:32px 32px 0;">
+      <div style="font-family:var(--serif);font-size:26px;color:var(--gold);margin-bottom:4px;">Connect to GitHub</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">This one-time step lets admin changes appear for all site visitors. Your browser remembers the token — you won't be asked again.</p>
+      <div style="background:#f4f7f4;border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:20px;font-size:13px;line-height:1.8;text-align:left;">
+        <strong style="display:block;margin-bottom:8px;color:var(--ink);">Create a token in 1 minute:</strong>
+        <ol style="margin:0;padding-left:20px;color:var(--ink-2);">
+          <li>Click → <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color:var(--green);font-weight:600;">Open GitHub token page</a></li>
+          <li>Token name: <code style="background:#fff;padding:1px 7px;border-radius:4px;font-family:var(--mono);border:1px solid var(--line);">Nucleus Admin</code></li>
+          <li>Expiration: <strong>No expiration</strong></li>
+          <li>Repository access → <strong>Only select repositories</strong> → pick <code style="background:#fff;padding:1px 7px;border-radius:4px;font-family:var(--mono);border:1px solid var(--line);">NucleusWebsite</code></li>
+          <li>Permissions → Repository permissions → <strong>Contents → Read and write</strong></li>
+          <li>Click <strong>Generate token</strong> → copy it → paste below</li>
+        </ol>
+      </div>
+    </div>
+    <div style="padding:0 32px 32px;">
+      <label style="display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">GitHub Personal Access Token</label>
+      <input type="password" id="ghTokenInput" placeholder="github_pat_xxxxxxxxxxxx..." style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:8px;margin-bottom:14px;font-size:13px;font-family:var(--mono);background:var(--bg);color:var(--ink);outline:none;transition:border .2s;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--line)'" onkeydown="if(event.key==='Enter') saveGithubToken()" />
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-primary" style="flex:1;padding:13px;" onclick="saveGithubToken()">Save &amp; Enter Admin →</button>
+        <button class="btn btn-ghost" style="padding:13px 18px;" onclick="skipGithubSetup()" title="Skip — changes will only show on this device">Skip</button>
+      </div>
+      <p id="ghSetupError" style="color:#d93025;font-size:12px;margin-top:12px;display:none;"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Re-enter token wizard (triggered from sidebar gear icon) -->
+<div id="ghSetupGate" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9998;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--paper);padding:32px;border-radius:16px;border:1px solid var(--line);width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div style="font-family:var(--serif);font-size:24px;color:var(--gold);margin-bottom:6px;">Update GitHub Token</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5;">Paste a new token to restore sync. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color:var(--green);">Create a token →</a></p>
+    <label style="display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">GitHub Personal Access Token</label>
+    <input type="password" id="ghTokenInputModal" placeholder="github_pat_..." style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:8px;margin-bottom:16px;font-size:13px;font-family:var(--mono);background:var(--bg);color:var(--ink);" onkeydown="if(event.key==='Enter') saveGithubTokenModal()" />
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="saveGithubTokenModal()">Save &amp; Reconnect</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('ghSetupGate').style.display='none'">Cancel</button>
+    </div>
+    <p id="ghSetupErrorModal" style="color:#d93025;font-size:12px;margin-top:12px;display:none;"></p>
   </div>
 </div>
 
@@ -265,6 +298,16 @@
       <button onclick="showView('leads')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Leads</button>
       <button onclick="window.open('index.html','_blank')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> View Site</button>
     </nav>
+    <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:16px;margin-top:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);">Cloud Sync</span>
+        <span id="nucleus-sync-badge" style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.4);" title="Checking...">&#9679; Checking...</span>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="forceSyncNow()" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);font:inherit;font-size:12px;padding:8px 10px;border-radius:6px;cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,.13)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">&#8645; Sync Now</button>
+        <button onclick="showGithubSetup()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);font:inherit;font-size:12px;padding:8px 10px;border-radius:6px;cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,.13)'" onmouseout="this.style.background='rgba(255,255,255,.07)'" title="Setup / Re-enter GitHub token">&#9881;</button>
+      </div>
+    </div>
     <div>
       <p style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);margin:0 0 10px;">Published Posts</p>
       <div class="post-list" id="sidebarList"></div>
@@ -420,7 +463,7 @@
             <div style="font-size:11px;color:var(--muted);margin-top:6px;">Default password is <strong>nucleusadmin</strong>. Leave blank to keep current.</div>
             <button class="btn btn-gold btn-sm" style="margin-top:12px;" onclick="changePassword()">Update Password</button>
             <button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="logout()">Log Out</button>
-            <button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="document.getElementById('firebaseSetupModal').style.display='flex'">Cloud Connection Wizard ☁️</button>
+            <button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="showGithubSetup()">Update GitHub Token ☁️</button>
           </div>
 
           <div class="panel">
@@ -789,38 +832,6 @@ Everything depends on you</textarea></div>
   </main>
 </div>
 
-<!-- Firebase Setup Wizard -->
-<div id="firebaseSetupModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
-  <div style="background:var(--paper);border-radius:16px;border:1px solid var(--line);width:100%;max-width:580px;padding:40px;box-shadow:0 24px 64px rgba(0,0,0,0.3);">
-    <div style="font-family:var(--serif);font-size:28px;color:var(--ink);margin-bottom:6px;">Connect to Cloud ☁️</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">To make admin changes visible on the live site, connect a free Firebase project. This takes ~3 minutes and is a one-time setup.</p>
-
-    <div style="background:#fff8e1;border:1px solid #f0c040;border-radius:8px;padding:16px;margin-bottom:24px;font-size:13px;line-height:1.7;">
-      <strong>Quick Steps:</strong><br>
-      1. Go to <a href="https://console.firebase.google.com" target="_blank" style="color:var(--green);font-weight:600;">console.firebase.google.com</a><br>
-      2. Click <strong>"Add project"</strong> → name it "nucleus-cms" → Create<br>
-      3. Click <strong>"Web"</strong> icon → Register app → Copy the <code style="background:#f0f0f0;padding:2px 6px;border-radius:3px;">firebaseConfig</code> object<br>
-      4. Go to <strong>Firestore Database</strong> → Create → Start in Test Mode<br>
-      5. Go to <strong>Storage</strong> → Get Started → Start in Test Mode<br>
-      6. Paste your config values below:
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-      <div class="field" style="margin:0;"><label>API Key</label><input type="text" id="wz_apiKey" placeholder="AIzaSy..." /></div>
-      <div class="field" style="margin:0;"><label>Auth Domain</label><input type="text" id="wz_authDomain" placeholder="xxx.firebaseapp.com" /></div>
-      <div class="field" style="margin:0;"><label>Project ID</label><input type="text" id="wz_projectId" placeholder="nucleus-cms" /></div>
-      <div class="field" style="margin:0;"><label>Storage Bucket</label><input type="text" id="wz_storageBucket" placeholder="xxx.appspot.com" /></div>
-      <div class="field" style="margin:0;"><label>Messaging Sender ID</label><input type="text" id="wz_messagingSenderId" placeholder="123456789" /></div>
-      <div class="field" style="margin:0;"><label>App ID</label><input type="text" id="wz_appId" placeholder="1:123:web:abc" /></div>
-    </div>
-
-    <div style="display:flex;gap:10px;">
-      <button class="btn btn-gold" style="flex:1;" onclick="saveFirebaseConfig()">Save & Connect →</button>
-      <button class="btn btn-ghost" onclick="localStorage.setItem('nucleus_setup_skipped','true'); document.getElementById('firebaseSetupModal').style.display='none'">Skip (use local only)</button>
-    </div>
-    <p style="font-size:11px;color:var(--muted);margin-top:12px;text-align:center;">Your config is saved in <code>assets/firebase-config.js</code> in your project folder.</p>
-  </div>
-</div>
 
 <!-- Toast -->
 <div class="toast" id="toast"></div>
@@ -994,11 +1005,11 @@ function mttSwitchCard(key, type, btn) {
 }
 
 async function uploadToFirebaseStorage(key, file) {
-  const storageRef = firebase.storage().ref();
-  const fileRef = storageRef.child('media/' + key + '_' + Date.now() + '_' + file.name);
-  const snapshot = await fileRef.put(file);
-  const downloadURL = await snapshot.ref.getDownloadURL();
-  return downloadURL;
+  // NOTE: name kept for backward compatibility — now uploads to GitHub.
+  if (!window.nucleusUploadMedia) {
+    throw new Error('Sync engine not loaded.');
+  }
+  return await window.nucleusUploadMedia(key, file);
 }
 
 function handleImageUpload(e) {
@@ -1026,8 +1037,8 @@ function handleImageUpload(e) {
       }
       showToast('Cover media uploaded successfully!', 'success');
     }).catch(err => {
-      console.error(err);
-      showToast('Upload failed.', 'error');
+      console.error('[Blog Upload Error]', err);
+      showToast(err.message || 'Upload failed. Check Firebase Storage rules.', 'error');
     });
   } else {
     // Blog cover uses FileReader for immediate preview (small files only)
@@ -1407,23 +1418,102 @@ function clearLeads() {
 
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
+function _enterAdmin() {
+  document.getElementById('loginGate').style.display = 'none';
+  document.getElementById('adminLayout').style.display = '';
+}
+
 function checkLogin() {
   const pwd = document.getElementById('adminPassword').value;
   let s; try { s = JSON.parse(localStorage.getItem('nucleus_site_settings')) || {}; } catch(e) { s = {}; }
   const realPwd = s.adminPwd || 'nucleusadmin';
-  
-  if (pwd === realPwd) {
-    sessionStorage.setItem('nucleus_auth', 'true');
-    document.getElementById('loginGate').style.display = 'none';
-    document.getElementById('adminLayout').style.display = '';
-  } else {
+  if (pwd !== realPwd) {
     document.getElementById('loginError').style.display = 'block';
+    return;
+  }
+  sessionStorage.setItem('nucleus_auth', 'true');
+  document.getElementById('loginError').style.display = 'none';
+  // Check if GitHub token already saved
+  const cfg = (window.nucleusGithubGetConfig && window.nucleusGithubGetConfig()) || null;
+  if (!cfg || !cfg.token) {
+    // Show step 2 (token setup) inside the login gate
+    document.getElementById('loginStep1').style.display = 'none';
+    document.getElementById('loginStep2').style.display = 'block';
+  } else {
+    _enterAdmin();
   }
 }
 
+function skipGithubSetup() {
+  _enterAdmin();
+  showToast('Skipped — changes will only show on this device until you connect GitHub.', 'error');
+}
+
 if (sessionStorage.getItem('nucleus_auth') === 'true') {
-  document.getElementById('loginGate').style.display = 'none';
-  document.getElementById('adminLayout').style.display = '';
+  const _existingCfg = (window.nucleusGithubGetConfig && window.nucleusGithubGetConfig()) || null;
+  if (_existingCfg && _existingCfg.token) {
+    _enterAdmin();
+  } else {
+    // Already authenticated but no token — show step 2
+    document.getElementById('loginStep1').style.display = 'none';
+    document.getElementById('loginStep2').style.display = 'block';
+  }
+}
+
+// ── GitHub Token Setup ────────────────────────────────────────────────────────
+async function _validateAndSaveToken(token, errEl, onSuccess) {
+  if (!token) { errEl.textContent = 'Please paste your token.'; errEl.style.display = 'block'; return; }
+  if (!token.startsWith('github_pat_') && !token.startsWith('ghp_')) {
+    errEl.textContent = 'Token should start with "github_pat_" — copy it exactly from GitHub.';
+    errEl.style.display = 'block'; return;
+  }
+  errEl.style.display = 'none';
+  const cfg = window.NUCLEUS_GITHUB_REPO;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}`, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github+json' }
+    });
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      throw new Error(j.message || 'Token rejected (status ' + res.status + ')');
+    }
+  } catch (e) {
+    errEl.textContent = 'Could not verify token: ' + e.message;
+    errEl.style.display = 'block'; return;
+  }
+  window.nucleusGithubSetToken(token);
+  if (window.initNucleusSync) await window.initNucleusSync();
+  onSuccess();
+}
+
+async function saveGithubToken() {
+  const token = (document.getElementById('ghTokenInput').value || '').trim();
+  const errEl = document.getElementById('ghSetupError');
+  const btn = errEl.closest('div').querySelector('.btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifying...'; }
+  await _validateAndSaveToken(token, errEl, () => {
+    _enterAdmin();
+    showToast('GitHub connected! Admin changes now sync to all visitors.', 'success');
+  });
+  if (btn) { btn.disabled = false; btn.textContent = 'Save & Enter Admin →'; }
+}
+
+function showGithubSetup() {
+  const gate = document.getElementById('ghSetupGate');
+  if (gate) { gate.style.display = 'flex'; }
+  const inp = document.getElementById('ghTokenInputModal');
+  if (inp) inp.value = '';
+  const err = document.getElementById('ghSetupErrorModal');
+  if (err) err.style.display = 'none';
+}
+
+async function saveGithubTokenModal() {
+  const token = (document.getElementById('ghTokenInputModal').value || '').trim();
+  const errEl = document.getElementById('ghSetupErrorModal');
+  await _validateAndSaveToken(token, errEl, () => {
+    document.getElementById('ghSetupGate').style.display = 'none';
+    showToast('GitHub reconnected!', 'success');
+  });
 }
 
 // ── Homepage Content ─────────────────────────────────────────────────────────
@@ -1744,16 +1834,17 @@ async function handleUniversalMediaUpload(storageKey, event) {
       localStorage.removeItem(storageKey); // clear old base64
     }
     localStorage.removeItem(storageKey + '_url');
-    
+
     const urlInput = document.getElementById('url-' + storageKey);
     if (urlInput) urlInput.value = '';
-    
+
     localStorage.setItem(storageKey + '_type', isVideo ? 'video' : 'image');
     refreshUniversalMediaPreview(storageKey);
     showToast('Media saved successfully!');
   } catch(err) {
-    console.error('Media save error:', err);
-    showToast('Upload failed.', 'error');
+    console.error('[Universal Media Upload Error]', err);
+    const msg = err.message || 'Upload failed. Check Firebase Storage rules.';
+    showToast(msg, 'error');
   }
   event.target.value = ''; // reset input
 }
@@ -1947,8 +2038,9 @@ async function handleImgCardUpload(key, e, card) {
     }
     showToast(`"${card.dataset.label}" updated!`, 'success');
   } catch(err) {
-    console.error(err);
-    showToast('Upload failed. Try a smaller file.', 'error');
+    console.error('[Image Card Upload Error]', err);
+    const msg = err.message || 'Upload failed. Try a smaller file or check Firebase Storage rules.';
+    showToast(msg, 'error');
   }
 }
 
@@ -1988,36 +2080,31 @@ function reloadActiveView() {
   });
 }
 
-function saveFirebaseConfig() {
-  const cfg = {
-    apiKey: document.getElementById('wz_apiKey').value.trim(),
-    authDomain: document.getElementById('wz_authDomain').value.trim(),
-    projectId: document.getElementById('wz_projectId').value.trim(),
-    storageBucket: document.getElementById('wz_storageBucket').value.trim(),
-    messagingSenderId: document.getElementById('wz_messagingSenderId').value.trim(),
-    appId: document.getElementById('wz_appId').value.trim()
-  };
-  if (!cfg.apiKey || !cfg.projectId) {
-    showToast('API Key and Project ID are required.', 'error');
+window._nucleusIsAdmin = true;
+
+async function forceSyncNow() {
+  const badge = document.getElementById('nucleus-sync-badge');
+  const cfg = window.nucleusGithubGetConfig && window.nucleusGithubGetConfig();
+  if (!cfg || !cfg.token) {
+    showToast('No GitHub token. Click the gear icon to set up sync.', 'error');
+    showGithubSetup();
     return;
   }
-  localStorage.setItem('nucleus_firebase_cfg', JSON.stringify(cfg));
-  showToast('Firebase configuration saved! Reconnecting...', 'success');
-  document.getElementById('firebaseSetupModal').style.display = 'none';
-  if (window.initNucleusSync) {
-    window.initNucleusSync();
-  } else {
-    location.reload();
+  if (badge) badge.innerHTML = '<span style="color:#ffb300;">&#9679;</span> Syncing...';
+  const PREFIXES = ['nucleus_', 'about_', 'founder_', 'img_'];
+  Object.keys(localStorage).forEach(k => {
+    if (PREFIXES.some(p => k.startsWith(p))) {
+      const v = localStorage.getItem(k);
+      if (v !== null) localStorage.setItem(k, v); // goes through sync interceptor
+    }
+  });
+  try {
+    await window.nucleusSyncFlush();
+    showToast('All content pushed to GitHub!', 'success');
+  } catch (e) {
+    showToast('Push failed: ' + e.message, 'error');
   }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  const isConfigured = (window.NUCLEUS_FIREBASE_CONFIG && window.NUCLEUS_FIREBASE_CONFIG.apiKey) || localStorage.getItem('nucleus_firebase_cfg');
-  const skipped = localStorage.getItem('nucleus_setup_skipped') === 'true';
-  if (!isConfigured && !skipped) {
-    document.getElementById('firebaseSetupModal').style.display = 'flex';
-  }
-});
 
 document.addEventListener('nucleus-sync-ready', function() {
   const btn = document.getElementById('loginButton');
@@ -2025,10 +2112,16 @@ document.addEventListener('nucleus-sync-ready', function() {
     btn.disabled = false;
     btn.textContent = 'Login →';
   }
-  // If synced successfully, hide setup modal
-  const modal = document.getElementById('firebaseSetupModal');
-  if (modal) modal.style.display = 'none';
-
+  const badge = document.getElementById('nucleus-sync-badge');
+  if (badge) {
+    if (window._nucleusSyncActive) {
+      badge.innerHTML = '<span style="color:#4caf50;">&#9679;</span> Connected';
+      badge.title = 'GitHub sync is working. Changes will appear for all visitors.';
+    } else {
+      badge.innerHTML = '<span style="color:#f44336;">&#9679;</span> Local only';
+      badge.title = 'GitHub not connected. Click the gear icon to add your token.';
+    }
+  }
   renderSidebar();
   reloadActiveView();
 });
