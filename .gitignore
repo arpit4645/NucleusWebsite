@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Uploaded user content (large binary files)
+uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Screenshots (optional - remove this line if you want screenshots in repo)
+screenshots/
+
+# Environment files
+.env
+.env.local

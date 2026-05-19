@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact — Nucleus Consultant</title>
+  
+  <meta property="og:title" content="Nucleus Consultant" />
+  <meta property="og:description" content="We help young minds and growing businesses clarify purpose and turn dreams into reality." />
+  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    .contact-grid {
+      display: grid; grid-template-columns: 1.1fr 1fr;
+      gap: 80px;
+      padding: 60px 0;
+    }
+    @media (max-width: 980px) { .contact-grid { grid-template-columns: 1fr; gap: 40px; } }
+    .form-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: clamp(32px, 4vw, 56px);
+      position: relative;
+    }
+    .form-step { display: none; animation: fadeIn 0.4s ease-out; }
+    .form-step.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .progress-bar-container {
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .progress-bar {
+      height: 6px;
+      background: var(--line);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--green-primary);
+      width: 33.33%;
+      transition: width 0.3s ease-out;
+    }
+    .step-indicator {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .form-card .field { margin-bottom: 20px; }
+    .form-card .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .form-card .field-row { grid-template-columns: 1fr; } }
+    
+    .form-card button.btn-next, .form-card button[type=submit] {
+      margin-top: 12px;
+      width: 100%;
+      padding: 18px;
+      border-radius: 999px;
+      background: var(--green-deep);
+      color: var(--paper);
+      font: inherit; font-weight: 500;
+      transition: background .3s, transform .3s;
+    }
+    .form-card button.btn-next:hover, .form-card button[type=submit]:hover { background: var(--green); transform: translateY(-2px); }
+    .form-card button.btn-prev {
+      margin-top: 12px;
+      width: 100%;
+      padding: 18px;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink);
+      font: inherit; font-weight: 500;
+      border: 1px solid var(--line);
+      transition: background .3s;
+    }
+    .form-card button.btn-prev:hover { background: var(--warm-white); }
+    
+    .btn-group {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 16px;
+    }
+
+    /* Radio buttons for urgency */
+    .radio-group { display: flex; flex-direction: column; gap: 12px; }
+    .radio-label {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px; border: 1px solid var(--line); border-radius: 10px;
+      cursor: pointer; transition: border-color 0.2s;
+    }
+    .radio-label:hover { border-color: var(--green-primary); }
+    .radio-label input { margin: 0; width: 18px; height: 18px; accent-color: var(--green-primary); }
+
+    .info-block {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .info-block:first-child { border-top: 1px solid var(--line); }
+    .info-block .label {
+      font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+    }
+    .info-block .value {
+      font-family: var(--serif); font-size: 24px;
+      font-variation-settings: "SOFT" 30;
+    }
+    .info-block .value a { border-bottom: 1px solid transparent; transition: border-color .3s; }
+    .info-block .value a:hover { border-color: var(--charcoal); }
+
+    .map-card {
+      margin-top: 48px;
+      background: var(--warm-white);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 16/9;
+    }
+    .map-card .pin {
+      position: absolute; left: 30%; top: 50%;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 8px rgba(232,181,71,.18), 0 0 0 18px rgba(232,181,71,.08);
+      animation: pinPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pinPulse {
+      0%,100% { box-shadow: 0 0 0 8px rgba(232,181,71,.18), 0 0 0 18px rgba(232,181,71,.08); }
+      50% { box-shadow: 0 0 0 14px rgba(232,181,71,.10), 0 0 0 28px rgba(232,181,71,0); }
+    }
+    .map-card svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .5; }
+    .map-card .meta {
+      position: absolute; left: 36px; bottom: 36px;
+      font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    .check-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      margin-top: 32px;
+      padding: 24px 0;
+      border-top: 1px solid var(--line);
+    }
+    @media (max-width: 880px) { .check-row { grid-template-columns: 1fr 1fr; } }
+    .check {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 13px; color: var(--stone); line-height: 1.4;
+    }
+    .check::before {
+      content: "✓"; color: var(--green); font-weight: 700; font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ═══════════ NAV ═══════════ -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">
+      <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" />
+    </a>
+        <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="programs.html">Programs</a>
+      <a href="case-studies.html">Case Studies</a>
+      <a href="blog.html">Blog</a>
+      <a href="careers.html">Careers</a>
+      <a href="contact.html" class="nav-cta active">Book consult</a>
+    </div>
+    <button class="nav-burger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <header class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow reveal">Get in touch</p>
+      <h1 class="reveal" style="margin-top: 32px; transition-delay: .1s;">
+        Let’s Diagnose Your <em class="gold-word">Business</em>
+      </h1>
+      <p class="lead reveal" style="margin-top: 32px; transition-delay: .2s; max-width: 60ch; font-size: 24px;">
+        This is not a sales call. This is a clarity call.
+      </p>
+    </div>
+  </header>
+
+  <section class="wrap">
+    <div class="contact-grid">
+      <!-- Multi-step Form -->
+      <form class="form-card reveal card-hover" id="contactForm" action="https://formspree.io/f/xrejpqlv" method="POST" onsubmit="submitForm(event)">
+        <div class="progress-bar-container">
+          <div class="step-indicator">Step <span id="currentStepIndicator">1</span> of 3</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <!-- Step 1: About You -->
+        <div class="form-step active" id="step1">
+          <p class="eyebrow" style="margin-bottom: 24px;">Step 1 — About You</p>
+          <div class="field-row">
+            <div class="field">
+              <label for="n">Full Name *</label>
+              <input id="n" name="name" type="text" required placeholder="Your Full Name" />
+            </div>
+            <div class="field">
+              <label for="e">Email Address *</label>
+              <input id="e" name="email" type="email" required placeholder="you@email.com" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="p">Phone / WhatsApp *</label>
+              <input id="p" name="phone" type="tel" required placeholder="+91 ..." />
+            </div>
+            <div class="field">
+              <label for="c">City</label>
+              <input id="c" name="city" type="text" placeholder="e.g. Surat, Mumbai" />
+            </div>
+          </div>
+          <button type="button" class="btn-next" onclick="nextStep(1)">Next step &nbsp;→</button>
+        </div>
+
+        <!-- Step 2: About Your Business -->
+        <div class="form-step" id="step2">
+          <p class="eyebrow" style="margin-bottom: 24px;">Step 2 — About Your Business</p>
+          <div class="field">
+            <label for="b">Business Type *</label>
+            <input id="b" name="business_type" type="text" required placeholder="e.g. Agency, SaaS, Retail, Manufacturing" />
+          </div>
+          <div class="field">
+            <label for="i">Industry *</label>
+            <select id="i" name="industry" required>
+              <option value="" disabled selected>Select Industry</option>
+              <option value="Manufacturing">Manufacturing</option>
+              <option value="Retail">Retail</option>
+              <option value="Services">Services</option>
+              <option value="Tech">Tech</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="t">Team Size *</label>
+              <select id="t" name="team_size" required>
+                <option value="" disabled selected>Select Size</option>
+                <option value="1-10">1-10</option>
+                <option value="11-25">11-25</option>
+                <option value="26-50">26-50</option>
+                <option value="51-100">51-100</option>
+                <option value="100+">100+</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="r">Annual Revenue Range *</label>
+              <select id="r" name="revenue" required>
+                <option value="" disabled selected>Select Range</option>
+                <option value="Below 1Cr">Below 1Cr</option>
+                <option value="1-5Cr">1-5Cr</option>
+                <option value="5-25Cr">5-25Cr</option>
+                <option value="25Cr+">25Cr+</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn-prev" onclick="prevStep(2)">← Back</button>
+            <button type="button" class="btn-next" onclick="nextStep(2)">Next step &nbsp;→</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Your Challenge -->
+        <div class="form-step" id="step3">
+          <p class="eyebrow" style="margin-bottom: 24px;">Step 3 — Your Challenge</p>
+          <div class="field">
+            <label for="m1">What is the #1 thing holding your business back right now? *</label>
+            <textarea id="m1" name="challenge" rows="3" required placeholder="Describe your main bottleneck..."></textarea>
+          </div>
+          <div class="field">
+            <label for="m2">What have you already tried? *</label>
+            <textarea id="m2" name="attempted_solutions" rows="3" required placeholder="Consultants, new hires, software..."></textarea>
+          </div>
+          <div class="field" style="margin-bottom: 32px;">
+            <label>How urgently do you need help? *</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="urgency" value="This Month" required> This Month
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="urgency" value="Next 3 Months"> Next 3 Months
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="urgency" value="Just Exploring"> Just Exploring
+              </label>
+            </div>
+          </div>
+          
+          <div class="btn-group">
+            <button type="button" class="btn-prev" onclick="prevStep(3)">← Back</button>
+            <button type="submit" id="submitBtn">Submit Application &nbsp;→</button>
+          </div>
+        </div>
+
+        <div class="check-row">
+          <div class="check">Reply within 4 hours</div>
+          <div class="check">No sales scripts</div>
+          <div class="check">Free 60-min call</div>
+        </div>
+      </form>
+
+      <!-- Info -->
+      <aside class="reveal" style="transition-delay: .15s;">
+        <div class="info-block">
+          <div class="label">Phone / WhatsApp</div>
+          <div class="value"><a href="tel:+918156076680">+91 8156 076 680</a></div>
+        </div>
+        <div class="info-block">
+          <div class="label">Email</div>
+          <div class="value"><a href="mailto:hello@nucleusconsultant.in">hello@nucleusconsultant.in</a></div>
+        </div>
+        <div class="info-block">
+          <div class="label">Office</div>
+          <div class="value" style="font-size: 18px; line-height: 1.4;">
+            811, International Finance Center (IFC),<br/>
+            Opp. Fire Station, VIP Road,<br/>
+            Vesu, Surat – 395007
+          </div>
+        </div>
+        <div class="info-block" style="border-bottom: 0;">
+          <div class="label">What happens next:</div>
+          <div style="font-size: 15px; color: var(--stone); display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+            <div class="check">Application reviewed within 4 hours</div>
+            <div class="check">Consultation call scheduled within 24 hours</div>
+            <div class="check">Pre-session brief sent 24 hours before</div>
+            <div class="check">60-minute deep-dive call</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <div class="spacer-lg"></div>
+      <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="footer">
+    <div class="footer-watermark">NUCLEUS</div>
+    <div class="wrap" style="position:relative; z-index:10;">
+      <div class="footer-top">
+        <h2 class="footer-tagline">Transforming <em class="gold-word">inner light</em><br>into outer impact.</h2>
+      </div>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="index.html" class="footer-logo"><img loading="eager" src="assets/logo.png" alt="Nucleus Logo" style="height:38px; filter:brightness(0) invert(1); opacity:0.9; margin-bottom: 24px;" /></a>
+          <p class="muted" style="max-width:28ch; font-size:14px; line-height:1.7;">We help young minds and growing businesses clarify purpose and turn dreams into reality.</p>
+        </div>
+                <div class="footer-col">
+          <h5>Explore</h5>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="programs.html">Programs</a></li>
+            <li><a href="case-studies.html">Case Studies</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="careers.html">Careers</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Programs</h5>
+          <ul>
+            <li><a href="programs.html">Be Extraordinary</a></li>
+            <li><a href="programs.html">Business Excellence</a></li>
+            <li><a href="programs.html">Sales Mastery</a></li>
+            <li><a href="programs.html">Outbound Training</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Contact</h5>
+          <ul>
+            <li><a href="tel:+918156076680" data-set="phone" style="opacity:0.9;">+91 8156 076 680</a></li>
+            <li><a href="mailto:hello@nucleusconsultant.in" data-set="email" style="opacity:0.9;">hello@nucleusconsultant.in</a></li>
+            <li class="muted" style="margin-top:16px; font-size:13px; line-height:1.6;" data-set="address">811 IFC, Opp. Fire Station<br>VIP Road, Vesu, Surat – 395007</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 NUCLEUS CONSULTANT. ALL RIGHTS RESERVED.</div>
+        <div>SURAT, INDIA · TRANSFORMING INNER LIGHT</div>
+      </div>
+    </div>
+  </footer>
+    
+  <script src="assets/site.js"></script>
+  <script>
+    // Multi-step form logic
+    let currentStep = 1;
+    const totalSteps = 3;
+
+    function validateStep(step) {
+      const stepEl = document.getElementById('step' + step);
+      const inputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
+      let valid = true;
+      inputs.forEach(input => {
+        if (!input.checkValidity()) {
+          input.reportValidity();
+          valid = false;
+        }
+      });
+      return valid;
+    }
+
+    function nextStep(step) {
+      if (!validateStep(step)) return;
+      document.getElementById('step' + step).classList.remove('active');
+      currentStep++;
+      document.getElementById('step' + currentStep).classList.add('active');
+      updateProgress();
+    }
+
+    function prevStep(step) {
+      document.getElementById('step' + step).classList.remove('active');
+      currentStep--;
+      document.getElementById('step' + currentStep).classList.add('active');
+      updateProgress();
+    }
+
+    function updateProgress() {
+      document.getElementById('currentStepIndicator').textContent = currentStep;
+      document.getElementById('progressFill').style.width = ((currentStep / totalSteps) * 100) + '%';
+    }
+
+    // Submit form logic
+    function submitForm(e) {
+      e.preventDefault();
+      var btn = document.getElementById('submitBtn');
+      var form = document.getElementById('contactForm');
+      btn.textContent = 'Submitting...';
+      btn.disabled = true;
+
+      var settings = {};
+      try { settings = JSON.parse(localStorage.getItem('nucleus_site_settings')) || {}; } catch(err) {}
+      var endpoint = settings.form || form.action;
+
+      // Save to local storage for Admin panel immediately
+      var formData = new FormData(form);
+      try {
+        var leads = JSON.parse(localStorage.getItem('nucleus_leads') || '[]');
+        leads.unshift({
+          id: Date.now(),
+          date: new Date().toISOString(),
+          name: formData.get('name'),
+          email: formData.get('email'),
+          company: formData.get('business_type') || 'N/A',
+          role: formData.get('industry') || 'N/A',
+          phone: formData.get('phone') || 'N/A',
+          interest: formData.get('challenge') || 'N/A',
+          message: formData.get('attempted_solutions') || ''
+        });
+        localStorage.setItem('nucleus_leads', JSON.stringify(leads));
+      } catch(e) {}
+
+      // Formspree fetch
+      fetch(endpoint, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      }).then(function(r) {
+        window.location.href = "thank-you.html";
+      }).catch(function(e) { 
+        window.location.href = "thank-you.html";
+      });
+    }
+  </script>
+</body>
+</html>

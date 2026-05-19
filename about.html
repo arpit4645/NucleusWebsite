@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About — Nucleus Consultant</title>
+  
+  <meta property="og:title" content="About Nucleus Consultant" />
+  <meta property="og:description" content="We transform the way leaders think, teams behave, and businesses grow." />
+  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="assets/logo.png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,wght@0,300..600;1,300..600&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css" />
+  
+  <style>
+    /* 1. CINEMATIC HERO */
+    .hero-about {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: var(--green-deep);
+      color: var(--white);
+      padding: 120px 0;
+    }
+    .hero-about .mesh-bg {
+      position: absolute; inset: 0; pointer-events: none; opacity: 0.8;
+    }
+    .hero-about .mesh-bg .blob-1 { background: var(--green); top: -20%; left: -10%; }
+    .hero-about .mesh-bg .blob-2 { background: var(--gold); bottom: -20%; right: -10%; }
+    
+    /* 2. WHO WE ARE */
+    .who-we-are-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    @media(max-width: 900px) { .who-we-are-grid { grid-template-columns: 1fr; gap: 40px; } }
+    
+    /* 3. VISION & MISSION */
+    .vision-split {
+      display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px;
+    }
+    .mission-split {
+      display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; margin-top: 80px;
+    }
+    @media(max-width: 900px) { .vision-split, .mission-split { grid-template-columns: 1fr; } }
+    
+    /* 6. CULTURE & VALUES */
+    .values-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;
+    }
+    .value-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      padding: 48px;
+      border-radius: var(--radius-lg);
+      transition: all var(--dur-base);
+    }
+    .value-card:hover { border-color: var(--gold-primary); transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+    
+    /* 7. FOUNDER STORY */
+    .editorial-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    @media(max-width: 900px) { .editorial-grid { grid-template-columns: 1fr; gap: 40px; } }
+    .founder-signoff {
+      font-family: var(--serif); font-style: italic; font-size: 32px; color: var(--gold-primary); margin-top: 32px;
+    }
+    
+    /* MODAL STYLES */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(11, 34, 11, 0.9); backdrop-filter: blur(8px);
+      z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal-content {
+      background: var(--white); border-radius: var(--radius-lg); padding: 60px;
+      max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto;
+      transform: translateY(20px); transition: transform 0.3s ease; position: relative;
+    }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
+    .modal-close {
+      position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px;
+      color: var(--muted); cursor: pointer; transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--charcoal); }
+    .modal-body h3 { font-size: 24px; color: var(--green-primary); margin: 32px 0 16px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+    .modal-body p { margin-bottom: 16px; color: var(--muted); line-height: 1.8; }
+    .modal-body blockquote { font-style: italic; color: var(--gold-dark); border-left: 3px solid var(--gold-primary); padding-left: 16px; margin: 24px 0; font-size: 18px; }
+    
+    /* 8. TEAM SECTION */
+    .team-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px; margin-top: 48px;
+    }
+    .team-card {
+      background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
+    }
+    
+    /* 9. TIMELINE */
+    .timeline-container { position: relative; max-width: 800px; margin: 0 auto; padding-left: 40px; }
+    .timeline-container::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--line);
+    }
+    .timeline-item { position: relative; margin-bottom: 64px; }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-item::before {
+      content: ''; position: absolute; left: -45px; top: 8px; width: 12px; height: 12px; border-radius: 50%;
+      background: var(--gold-primary); border: 4px solid var(--cream);
+    }
+    .timeline-year { font-family: var(--mono); font-size: 14px; color: var(--gold-dark); letter-spacing: 0.1em; margin-bottom: 8px; display: block; }
+    
+    /* 10. TRUST LOGOS */
+    .trust-logos {
+      display: flex; gap: 60px; justify-content: center; flex-wrap: wrap; margin-top: 48px; opacity: 0.6;
+    }
+    .trust-logos svg { height: 40px; fill: currentColor; }
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">
+      <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" />
+    </a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="programs.html">Programs</a>
+      <a href="case-studies.html">Case Studies</a>
+      <a href="blog.html">Blog</a>
+      <a href="careers.html">Careers</a>
+      <a href="contact.html" class="nav-cta">Book consult</a>
+    </div>
+    <button class="nav-burger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- 1. CINEMATIC HERO SECTION -->
+  <header class="hero-about dark-section">
+    <div class="mesh-bg">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+    </div>
+    <div class="wrap" style="position: relative; z-index: 2; text-align: center;">
+      <p class="eyebrow reveal" style="color: var(--gold-primary);" data-set="about_hero_eyebrow">The Organization</p>
+      <h1 class="reveal" style="font-size: clamp(48px, 6vw, 90px); margin-top: 24px; line-height: 1.1; max-width: 16ch; margin-inline: auto;" data-set="about_hero_title">
+        We rebuild businesses by <em class="gold-word">rebuilding leaders.</em>
+      </h1>
+      <p class="reveal" style="margin-top: 32px; font-size: 22px; color: rgba(255,255,255,0.7); max-width: 32ch; margin-inline: auto; line-height: 1.6;" data-set="about_hero_subtitle">
+        A premium transformation consultancy for SMEs. We don't just give strategy; we align mindset, culture, and systems to engineer predictable growth.
+      </p>
+      
+      <div class="reveal" style="margin-top: 64px; display: flex; justify-content: center; gap: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 40px;">
+        <div style="text-align: left;">
+          <div style="font-family: var(--serif); font-size: 32px; color: var(--gold-primary);"><span data-counter="8" data-suffix="+">8+</span></div>
+          <div style="font-family: var(--mono); font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 8px;">Years Experience</div>
+        </div>
+        <div style="text-align: left; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 40px;">
+          <div style="font-family: var(--serif); font-size: 32px; color: var(--gold-primary);"><span data-counter="50" data-suffix="+">50+</span></div>
+          <div style="font-family: var(--mono); font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 8px;">Enterprises Transformed</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. WHO WE ARE SECTION -->
+  <section class="section" style="background: var(--warm-white);">
+    <div class="wrap who-we-are-grid">
+      <div class="reveal-left">
+        <p class="eyebrow" data-set="about_who_eyebrow">Who We Are</p>
+        <h2 style="margin-top: 16px; font-size: clamp(36px, 4vw, 56px);" data-set="about_who_title">More Than Consultants.<br>Transformation Partners.</h2>
+        <p style="margin-top: 32px; font-size: 18px; line-height: 1.8; color: var(--muted);" data-set="about_who_body_1">
+          Nucleus was founded on a simple realization: Most business problems are not strategy problems. They are thinking problems. We noticed that external consultants providing standard operating procedures failed because they ignored the culture and the mindset of the leaders executing them.
+        </p>
+        <p style="margin-top: 24px; font-size: 18px; line-height: 1.8; color: var(--muted);" data-set="about_who_body_2">
+          We operate as an elite extension of your leadership team. We dive deep into the chaos, establish structure, align your people, and engineer an ecosystem where growth is natural, predictable, and sustainable.
+        </p>
+      </div>
+      <div class="reveal-scale img-zoom upload-zone" id="about-who-img" style="aspect-ratio: 4/5; border-radius: var(--radius-lg); background: url('assets/strategy_abstract.png') center/cover; position: relative;">
+        <span class="upload-placeholder" style="display: none;">Upload Image</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. VISION & MISSION SECTION -->
+  <section class="section" style="background: var(--cream);">
+    <div class="wrap">
+      <!-- Vision -->
+      <div class="vision-split">
+        <!-- Vision Video Player -->
+        <div class="reveal-scale" style="border-radius: var(--radius-lg); overflow: hidden; min-height: 400px; position: relative; background: #0a1a0a;">
+          <div id="vision-media-container" style="width: 100%; height: 100%; min-height: 400px; position: relative;"></div>
+        </div>
+        <div class="reveal" style="display: flex; flex-direction: column; justify-content: center; padding: 40px;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--green-pale); display: flex; align-items: center; justify-content: center; color: var(--green-primary); margin-bottom: 24px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          </div>
+          <h2 data-set="about_vision_title">Our Vision</h2>
+          <p style="margin-top: 16px; font-size: 22px; font-style: italic; color: var(--charcoal); line-height: 1.6;" data-set="about_vision_text">
+            "To be the catalyst that transforms Indian SMEs from founder-dependent setups into globally competitive, self-driven enterprises."
+          </p>
+        </div>
+      </div>
+      
+      <!-- Mission -->
+      <div class="mission-split">
+        <div class="reveal" style="display: flex; flex-direction: column; justify-content: center; padding: 40px;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--green-pale); display: flex; align-items: center; justify-content: center; color: var(--green-primary); margin-bottom: 24px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+          </div>
+          <h2 data-set="about_mission_title">Our Mission</h2>
+          <p style="margin-top: 16px; font-size: 18px; color: var(--muted); line-height: 1.8;" data-set="about_mission_text">
+            To empower founders with absolute clarity, build robust operational systems, and align organizational culture so that every business we touch scales with predictability and purpose.
+          </p>
+        </div>
+        <div class="reveal-scale img-zoom upload-zone" id="about-mission-img" style="border-radius: var(--radius-lg); background: url('assets/culture_alignment.png') center/cover; min-height: 400px; position: relative;">
+          <span class="upload-placeholder" style="display: none;">Upload Image</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. OUR IMPACT SECTION -->
+  <section class="section dark-section" style="background: var(--charcoal);">
+    <div class="wrap reveal">
+      <div style="text-align: center; margin-bottom: 56px;">
+        <p class="eyebrow" style="color: var(--gold-primary);">The Impact</p>
+        <h2 style="margin-top: 16px; color: var(--white);">Numbers That Matter</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); overflow: hidden; background: rgba(255,255,255,0.02);">
+        <div style="padding: 48px 32px; text-align: center; border-right: 1px solid rgba(255,255,255,0.1);">
+          <div style="font-family: var(--serif); font-size: clamp(36px, 4vw, 56px); color: var(--gold-primary); line-height: 1;"><span data-counter="50" data-suffix="+">50+</span></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 16px;">SMEs Transformed</div>
+        </div>
+        <div style="padding: 48px 32px; text-align: center; border-right: 1px solid rgba(255,255,255,0.1);">
+          <div style="font-family: var(--serif); font-size: clamp(36px, 4vw, 56px); color: var(--gold-primary); line-height: 1;"><span data-counter="200" data-suffix="+">200+</span></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 16px;">Leaders Mentored</div>
+        </div>
+        <div style="padding: 48px 32px; text-align: center; border-right: 1px solid rgba(255,255,255,0.1);">
+          <div style="font-family: var(--serif); font-size: clamp(36px, 4vw, 56px); color: var(--gold-primary); line-height: 1;"><span data-counter="15" data-suffix="+">15+</span></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 16px;">Industries Served</div>
+        </div>
+        <div style="padding: 48px 32px; text-align: center;">
+          <div style="font-family: var(--serif); font-size: clamp(36px, 4vw, 56px); color: var(--gold-primary); line-height: 1;"><span data-counter="95" data-suffix="%">95%</span></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 16px;">Client Retention</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. THE NUCLEUS DIFFERENCE -->
+  <section class="section" style="background: var(--white);">
+    <div class="wrap">
+      <div style="text-align: center; margin-bottom: 64px;">
+        <p class="eyebrow reveal">The Difference</p>
+        <h2 class="reveal" style="margin-top: 16px;">Consulting, Evolved.</h2>
+      </div>
+      <div class="reveal card-hover glass" style="border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--line); background: var(--warm-white);">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; background: var(--green-primary); color: var(--white); padding: 24px 40px;">
+          <h3 style="font-size: 20px; color: rgba(255,255,255,0.6);">Traditional Agencies</h3>
+          <h3 style="font-size: 20px; color: var(--gold-primary);">Nucleus Standard</h3>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
+          <p style="font-size: 18px; color: var(--muted);">Deliver PowerPoint strategies</p>
+          <p style="font-size: 18px; font-weight: 500; color: var(--green-primary);">Engineer cultural shifts</p>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
+          <p style="font-size: 18px; color: var(--muted);">Focus purely on metrics</p>
+          <p style="font-size: 18px; font-weight: 500; color: var(--green-primary);">Focus on the leaders driving the metrics</p>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
+          <p style="font-size: 18px; color: var(--muted);">Create dependencies</p>
+          <p style="font-size: 18px; font-weight: 500; color: var(--green-primary);">Build self-sustaining ecosystems</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. CULTURE & VALUES SECTION -->
+  <section class="section" style="background: var(--cream);">
+    <div class="wrap">
+      <div style="text-align: center; margin-bottom: 64px;">
+        <p class="eyebrow reveal">Core Values</p>
+        <h2 class="reveal" style="margin-top: 16px;">The Principles We Live By</h2>
+      </div>
+      <div class="values-grid reveal" data-stagger="100">
+        <div class="value-card">
+          <div style="font-family: var(--mono); color: var(--gold-dark); margin-bottom: 16px;">01</div>
+          <h3 style="font-size: 22px; margin-bottom: 16px;" data-set="val_1_title">Extreme Ownership</h3>
+          <p style="color: var(--muted); line-height: 1.6;" data-set="val_1_desc">We don't blame external factors. We take absolute responsibility for our results, our clients' success, and our internal growth.</p>
+        </div>
+        <div class="value-card">
+          <div style="font-family: var(--mono); color: var(--gold-dark); margin-bottom: 16px;">02</div>
+          <h3 style="font-size: 22px; margin-bottom: 16px;" data-set="val_2_title">Context Over Control</h3>
+          <p style="color: var(--muted); line-height: 1.6;" data-set="val_2_desc">We build leaders who don't need micromanagement. By providing ultimate clarity and context, we enable autonomous execution.</p>
+        </div>
+        <div class="value-card">
+          <div style="font-family: var(--mono); color: var(--gold-dark); margin-bottom: 16px;">03</div>
+          <h3 style="font-size: 22px; margin-bottom: 16px;" data-set="val_3_title">Radical Transparency</h3>
+          <p style="color: var(--muted); line-height: 1.6;" data-set="val_3_desc">No hidden agendas. We speak the truth to our clients and to each other, even when it's uncomfortable. Honesty accelerates growth.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. FOUNDER STORY SECTION -->
+  <section class="section" style="background: var(--white);">
+    <div class="wrap editorial-grid">
+      <div class="reveal-scale img-zoom upload-zone" id="founder-photo-upload" onclick="document.getElementById('founder-modal').classList.add('active')" style="aspect-ratio: 4/5; border-radius: var(--radius-lg); background: url('assets/founder_portrait.png') center/cover; position: relative; cursor: pointer;">
+        <span class="upload-placeholder" style="display: none;">Upload Founder Photo</span>
+        <div style="position: absolute; bottom: 20px; right: 20px; background: var(--gold-primary); color: var(--ink); padding: 8px 16px; border-radius: 20px; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; pointer-events: none;">Read Full Story →</div>
+      </div>
+      <div class="reveal-left">
+        <p class="eyebrow">The Leadership</p>
+        <h2 style="margin-top: 16px; font-size: clamp(32px, 4vw, 48px);" data-set="founder_name">Sanjay Patel</h2>
+        <p style="font-family: var(--mono); font-size: 12px; color: var(--gold-dark); text-transform: uppercase; margin-top: 8px;" data-set="founder_role">Chief Cultural Officer & Transformation Leader</p>
+        
+        <p style="margin-top: 32px; font-size: 18px; line-height: 1.8; color: var(--muted);" data-set="founder_bio_1">
+          MBA from Delhi in International Business. I had total worked 13 years in corporate.
+        </p>
+        <p style="margin-top: 24px; font-size: 18px; line-height: 1.8; color: var(--muted);" data-set="founder_bio_2">
+          Worked in Delhi, Dubai in International Finance and also worked in one of the biggest private sector Banks in India before pursuing a higher purpose.
+        </p>
+        <div class="founder-signoff" data-set="founder_signoff">S. Patel</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDER MODAL -->
+  <div class="modal-overlay" id="founder-modal" onclick="if(event.target === this) this.classList.remove('active')">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('founder-modal').classList.remove('active')">&times;</button>
+      <div class="modal-body">
+        <h2 style="font-size: 32px; margin-bottom: 8px;">Sanjay Patel</h2>
+        <p style="font-family: var(--mono); color: var(--gold-dark); text-transform: uppercase; font-size: 12px; letter-spacing: 0.1em;">Chief Cultural Officer & Transformation Leader</p>
+        
+        <h3>Life’s Purpose</h3>
+        <blockquote>"Making India into BHARAT"</blockquote>
+        <p>To use my talent of coaching and passion to inspire and transform Youth to clarify their life’s Purpose & dream and support them live life with purpose along with creating dream into reality.</p>
+        <blockquote>"Transform 1 Crore youth till 2030."</blockquote>
+        
+        <h3>School Transformation</h3>
+        <p>He worked in the fields of International Financial market, and Banks over the past thirteen years. Even being on the pinnacle of his career he has moved from financial industry to transforming Youth for better India to pursue his passion. His personal inclination is towards developing the School where holistic development of the child happens.</p>
+        <p>To give wings to his aspiration (Youth Empowerment) he has started a concept called "SCHOOL TRANSFORMATION PROGRAM". The program is all about character-based education.</p>
+        <p>Today his firm is serving 8 schools across without any charges. The entire focus is giving wings to our youth for a better "BHARAT".</p>
+        
+        <h3>Business Transformation</h3>
+        <p>He believes Business with "Spiritual Vision" will lead the future world. Hence, he has created "Business Model with Purpose". Which helps not only create profit but satisfaction which every one craves.</p>
+        <p>He has also done "Management Innovation" which helps not only to achieve the targeted goals but create a culture as a competitive advantage that can not be copied by competitors.</p>
+        <p>He has also developed "Strategy of Excellence" which breaks all old dogmas of believing "Customer as God" and giving a new perspective of "Customer is not a God but customer is our Child."</p>
+        <p>He has also developed Consultative Training First time ever in India called "Sales Mastery" to help SMEs increase sales. A systematic 10 step process which helps you to achieve sales goals.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 9. COMPANY TIMELINE -->
+  <section class="section" style="background: var(--white);">
+    <div class="wrap">
+      <div style="text-align: center; margin-bottom: 80px;">
+        <p class="eyebrow reveal">Our History</p>
+        <h2 class="reveal" style="margin-top: 16px;">The Journey So Far</h2>
+      </div>
+      
+      <div class="timeline-container reveal" data-stagger="150">
+        <div class="timeline-item">
+          <span class="timeline-year" data-set="time_1_yr">2016</span>
+          <h3 style="font-size: 24px; margin-bottom: 12px;" data-set="time_1_title">The Foundation</h3>
+          <p style="color: var(--muted); line-height: 1.6; max-width: 50ch;" data-set="time_1_desc">Nucleus Consultant was founded in Surat with a distinct vision to elevate the SME sector by focusing on leadership psychology rather than just spreadsheets.</p>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-year" data-set="time_2_yr">2018</span>
+          <h3 style="font-size: 24px; margin-bottom: 12px;" data-set="time_2_title">Regional Expansion</h3>
+          <p style="color: var(--muted); line-height: 1.6; max-width: 50ch;" data-set="time_2_desc">Crossed the 50-client milestone and successfully established a secondary presence in Ahmedabad, proving the scalability of our transformation models.</p>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-year" data-set="time_3_yr">2021</span>
+          <h3 style="font-size: 24px; margin-bottom: 12px;" data-set="time_3_title">Program Launch: Be Extraordinary</h3>
+          <p style="color: var(--muted); line-height: 1.6; max-width: 50ch;" data-set="time_3_desc">Launched our flagship youth and emerging leadership program to cultivate the next generation of unshakeable entrepreneurs.</p>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-year" data-set="time_4_yr">2024</span>
+          <h3 style="font-size: 24px; margin-bottom: 12px;" data-set="time_4_title">Enterprise Dominance</h3>
+          <p style="color: var(--muted); line-height: 1.6; max-width: 50ch;" data-set="time_4_desc">Recognized as a premier consulting agency with over 200 active transformations across 15 diverse industries in India.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. TESTIMONIAL / TRUST SECTION -->
+  <section class="section dark-section" style="background: var(--green-primary); position: relative; overflow: hidden; padding: 120px 0;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: var(--serif); font-size: 400px; color: var(--gold-primary); opacity: 0.03; pointer-events: none; line-height: 1;">"</div>
+    <div class="wrap reveal" style="text-align: center; max-width: 800px; position: relative; z-index: 2;">
+      <p class="eyebrow" style="color: var(--gold-primary);">Trusted By Leaders</p>
+      <blockquote style="font-family: var(--serif); font-style: italic; font-size: clamp(28px, 4vw, 44px); line-height: 1.4; color: var(--white); margin: 40px 0;" data-set="about_testimonial">
+        "Nucleus didn't give us a strategy. They changed how we think about business entirely. In 6 months, our team doubled their ownership."
+      </blockquote>
+      <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.6);">
+        <span style="color: var(--gold-primary);" data-set="about_test_author">Rahul Mehta</span><br>
+        <span style="display: block; margin-top: 8px;" data-set="about_test_role">Founder, Mehta Manufacturing</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. FINAL CTA SECTION -->
+  <section class="section dark-section final-cta" style="background: var(--green-deep); color: var(--white); text-align: center; padding: 120px 0;">
+    <div class="wrap reveal">
+      <h2 style="font-size: clamp(40px, 5vw, 64px); max-width: 14ch; margin-inline: auto; line-height: 1.1;">Ready to rebuild your business?</h2>
+      <p style="margin-top: 24px; font-size: 20px; color: rgba(255,255,255,0.7);">Stop firefighting. Start leading. Let's diagnose your current state.</p>
+      <div style="margin-top: 48px;">
+        <a href="contact.html" class="btn btn-primary" style="background: var(--gold-primary); color: var(--ink);">Book a Consultation</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer dark-section" style="background: var(--green-deep);">
+    <div class="footer-watermark">NUCLEUS</div>
+    <div class="wrap" style="position:relative; z-index:10;">
+      <div class="footer-top">
+        <h2 class="footer-tagline">Transforming <em class="gold-word">inner light</em><br>into outer impact.</h2>
+      </div>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="index.html" class="footer-logo"><img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" style="height:38px; filter:brightness(0) invert(1); opacity:0.9; margin-bottom: 24px;" /></a>
+          <p class="muted" style="max-width:28ch; font-size:14px; line-height:1.7;">We help young minds and growing businesses clarify purpose and turn dreams into reality.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="programs.html">Programs</a></li>
+            <li><a href="case-studies.html">Case Studies</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="careers.html">Careers</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Programs</h5>
+          <ul>
+            <li><a href="programs.html">Be Extraordinary</a></li>
+            <li><a href="programs.html">Business Excellence</a></li>
+            <li><a href="programs.html">Sales Mastery</a></li>
+            <li><a href="programs.html">Outbound Training</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Contact</h5>
+          <ul>
+            <li><a href="tel:+918156076680" data-set="phone" style="opacity:0.9;">+91 8156 076 680</a></li>
+            <li><a href="mailto:hello@nucleusconsultant.in" data-set="email" style="opacity:0.9;">hello@nucleusconsultant.in</a></li>
+            <li class="muted" style="margin-top:16px; font-size:13px; line-height:1.6;" data-set="address">811 IFC, Opp. Fire Station<br>VIP Road, Vesu, Surat – 395007</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 NUCLEUS CONSULTANT. ALL RIGHTS RESERVED.</div>
+        <div>SURAT, INDIA · TRANSFORMING INNER LIGHT</div>
+      </div>
+    </div>
+  </footer>
+    
+  <script src="assets/site.js"></script>
+  <script>
+    // CMS LITE: Text Loading (Read-only on frontend)
+    function loadTextContent() {
+      document.querySelectorAll('[data-set]').forEach(el => {
+        const key = el.getAttribute('data-set');
+        if (key && localStorage.getItem(key)) {
+          el.innerHTML = localStorage.getItem(key);
+        }
+      });
+    }
+
+    // Image uploads are now managed via Universal Media Loader
+
+
+    // ── IndexedDB Media Store (mirrors admin.html) ───────────────────────
+    (function(){
+      const DB='nucleus_media', ST='files';
+      function _open(){
+        return new Promise((res,rej)=>{
+          const r=indexedDB.open(DB,1);
+          r.onupgradeneeded=e=>e.target.result.createObjectStore(ST);
+          r.onsuccess=e=>res(e.target.result);
+          r.onerror=()=>rej(r.error);
+        });
+      }
+      window.mdbLoad=async(key)=>{
+        const db=await _open();
+        return new Promise((res,rej)=>{
+          const tx=db.transaction(ST,'readonly');
+          const r=tx.objectStore(ST).get(key);
+          r.onsuccess=()=>res(r.result?URL.createObjectURL(r.result):null);
+          r.onerror=()=>rej(r.error);
+        });
+      };
+      window.mdbMarked=key=>!!localStorage.getItem('__idb:'+key);
+    })();
+
+    // ── Universal Media Loader ───────────────────────────────────────────────
+    async function loadUniversalMedia(containerId, storageKey, fallbackSrc) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const url = localStorage.getItem(storageKey + '_url') || '';
+      let src = url;
+      if (!src && window.mdbMarked && mdbMarked(storageKey)) {
+        src = await mdbLoad(storageKey).catch(()=>null);
+      }
+      if (!src) src = localStorage.getItem(storageKey) || '';
+
+      // Hide any upload placeholder from frontend
+      const placeholder = container.querySelector('.upload-placeholder');
+      if (placeholder) placeholder.style.display = 'none';
+
+      if (!src) {
+        if (fallbackSrc) {
+          container.innerHTML = `<div style="width:100%;height:100%;min-height:inherit;background:url('${fallbackSrc}') center/cover no-repeat;"></div>`;
+        }
+        return;
+      }
+
+      // Clear existing backgrounds or placeholders to make room for injected media
+      container.style.background = 'none';
+      container.style.overflow = 'hidden';
+      container.style.position = 'relative';
+
+      const svgMuted = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
+      const svgUnmuted = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`;
+      const btnHtml = `<button class="universal-mute-btn" style="position:absolute;bottom:16px;right:16px;background:rgba(0,0,0,0.5);color:white;border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(4px);border-radius:50%;width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:20;transition:all 0.3s ease;">${svgMuted}</button>`;
+
+      // YouTube
+      if (src.includes('youtube.com') || src.includes('youtu.be')) {
+        const ytMatch = src.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\s?]+)/);
+        if (ytMatch) {
+          container.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=1&loop=1&playlist=${ytMatch[1]}&controls=0&rel=0&enablejsapi=1" style="width:100%;height:100%;min-height:inherit;border:none;display:block;object-fit:cover;" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>` + btnHtml;
+          
+          const iframe = container.querySelector('iframe');
+          const btn = container.querySelector('.universal-mute-btn');
+          let isMuted = true;
+          btn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            iframe.contentWindow.postMessage('{"event":"command","func":"' + (isMuted ? 'mute' : 'unMute') + '","args":""}', '*');
+            btn.innerHTML = isMuted ? svgMuted : svgUnmuted;
+          });
+          return;
+        }
+      }
+      // Vimeo
+      if (src.includes('vimeo.com')) {
+        const vmMatch = src.match(/vimeo\.com\/(\d+)/);
+        if (vmMatch) {
+          container.innerHTML = `<iframe src="https://player.vimeo.com/video/${vmMatch[1]}?autoplay=1&muted=1&loop=1&background=1&api=1" style="width:100%;height:100%;min-height:inherit;border:none;display:block;object-fit:cover;" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>` + btnHtml;
+          
+          const iframe = container.querySelector('iframe');
+          const btn = container.querySelector('.universal-mute-btn');
+          let isMuted = true;
+          btn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            iframe.contentWindow.postMessage('{"method":"setVolume","value":' + (isMuted ? 0 : 1) + '}', '*');
+            btn.innerHTML = isMuted ? svgMuted : svgUnmuted;
+          });
+          return;
+        }
+      }
+
+      const savedType = localStorage.getItem(storageKey + '_type');
+      const isVideo = src.startsWith('data:video/') || src.match(/\.(mp4|webm|mov)(\?.*)?$/i) || savedType === 'video';
+
+      if (isVideo) {
+        container.innerHTML = `<video autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;min-height:inherit;display:block;"><source src="${src}" />Your browser does not support HTML5 video.</video>` + btnHtml;
+        
+        const video = container.querySelector('video');
+        const btn = container.querySelector('.universal-mute-btn');
+        btn.addEventListener('click', () => {
+          video.muted = !video.muted;
+          btn.innerHTML = video.muted ? svgMuted : svgUnmuted;
+        });
+      } else {
+        container.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;min-height:inherit;display:block;" />`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      loadTextContent();
+
+      // Load all dynamic media with appropriate fallbacks
+      loadUniversalMedia('about-who-img',        'nucleus_about_who_img',     'assets/strategy_abstract.png');
+      loadUniversalMedia('vision-media-container','nucleus_vision_video',      'assets/inner_light.png');
+      loadUniversalMedia('about-mission-img',    'nucleus_about_mission_img', 'assets/culture_alignment.png');
+      loadUniversalMedia('founder-photo-upload', 'nucleus_founder_photo',     'assets/founder_portrait.png');
+    });
+  </script>
+</body>
+</html>

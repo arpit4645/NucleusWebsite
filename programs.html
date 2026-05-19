@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Programs — Nucleus Consultant</title>
+  
+  <meta property="og:title" content="Nucleus Consultant" />
+  <meta property="og:description" content="Programs That Change How People Think" />
+  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    .prog-card {
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
+    }
+    .prog-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    .prog-img {
+      height: 280px;
+      width: 100%;
+      object-fit: cover;
+    }
+    .prog-content {
+      padding: 40px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .prog-content h2 { margin-bottom: 16px; }
+    .prog-content p { font-size: 16px; margin-bottom: 24px; }
+    .prog-meta {
+      display: flex; gap: 24px;
+      margin-bottom: 24px;
+      font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .prog-meta div {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .prog-meta span { color: var(--gold-primary); font-weight: 500; }
+    
+    .prog-outcomes {
+      list-style: none; padding: 0; margin: 0 0 32px 0;
+      flex-grow: 1;
+    }
+    .prog-outcomes li {
+      display: flex; gap: 12px; margin-bottom: 12px; font-size: 15px;
+    }
+    .prog-outcomes li::before { content: "✓"; font-weight: bold; }
+    
+    /* Specific Card Themes */
+    .c-dark { background: var(--green-deep); color: var(--white); border-color: transparent; }
+    .c-dark .prog-outcomes li::before { color: var(--gold-primary); }
+    .c-dark p { color: rgba(255,255,255,0.8); }
+    .c-dark .prog-outcomes li { color: rgba(255,255,255,0.9); }
+    .c-dark .btn { background: var(--white); color: var(--green-deep); }
+    
+    .c-white { background: var(--white); color: var(--charcoal); border-color: var(--green-primary); border-width: 2px; }
+    .c-white .prog-outcomes li::before { color: var(--green-primary); }
+    .c-white p { color: var(--stone); }
+    
+    .c-gold { background: var(--gold-primary); color: var(--charcoal); border-color: transparent; }
+    .c-gold .prog-meta span { color: var(--green-deep); }
+    .c-gold .prog-outcomes li::before { color: var(--green-deep); }
+    .c-gold p { color: rgba(0,0,0,0.7); }
+    .c-gold .btn { background: var(--green-deep); color: var(--white); }
+    
+    .c-cream { background: var(--warm-white); color: var(--charcoal); }
+    .c-cream .prog-outcomes li::before { color: var(--gold-dark); }
+    .c-cream p { color: var(--stone); }
+
+    /* Schedule Table */
+    .schedule-section {
+      background: var(--white);
+      padding: 80px 0;
+    }
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 48px;
+    }
+    .schedule-table th, .schedule-table td {
+      padding: 24px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+    }
+    .schedule-table th {
+      font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted);
+      background: var(--warm-white);
+    }
+    .schedule-table td {
+      font-size: 16px;
+    }
+    .schedule-table .prog-name {
+      font-family: var(--serif); font-size: 20px; font-weight: 500;
+    }
+    
+    .status-badge {
+      display: inline-block; padding: 6px 12px; border-radius: 999px;
+      font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .status-available { background: #E8F0E8; color: var(--green-primary); }
+    .status-filling { background: #FAF0D0; color: var(--gold-dark); }
+    .status-full { background: #FFF0F0; color: #D32F2F; }
+
+    /* Corporate Note */
+    .corporate-note {
+      background: var(--green-deep);
+      color: var(--white);
+      padding: 80px 0;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body>
+  <!-- ═══════════ NAV ═══════════ -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">
+      <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" />
+    </a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="programs.html" class="active">Programs</a>
+      <a href="case-studies.html">Case Studies</a>
+      <a href="blog.html">Blog</a>
+      <a href="careers.html">Careers</a>
+      <a href="contact.html" class="nav-cta">Book consult</a>
+    </div>
+    <button class="nav-burger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <header class="page-hero dark-section" style="background: var(--green-deep); color: var(--white); position: relative; overflow: hidden;">
+    <div class="hero-bg" style="position: absolute; inset: 0; background: radial-gradient(circle at 80% 20%, rgba(240, 192, 64, 0.15) 0%, transparent 50%); pointer-events: none;"></div>
+    <div class="wrap" style="text-align: center; position: relative; z-index: 2;">
+      <p class="eyebrow reveal" style="color: var(--gold-primary);">Training & Development</p>
+      <h1 class="reveal" style="color: var(--white); max-width: 22ch; margin: 16px auto 0;">Programs That Change How People Think</h1>
+      <p class="lead reveal" style="margin: 24px auto 0; color: rgba(255,255,255,0.8); max-width: 60ch;">
+        Not motivational talks. Not one-day workshops. Structured programs that transform behavior, skills, and mindset.
+      </p>
+    </div>
+  </header>
+
+  <!-- ═══════════ PROGRAMS GRID ═══════════ -->
+  <section class="wrap section">
+    <div class="grid grid-2" data-stagger="150">
+      
+      <!-- P1 -->
+      <div class="prog-card c-dark reveal">
+        <img loading="lazy" src="assets/prog_extraordinary.png" class="prog-img" alt="Be Extraordinary" data-media-key="img_prog_extraordinary" />
+        <div class="prog-content">
+          <h2>Be Extraordinary</h2>
+          <div class="prog-meta">
+            <div><span style="color:var(--muted);">For</span><span>Students, Fresh Grads</span></div>
+            <div><span style="color:var(--muted);">Duration</span><span>2 Days Intensive</span></div>
+          </div>
+          <p>The foundation program for personal transformation. Participants leave with a clear life vision, purpose statement, and action roadmap.</p>
+          <ul class="prog-outcomes">
+            <li>Clarity on life purpose and goals</li>
+            <li>Mindset shift from victim to creator</li>
+            <li>Personal action plan with accountability</li>
+          </ul>
+          <div style="margin-top: auto;">
+            <a href="contact.html" class="btn">Enquire Now →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- P2 -->
+      <div class="prog-card c-white reveal">
+        <img loading="lazy" src="assets/prog_business.png" class="prog-img" alt="Business Excellence" data-media-key="img_prog_business" />
+        <div class="prog-content">
+          <h2>Business Excellence</h2>
+          <div class="prog-meta">
+            <div><span style="color:var(--muted);">For</span><span style="color:var(--green-primary);">Founders, Senior Leaders</span></div>
+            <div><span style="color:var(--muted);">Duration</span><span style="color:var(--green-primary);">3-Day Residential</span></div>
+          </div>
+          <p>The flagship business transformation program. Break through the thinking patterns holding your business back. Return with a complete transformation blueprint.</p>
+          <ul class="prog-outcomes">
+            <li>Identify the #1 bottleneck in your business</li>
+            <li>Complete your Business Transformation Blueprint</li>
+            <li>Peer accountability group of founders</li>
+          </ul>
+          <div style="margin-top: auto;">
+            <a href="contact.html" class="btn btn-primary">Apply Now →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- P3 -->
+      <div class="prog-card c-gold reveal">
+        <img loading="lazy" src="assets/prog_sales.png" class="prog-img" alt="Sales Mastery" data-media-key="img_prog_sales" />
+        <div class="prog-content">
+          <h2>Sales Mastery</h2>
+          <div class="prog-meta">
+            <div><span style="color:rgba(0,0,0,0.5);">For</span><span>Sales Teams & Managers</span></div>
+            <div><span style="color:rgba(0,0,0,0.5);">Duration</span><span>2 Days + 90-Day Follow-up</span></div>
+          </div>
+          <p>Not just sales skills. A complete rewiring of how your team thinks about selling. From fear-based selling to value-based selling.</p>
+          <ul class="prog-outcomes">
+            <li>Sales mindset transformation</li>
+            <li>Full consultative selling framework</li>
+            <li>Scripts, objection handling, and closing</li>
+          </ul>
+          <div style="margin-top: auto;">
+            <a href="contact.html" class="btn">Enquire Now →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- P4 -->
+      <div class="prog-card c-cream reveal">
+        <img loading="lazy" src="assets/prog_outbound.png" class="prog-img" alt="Outbound Mastery" data-media-key="img_prog_outbound" />
+        <div class="prog-content">
+          <h2>Outbound Mastery</h2>
+          <div class="prog-meta">
+            <div><span style="color:var(--muted);">For</span><span style="color:var(--gold-dark);">B2B Sales Teams</span></div>
+            <div><span style="color:var(--muted);">Duration</span><span style="color:var(--gold-dark);">1 Day + Implementation</span></div>
+          </div>
+          <p>Build a systematic outbound engine. From lead identification to first meeting booked. Stop relying on referrals alone.</p>
+          <ul class="prog-outcomes">
+            <li>Outbound prospecting playbook</li>
+            <li>LinkedIn and WhatsApp outreach system</li>
+            <li>30-day implementation challenge</li>
+          </ul>
+          <div style="margin-top: auto;">
+            <a href="contact.html" class="btn" style="background: var(--charcoal); color: var(--white);">Enquire Now →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════ UPCOMING SCHEDULE ═══════════ -->
+  <section class="schedule-section">
+    <div class="wrap reveal">
+      <div style="text-align: center;">
+        <h2 style="margin-bottom: 16px;">Upcoming Schedule</h2>
+        <p class="muted">Reserve your seat for our next intakes in Surat and across India.</p>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Program</th>
+              <th>Dates</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="prog-name">Business Excellence</td>
+              <td>12 - 14 August 2026</td>
+              <td>Lonavala Resort</td>
+              <td><span class="status-badge status-filling">Few Seats Left</span></td>
+              <td><a href="contact.html" class="link">Apply</a></td>
+            </tr>
+            <tr>
+              <td class="prog-name">Sales Mastery</td>
+              <td>05 - 06 September 2026</td>
+              <td>Surat Training Center</td>
+              <td><span class="status-badge status-available">Available</span></td>
+              <td><a href="contact.html" class="link">Enquire</a></td>
+            </tr>
+            <tr>
+              <td class="prog-name">Be Extraordinary</td>
+              <td>20 - 21 September 2026</td>
+              <td>Surat Training Center</td>
+              <td><span class="status-badge status-full">Waitlist</span></td>
+              <td><a href="contact.html" class="link">Join Waitlist</a></td>
+            </tr>
+            <tr>
+              <td class="prog-name">Outbound Mastery</td>
+              <td>10 October 2026</td>
+              <td>Surat Training Center</td>
+              <td><span class="status-badge status-available">Available</span></td>
+              <td><a href="contact.html" class="link">Enquire</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CORPORATE NOTE ═══════════ -->
+  <section class="corporate-note">
+    <div class="wrap reveal">
+      <p style="font-size: 22px; max-width: 60ch; margin: 0 auto 32px; color: rgba(255,255,255,0.9); line-height: 1.6;">
+        All programs can be customized for corporate groups of 20+ participants. We deliver in-house at your office or at our Surat training center.
+      </p>
+      <a href="contact.html" class="btn btn-primary" style="background: var(--gold-primary); color: var(--green-deep);">Request Corporate Training &nbsp;→</a>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="footer">
+    <div class="footer-watermark">NUCLEUS</div>
+    <div class="wrap" style="position:relative; z-index:10;">
+      <div class="footer-top">
+        <h2 class="footer-tagline">Transforming <em class="gold-word">inner light</em><br>into outer impact.</h2>
+      </div>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="index.html" class="footer-logo"><img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" style="height:38px; filter:brightness(0) invert(1); opacity:0.9; margin-bottom: 24px;" /></a>
+          <p class="muted" style="max-width:28ch; font-size:14px; line-height:1.7;">We help young minds and growing businesses clarify purpose and turn dreams into reality.</p>
+        </div>
+                <div class="footer-col">
+          <h5>Explore</h5>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="programs.html">Programs</a></li>
+            <li><a href="case-studies.html">Case Studies</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="careers.html">Careers</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Programs</h5>
+          <ul>
+            <li><a href="programs.html">Be Extraordinary</a></li>
+            <li><a href="programs.html">Business Excellence</a></li>
+            <li><a href="programs.html">Sales Mastery</a></li>
+            <li><a href="programs.html">Outbound Training</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Contact</h5>
+          <ul>
+            <li><a href="tel:+918156076680" data-set="phone" style="opacity:0.9;">+91 8156 076 680</a></li>
+            <li><a href="mailto:hello@nucleusconsultant.in" data-set="email" style="opacity:0.9;">hello@nucleusconsultant.in</a></li>
+            <li class="muted" style="margin-top:16px; font-size:13px; line-height:1.6;" data-set="address">811 IFC, Opp. Fire Station<br>VIP Road, Vesu, Surat – 395007</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 NUCLEUS CONSULTANT. ALL RIGHTS RESERVED.</div>
+        <div>SURAT, INDIA · TRANSFORMING INNER LIGHT</div>
+      </div>
+    </div>
+  </footer>
+    
+  <script src="assets/site.js"></script>
+</body>
+</html>

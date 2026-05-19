@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Case Studies — Nucleus Consultant | Business Transformation</title>
+  <meta name="description" content="Real case studies of business transformation by Nucleus Consultant. See how we helped manufacturing firms, tech agencies, and retail chains grow." />
+  
+  <meta property="og:title" content="Nucleus Consultant Case Studies" />
+  <meta property="og:description" content="Real transformation stories from Nucleus Consultant." />
+  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="assets/logo.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css" />
+
+  <style>
+    .filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 60px;
+    }
+    .filter-btn {
+      padding: 10px 24px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 500;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--charcoal);
+      transition: all 0.3s;
+    }
+    .filter-btn.active {
+      background: var(--gold-primary);
+      color: var(--charcoal);
+      border-color: var(--gold-primary);
+    }
+    .filter-btn:hover:not(.active) {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .case-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 48px;
+      margin-bottom: 40px;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 60px;
+      transition: transform 0.3s, box-shadow 0.3s, opacity 0.4s;
+    }
+    .case-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    }
+    @media (max-width: 880px) {
+      .case-card { grid-template-columns: 1fr; gap: 32px; padding: 32px; }
+    }
+    
+    .case-badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--green-pale);
+      color: var(--green-primary);
+      padding: 6px 12px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    
+    .case-section {
+      margin-bottom: 24px;
+    }
+    .case-section h3 {
+      font-size: 14px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+      font-family: var(--mono);
+    }
+    .case-section p, .case-section ul {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--stone);
+    }
+    .case-section ul { padding-left: 20px; list-style-type: disc; }
+    
+    .case-result {
+      background: rgba(232, 181, 71, 0.1);
+      border: 1px solid rgba(232, 181, 71, 0.3);
+      padding: 24px;
+      border-radius: 12px;
+      margin-top: 32px;
+    }
+    .case-result h3 { color: var(--gold-dark); }
+    .case-result p { font-size: 18px; color: var(--charcoal); font-weight: 500; }
+    
+    .case-quote {
+      margin-top: 32px;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 20px;
+      color: var(--green-deep);
+      border-left: 3px solid var(--gold-primary);
+      padding-left: 20px;
+    }
+    
+    .case-duration {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">
+      <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" />
+    </a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="programs.html">Programs</a>
+      <a href="case-studies.html" class="active">Case Studies</a>
+      <a href="blog.html">Blog</a>
+      <a href="careers.html">Careers</a>
+      <a href="contact.html" class="nav-cta">Book consult</a>
+    </div>
+    <button class="nav-burger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <header class="page-hero dark-section" style="background: var(--green-deep); color: var(--white); padding: 160px 0 100px;">
+    <div class="wrap" style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+      <div>
+        <h1 class="reveal" style="color: var(--white); line-height: 1.1; margin-bottom: 24px;">
+          Real Transformation. Measurable Results.
+        </h1>
+        <p class="lead reveal" style="color: rgba(255,255,255,0.8); max-width: 50ch;">
+          Not promises. Not slides. Actual businesses rebuilt.
+        </p>
+      </div>
+      <div class="reveal-scale img-zoom upload-zone" id="hero-upload" style="border-radius: 20px; overflow: hidden; border: 1px dashed rgba(255,255,255,0.3); background: url('assets/case_studies_hero_new.png') center/cover; aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); cursor: pointer; position: relative;">
+        <span class="upload-placeholder" style="font-size: 14px; text-align: center; display: none;">Click to upload hero banner image<br>(1400×400px)</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" style="background: var(--warm-white);">
+    <div class="wrap">
+      
+      <div class="filters reveal">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="manufacturing">Manufacturing</button>
+        <button class="filter-btn" data-filter="services">Services</button>
+        <button class="filter-btn" data-filter="tech">Tech</button>
+        <button class="filter-btn" data-filter="retail">Retail</button>
+      </div>
+
+      <!-- CASE 1 -->
+      <div class="case-card reveal case-item" data-category="manufacturing">
+        <div>
+          <span class="case-badge">Manufacturing</span>
+          <h2 style="font-size: 32px; color: var(--charcoal); margin-bottom: 8px;">Manufacturing Enterprise</h2>
+          <p style="color: var(--muted); font-size: 16px;">Surat, India</p>
+          <div class="case-duration">Duration of Engagement: 18 Months</div>
+        </div>
+        <div>
+          <div class="case-section">
+            <h3>Before</h3>
+            <ul>
+              <li>Stagnant growth despite demand</li>
+              <li>Founder bottleneck for all decisions</li>
+              <li>No SOP</li>
+            </ul>
+          </div>
+          <div class="case-section">
+            <h3>What We Did</h3>
+            <ul>
+              <li>Leadership accountability framework</li>
+              <li>Standardized SOPs</li>
+              <li>Culture code</li>
+            </ul>
+          </div>
+          <div class="case-result">
+            <h3>Result</h3>
+            <p>40% production efficiency increase, 80% reduction in founder dependency, predictable revenue over 18 months</p>
+          </div>
+          <blockquote class="case-quote">
+            "We finally have a team that doesn't need me for every small decision."
+          </blockquote>
+        </div>
+      </div>
+
+      <!-- CASE 2 -->
+      <div class="case-card reveal case-item" data-category="tech">
+        <div>
+          <span class="case-badge">Tech</span>
+          <h2 style="font-size: 32px; color: var(--charcoal); margin-bottom: 8px;">B2B Tech Agency</h2>
+          <p style="color: var(--muted); font-size: 16px;">Ahmedabad, India</p>
+          <div class="case-duration">Duration of Engagement: 12 Months</div>
+        </div>
+        <div>
+          <div class="case-section">
+            <h3>Before</h3>
+            <ul>
+              <li>High employee turnover</li>
+              <li>Sales pipeline only via referrals</li>
+              <li>No onboarding</li>
+            </ul>
+          </div>
+          <div class="case-section">
+            <h3>What We Did</h3>
+            <ul>
+              <li>Culture redefinition</li>
+              <li>Outbound sales system</li>
+              <li>Performance review process</li>
+            </ul>
+          </div>
+          <div class="case-result">
+            <h3>Result</h3>
+            <p>Employee retention +60%, consistent monthly leads, team grew 8 → 22 in 12 months</p>
+          </div>
+          <blockquote class="case-quote">
+            "Our culture is now our biggest competitive advantage in hiring."
+          </blockquote>
+        </div>
+      </div>
+
+      <!-- CASE 3 -->
+      <div class="case-card reveal case-item" data-category="retail">
+        <div>
+          <span class="case-badge">Retail</span>
+          <h2 style="font-size: 32px; color: var(--charcoal); margin-bottom: 8px;">Retail Chain (6 stores)</h2>
+          <p style="color: var(--muted); font-size: 16px;">Surat, India</p>
+          <div class="case-duration">Duration of Engagement: 9 Months</div>
+        </div>
+        <div>
+          <div class="case-section">
+            <h3>Before</h3>
+            <ul>
+              <li>No standardized operations</li>
+              <li>Each store run differently</li>
+              <li>Quality inconsistent</li>
+            </ul>
+          </div>
+          <div class="case-section">
+            <h3>What We Did</h3>
+            <ul>
+              <li>SOP documentation</li>
+              <li>Store manager accountability system</li>
+              <li>Customer experience standards</li>
+            </ul>
+          </div>
+          <div class="case-result">
+            <h3>Result</h3>
+            <p>35% revenue increase across all stores; founder free from daily ops; 2 new locations opened</p>
+          </div>
+          <blockquote class="case-quote">
+            "I went from running 6 stores to owning a business that runs itself."
+          </blockquote>
+        </div>
+      </div>
+
+      <!-- CASE 4 -->
+      <div class="case-card reveal case-item" data-category="services">
+        <div>
+          <span class="case-badge">Professional Services</span>
+          <h2 style="font-size: 32px; color: var(--charcoal); margin-bottom: 8px;">Professional Services Firm</h2>
+          <p style="color: var(--muted); font-size: 16px;">India</p>
+          <div class="case-duration">Duration of Engagement: 6 Months</div>
+        </div>
+        <div>
+          <div class="case-section">
+            <h3>Before</h3>
+            <ul>
+              <li>Founder doing 80% of client work</li>
+              <li>Unable to delegate</li>
+              <li>Team under-skilled</li>
+            </ul>
+          </div>
+          <div class="case-section">
+            <h3>What We Did</h3>
+            <ul>
+              <li>Service delivery playbook</li>
+              <li>Team skills development</li>
+              <li>Client communication standards</li>
+            </ul>
+          </div>
+          <div class="case-result">
+            <h3>Result</h3>
+            <p>Founder reclaimed 20 hrs/week; team handles 70% of delivery; satisfaction scores up</p>
+          </div>
+          <blockquote class="case-quote">
+            "I now work ON my business, not just IN it."
+          </blockquote>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section dark-section" style="background: var(--green-deep); color: var(--white); text-align: center;">
+    <div class="wrap reveal">
+      <h2 style="color: var(--white);">See if Nucleus can do this for your business.</h2>
+      <a href="contact.html" class="btn btn-primary" style="margin-top: 40px; background: var(--gold-primary); color: var(--green-deep);">
+        Book a Free Diagnosis &nbsp;→
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-watermark">NUCLEUS</div>
+    <div class="wrap" style="position:relative; z-index:10;">
+      <div class="footer-top">
+        <h2 class="footer-tagline">Transforming <em class="gold-word">inner light</em><br>into outer impact.</h2>
+      </div>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="index.html" class="footer-logo"><img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" style="height:38px; filter:brightness(0) invert(1); opacity:0.9; margin-bottom: 24px;" /></a>
+          <p class="muted" style="max-width:28ch; font-size:14px; line-height:1.7;">We help young minds and growing businesses clarify purpose and turn dreams into reality.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="programs.html">Programs</a></li>
+            <li><a href="case-studies.html">Case Studies</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="careers.html">Careers</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Contact</h5>
+          <ul>
+            <li><a href="tel:+918156076680" data-set="phone" style="opacity:0.9;">+91 8156 076 680</a></li>
+            <li><a href="mailto:hello@nucleusconsultant.in" data-set="email" style="opacity:0.9;">hello@nucleusconsultant.in</a></li>
+            <li class="muted" style="margin-top:16px; font-size:13px; line-height:1.6;" data-set="address">811 IFC, Opp. Fire Station<br>VIP Road, Vesu, Surat – 395007</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 NUCLEUS CONSULTANT. ALL RIGHTS RESERVED.</div>
+        <div>SURAT, INDIA · TRANSFORMING INNER LIGHT</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/site.js"></script>
+  <script>
+    // Filtering logic
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const caseItems = document.querySelectorAll('.case-item');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active class
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filterValue = btn.getAttribute('data-filter');
+
+        caseItems.forEach(item => {
+          if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+            item.style.display = 'grid';
+            setTimeout(() => item.style.opacity = '1', 50);
+          } else {
+            item.style.opacity = '0';
+            setTimeout(() => item.style.display = 'none', 400); // Wait for transition
+          }
+        });
+      });
+    });
+
+    // Universal image upload handler (for Hero banner)
+    async function setupImageUpload(containerId, storageKey) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      
+      function showImage(c, src) {
+        c.style.backgroundImage = `url(${src})`;
+        c.style.backgroundSize = 'cover';
+        c.style.backgroundPosition = 'center';
+        const placeholder = c.querySelector('.upload-placeholder');
+        if(placeholder) placeholder.style.display = 'none';
+        c.style.border = 'none';
+      }
+
+      // Check if overridden in IndexedDB first
+      let stored = null;
+      if (window.mdbMarked && mdbMarked('nucleus_case_hero')) {
+        stored = await mdbLoad('nucleus_case_hero').catch(() => null);
+      }
+      if (!stored) {
+        stored = localStorage.getItem('nucleus_case_hero');
+      }
+      if (!stored) {
+        stored = localStorage.getItem(storageKey);
+      }
+      
+      if (stored) showImage(container, stored);
+      
+      container.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (e) => {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            localStorage.setItem('nucleus_case_hero', ev.target.result);
+            localStorage.setItem('__idb:nucleus_case_hero', ''); // clear IDB flag so localstorage wins
+            showImage(container, ev.target.result);
+          };
+          reader.readAsDataURL(e.target.files[0]);
+        };
+        input.click();
+      });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      setupImageUpload('hero-upload', 'nucleus_case_studies_hero');
+    });
+  </script>
+</body>
+</html>

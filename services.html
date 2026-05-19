@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Services — Nucleus Consultant</title>
+  
+  <meta property="og:title" content="Nucleus Consultant" />
+  <meta property="og:description" content="We Don't Sell Services. We Deliver Transformation." />
+  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css" />
+  <style>
+    .service-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      padding: clamp(64px, 8vw, 120px) 0;
+      border-bottom: 1px solid var(--line);
+    }
+    @media (max-width: 980px) {
+      .service-block { grid-template-columns: 1fr; gap: 40px; }
+      .service-block.alt .content-side { order: 2; }
+      .service-block.alt .visual-side { order: 1; }
+    }
+    .service-block:last-child { border-bottom: none; }
+    
+    .s-num {
+      font-family: var(--serif);
+      font-size: 64px;
+      color: rgba(26, 74, 26, 0.1);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    
+    .s-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--green-pale);
+      color: var(--green-primary);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+    }
+    
+    .s-outcomes {
+      list-style: none; padding: 0; margin: 24px 0;
+    }
+    .s-outcomes li {
+      display: flex; gap: 12px;
+      margin-bottom: 12px;
+      font-size: 16px;
+      color: var(--stone);
+    }
+    .s-outcomes li::before {
+      content: "✓";
+      color: var(--gold-primary);
+      font-weight: 700;
+    }
+    
+    .s-who {
+      background: var(--warm-white);
+      padding: 24px;
+      border-radius: 12px;
+      border-left: 3px solid var(--green-primary);
+      margin-top: 32px;
+    }
+    .s-who p { margin: 0; font-size: 15px; color: var(--charcoal); }
+    .s-who strong { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green-primary); display: block; margin-bottom: 8px; }
+
+    .how-we-work {
+      background: var(--green-deep);
+      color: var(--white);
+      padding: 120px 0;
+    }
+    .step-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+    }
+    .step-card h3 { color: var(--white); margin: 20px 0 16px; }
+    .step-card p { color: rgba(255,255,255,0.7); font-size: 16px; }
+    .step-card .icon {
+      width: 64px; height: 64px; margin: 0 auto;
+      border-radius: 50%; background: var(--gold-primary);
+      display: flex; align-items: center; justify-content: center; color: var(--green-deep);
+    }
+
+    .pricing-note {
+      text-align: center;
+      background: var(--cream);
+      padding: 80px 0;
+    }
+    .pricing-note p {
+      font-size: 20px;
+      max-width: 60ch;
+      margin: 0 auto 32px;
+      color: var(--charcoal);
+    }
+  </style>
+</head>
+<body>
+  <!-- ═══════════ NAV ═══════════ -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">
+      <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" />
+    </a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="services.html" class="active">Services</a>
+      <a href="programs.html">Programs</a>
+      <a href="case-studies.html">Case Studies</a>
+      <a href="blog.html">Blog</a>
+      <a href="careers.html">Careers</a>
+      <a href="contact.html" class="nav-cta">Book consult</a>
+    </div>
+    <button class="nav-burger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <header class="page-hero dark-section" style="background: var(--green-deep); color: var(--white);">
+    <div class="wrap" style="text-align: center;">
+      <h1 class="reveal" style="color: var(--white); max-width: 20ch; margin: 0 auto;">We Don't Sell Services. <em class="gold-word">We Deliver Transformation.</em></h1>
+      <p class="lead reveal" style="margin: 24px auto 0; color: rgba(255,255,255,0.8); max-width: 60ch;">
+        Every engagement is designed to create lasting change in thinking, culture, and systems — not just a project deliverable.
+      </p>
+    </div>
+  </header>
+
+  <!-- ═══════════ SERVICES DETAIL ═══════════ -->
+  <section class="wrap">
+    
+    <!-- SERVICE 1 -->
+    <div class="service-block reveal">
+      <div class="content-side">
+        <div class="s-num">01</div>
+        <div class="s-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-7 7c0 2 1 3.9 2.5 5.2a2 2 0 0 1 .5 1.8V18h8v-2a2 2 0 0 1 .5-1.8C18 12.9 19 11 19 9a7 7 0 0 0-7-7z"/></svg></div>
+        <h3>Leadership & Thinking</h3>
+        <p class="muted" style="margin-top: 16px;">We work directly with founders and senior leaders to shift their mental models, decision-making frameworks, and leadership style.</p>
+        <ul class="s-outcomes">
+          <li>Founder transitions from operator to leader</li>
+          <li>Clearer decisions with less stress</li>
+          <li>Leaders who inspire ownership</li>
+        </ul>
+        <div class="s-who">
+          <strong>Who this is for</strong>
+          <p>Founders 2-10 years in business feeling stuck in execution</p>
+        </div>
+        <a href="contact.html" class="link" style="margin-top: 24px;">Transform your leadership →</a>
+      </div>
+      <div class="visual-side img-zoom reveal-scale" style="border-radius: 20px; overflow: hidden;">
+        <img loading="lazy" src="assets/philosophy_zen.png" alt="Leadership & Thinking" data-media-key="img_svc_leadership" style="width:100%; aspect-ratio: 4/3; object-fit: cover;" />
+      </div>
+    </div>
+
+    <!-- SERVICE 2 -->
+    <div class="service-block alt reveal">
+      <div class="visual-side img-zoom reveal-scale" style="border-radius: 20px; overflow: hidden;">
+        <img loading="lazy" src="assets/culture_alignment.png" alt="Culture & Accountability" data-media-key="img_svc_culture" style="width:100%; aspect-ratio: 4/3; object-fit: cover;" />
+      </div>
+      <div class="content-side">
+        <div class="s-num">02</div>
+        <div class="s-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Culture & Accountability</h3>
+        <p class="muted" style="margin-top: 16px;">Culture is not a poster on a wall. It is the invisible operating system of your organization. We make it visible, intentional, and powerful.</p>
+        <ul class="s-outcomes">
+          <li>Defined culture code that team actually lives</li>
+          <li>Accountability without micromanagement</li>
+          <li>High-performance team behaviours</li>
+        </ul>
+        <div class="s-who">
+          <strong>Who this is for</strong>
+          <p>Teams of 10-100 where accountability is the core problem</p>
+        </div>
+        <a href="contact.html" class="link" style="margin-top: 24px;">Build your culture →</a>
+      </div>
+    </div>
+
+    <!-- SERVICE 3 -->
+    <div class="service-block reveal">
+      <div class="content-side">
+        <div class="s-num">03</div>
+        <div class="s-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3>Sales & Growth System</h3>
+        <p class="muted" style="margin-top: 16px;">Build a repeatable, scalable sales engine that does not depend on the founder's relationships or one star performer.</p>
+        <ul class="s-outcomes">
+          <li>Documented sales playbook with scripts and processes</li>
+          <li>Sales team that hits targets consistently</li>
+          <li>Pipeline that is predictable, not random</li>
+        </ul>
+        <div class="s-who">
+          <strong>Who this is for</strong>
+          <p>Businesses with revenue ₹1Cr–₹50Cr wanting predictable growth</p>
+        </div>
+        <a href="contact.html" class="link" style="margin-top: 24px;">Scale your sales →</a>
+      </div>
+      <div class="visual-side img-zoom reveal-scale" style="border-radius: 20px; overflow: hidden;">
+        <img loading="lazy" src="assets/strategy_abstract.png" alt="Sales System" data-media-key="img_svc_sales" style="width:100%; aspect-ratio: 4/3; object-fit: cover;" />
+      </div>
+    </div>
+
+    <!-- SERVICE 4 -->
+    <div class="service-block alt reveal">
+      <div class="visual-side img-zoom reveal-scale" style="border-radius: 20px; overflow: hidden; background: var(--warm-white);">
+        <div style="width: 100%; height: 100%; min-height: 300px; display: flex; align-items: center; justify-content: center; color: var(--gold-primary);">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/></svg>
+        </div>
+      </div>
+      <div class="content-side">
+        <div class="s-num">04</div>
+        <div class="s-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <h3>Marketing & Brand Positioning</h3>
+        <p class="muted" style="margin-top: 16px;">Stop blending in. We help you identify your unique position in the market and build a brand that attracts the right clients and repels the wrong ones.</p>
+        <ul class="s-outcomes">
+          <li>Clear brand positioning statement</li>
+          <li>Content and marketing strategy</li>
+          <li>Messaging that converts</li>
+        </ul>
+        <div class="s-who">
+          <strong>Who this is for</strong>
+          <p>Businesses who struggle to explain what makes them different</p>
+        </div>
+        <a href="contact.html" class="link" style="margin-top: 24px;">Refine your positioning →</a>
+      </div>
+    </div>
+
+    <!-- SERVICE 5 -->
+    <div class="service-block reveal">
+      <div class="content-side">
+        <div class="s-num">05</div>
+        <div class="s-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+        <h3>Operations & SOP Systems</h3>
+        <p class="muted" style="margin-top: 16px;">Build the systems that allow your business to run without you. Standard operating procedures, process documentation, and operational clarity.</p>
+        <ul class="s-outcomes">
+          <li>Business runs independently of the founder</li>
+          <li>Consistent quality across all operations</li>
+          <li>Scalable without chaos</li>
+        </ul>
+        <div class="s-who">
+          <strong>Who this is for</strong>
+          <p>Businesses ready to scale but worried about losing quality</p>
+        </div>
+        <a href="contact.html" class="link" style="margin-top: 24px;">Build your systems →</a>
+      </div>
+      <div class="visual-side img-zoom reveal-scale" style="border-radius: 20px; overflow: hidden; background: var(--warm-white);">
+        <div style="width: 100%; height: 100%; min-height: 300px; display: flex; align-items: center; justify-content: center; color: var(--gold-primary);">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICE 6 -->
+    <div class="service-block alt reveal">
+      <div class="visual-side img-zoom reveal-scale" style="border-radius: 20px; overflow: hidden; background: var(--warm-white);">
+        <div style="width: 100%; height: 100%; min-height: 300px; display: flex; align-items: center; justify-content: center; color: var(--gold-primary);">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+      </div>
+      <div class="content-side">
+        <div class="s-num">06</div>
+        <div class="s-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <h3>HR & People Development</h3>
+        <p class="muted" style="margin-top: 16px;">Hire right. Develop right. Retain the best. We build your talent systems from job descriptions to onboarding to performance management.</p>
+        <ul class="s-outcomes">
+          <li>Clear job roles and performance expectations</li>
+          <li>Structured onboarding that reduces time-to-productivity</li>
+          <li>Retention culture that keeps your best people</li>
+        </ul>
+        <div class="s-who">
+          <strong>Who this is for</strong>
+          <p>Growing businesses with team size 15-100</p>
+        </div>
+        <a href="contact.html" class="link" style="margin-top: 24px;">Develop your people →</a>
+      </div>
+    </div>
+
+    <!-- SERVICE 7 -->
+    <div class="service-block reveal">
+      <div class="content-side">
+        <div class="s-num">07</div>
+        <div class="s-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <h3>Finance & Business Clarity</h3>
+        <p class="muted" style="margin-top: 16px;">Most SME founders don't have clear financial visibility. We help you understand your numbers, set financial goals, and build dashboards you actually use.</p>
+        <ul class="s-outcomes">
+          <li>Monthly financial review system</li>
+          <li>Cash flow visibility</li>
+          <li>Data-driven business decisions</li>
+        </ul>
+        <div class="s-who">
+          <strong>Who this is for</strong>
+          <p>Business owners who avoid looking at their P&L</p>
+        </div>
+        <a href="contact.html" class="link" style="margin-top: 24px;">Gain financial clarity →</a>
+      </div>
+      <div class="visual-side img-zoom reveal-scale" style="border-radius: 20px; overflow: hidden; background: var(--warm-white);">
+        <div style="width: 100%; height: 100%; min-height: 300px; display: flex; align-items: center; justify-content: center; color: var(--gold-primary);">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══════════ HOW WE WORK ═══════════ -->
+  <section class="how-we-work">
+    <div class="wrap">
+      <div style="text-align: center; margin-bottom: 64px;">
+        <p class="eyebrow reveal" style="color: var(--gold-primary);">How We Work</p>
+        <h2 class="reveal" style="color: var(--white); margin-top: 16px;">Our 3-Step Process</h2>
+      </div>
+
+      <div class="grid grid-3" data-stagger="150">
+        <div class="step-card">
+          <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <h3>1. Diagnose</h3>
+          <p>2-hour deep-dive into your business to identify the real bottlenecks. Completely free.</p>
+        </div>
+        <div class="step-card">
+          <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <h3>2. Design</h3>
+          <p>Custom transformation roadmap built specifically for your context and team size.</p>
+        </div>
+        <div class="step-card">
+          <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+          <h3>3. Deploy</h3>
+          <p>Hands-on implementation with your team over a 6 to 12-month partnership.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ PRICING NOTE ═══════════ -->
+  <section class="pricing-note">
+    <div class="wrap reveal">
+      <p>"Every engagement is custom-scoped based on your team size, challenges, and goals. Most clients see a 10x return on investment within 12 months."</p>
+      <a href="contact.html" class="btn btn-primary">Get a Custom Quote &nbsp;→</a>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="footer">
+    <div class="footer-watermark">NUCLEUS</div>
+    <div class="wrap" style="position:relative; z-index:10;">
+      <div class="footer-top">
+        <h2 class="footer-tagline">Transforming <em class="gold-word">inner light</em><br>into outer impact.</h2>
+      </div>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="index.html" class="footer-logo"><img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" style="height:38px; filter:brightness(0) invert(1); opacity:0.9; margin-bottom: 24px;" /></a>
+          <p class="muted" style="max-width:28ch; font-size:14px; line-height:1.7;">We help young minds and growing businesses clarify purpose and turn dreams into reality.</p>
+        </div>
+                <div class="footer-col">
+          <h5>Explore</h5>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="programs.html">Programs</a></li>
+            <li><a href="case-studies.html">Case Studies</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="careers.html">Careers</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Programs</h5>
+          <ul>
+            <li><a href="programs.html">Be Extraordinary</a></li>
+            <li><a href="programs.html">Business Excellence</a></li>
+            <li><a href="programs.html">Sales Mastery</a></li>
+            <li><a href="programs.html">Outbound Training</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Contact</h5>
+          <ul>
+            <li><a href="tel:+918156076680" data-set="phone" style="opacity:0.9;">+91 8156 076 680</a></li>
+            <li><a href="mailto:hello@nucleusconsultant.in" data-set="email" style="opacity:0.9;">hello@nucleusconsultant.in</a></li>
+            <li class="muted" style="margin-top:16px; font-size:13px; line-height:1.6;" data-set="address">811 IFC, Opp. Fire Station<br>VIP Road, Vesu, Surat – 395007</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 NUCLEUS CONSULTANT. ALL RIGHTS RESERVED.</div>
+        <div>SURAT, INDIA · TRANSFORMING INNER LIGHT</div>
+      </div>
+    </div>
+  </footer>
+    
+  <script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,1241 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nucleus Consultant — Transforming Inner Light</title>
+  <meta name="description"
+    content="We help young minds and growing businesses clarify purpose and turn dreams into reality. Programs, consulting and training based in Surat, India." />
+
+  <meta property="og:title" content="Nucleus Consultant" />
+  <meta property="og:description"
+    content="We help young minds and growing businesses clarify purpose and turn dreams into reality." />
+  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="assets/logo.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="assets/styles.css?v=1.0.2" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css?v=1.0.2" />
+
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" />
+  
+  <style>
+    /* ── Tweaks runtime tokens ─────────────────────────────── */
+    :root {
+      --t-green: var(--green-primary);
+      --t-gold: var(--gold-primary);
+      --t-bg: var(--warm-white);
+      --t-ink: var(--charcoal);
+    }
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 130px 0 100px;
+      position: relative;
+      overflow: hidden;
+      background: var(--green-deep);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 10% -5%, rgba(232, 181, 71, .18) 0%, transparent 45%),
+        radial-gradient(ellipse at 90% 95%, rgba(27, 94, 63, .12) 0%, transparent 45%);
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(14, 42, 31, .04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14, 42, 31, .04) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 80%);
+    }
+
+    /* Sun SVG */
+    .hero-sun {
+      position: absolute;
+      top: 0;
+      right: -80px;
+      width: 520px;
+      height: 520px;
+      pointer-events: none;
+      opacity: .75;
+    }
+
+    .hero-sun svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .ray-group {
+      transform-origin: 260px 260px;
+      animation: sunSpin 120s linear infinite;
+    }
+
+    @keyframes sunSpin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .s-core {
+      fill: var(--t-gold);
+      animation: corePulse 5s ease-in-out infinite;
+      transform-origin: 260px 260px;
+    }
+
+    .s-ring {
+      fill: none;
+      stroke: var(--t-gold);
+    }
+
+    @keyframes corePulse {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.06)
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero-sun {
+        width: 280px;
+        height: 280px;
+        right: -40px;
+        opacity: .4;
+      }
+    }
+
+    /* Hero layout */
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 60px;
+      align-items: center;
+    }
+
+    @media (max-width: 1100px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Title */
+    .hero-h1 {
+      font-family: var(--serif);
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      color: var(--white);
+      margin: 0;
+    }
+
+    .hero-h1 .hl {
+      color: var(--gold-primary);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    /* JS animation: each line slides up */
+    .js .hero-line {
+      overflow: hidden;
+      display: block;
+    }
+
+    .js .hero-line>span {
+      display: block;
+      transform: translateY(110%);
+      transition: transform 1s var(--ease-out);
+    }
+
+    .js .hero-line.line2>span {
+      transition-delay: .15s;
+    }
+
+    .js .hero-line.line3>span {
+      transition-delay: .3s;
+    }
+
+    .js .hero-anim.in .hero-line>span {
+      transform: none;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(27, 94, 63, .08);
+      border: 1px solid rgba(27, 94, 63, .2);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 36px;
+    }
+
+    .hero-tag .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: .4;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.3)
+      }
+    }
+
+    .hero-side {
+      background: rgba(255, 255, 255, .92);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 40px;
+    }
+
+    .hero-side p {
+      color: var(--ink-2);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .hero-side .stats-mini {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin: 28px 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .stats-mini .s {
+      padding: 20px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stats-mini .s:nth-child(2) {
+      border-right: 0;
+    }
+
+    .stats-mini .s:nth-child(3) {
+      border-bottom: 0;
+    }
+
+    .stats-mini .s:nth-child(4) {
+      border-right: 0;
+      border-bottom: 0;
+    }
+
+    .stats-mini .n {
+      font-family: var(--serif);
+      font-size: 36px;
+      line-height: 1;
+      color: var(--t-ink);
+      letter-spacing: -0.03em;
+      font-variation-settings: "SOFT" 30;
+    }
+
+    .stats-mini .n em {
+      font-style: italic;
+      color: var(--gold-deep);
+      font-variation-settings: "SOFT" 100;
+    }
+
+    .stats-mini .l {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Scroll cue */
+    .scroll-cue {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      animation: bobY 2.5s ease-in-out infinite;
+    }
+
+    .scroll-cue .tick {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--ink), transparent);
+    }
+
+    @keyframes bobY {
+
+      0%,
+      100% {
+        transform: translateX(-50%) translateY(0)
+      }
+
+      50% {
+        transform: translateX(-50%) translateY(8px)
+      }
+    }
+
+    /* ── STATS BAND ───────────────────────────────────────────── */
+    .stats-band {
+      background: var(--ink);
+      padding: 0;
+    }
+
+    .stats-band-inner {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media (max-width: 880px) {
+      .stats-band-inner {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .sb {
+      padding: 52px 40px;
+      border-right: 1px solid rgba(247, 244, 237, .12);
+      position: relative;
+    }
+
+    .sb:last-child {
+      border-right: 0;
+    }
+
+    @media (max-width: 880px) {
+      .sb:nth-child(2) {
+        border-right: 0;
+      }
+
+      .sb:nth-child(1),
+      .sb:nth-child(2) {
+        border-bottom: 1px solid rgba(247, 244, 237, .12);
+      }
+    }
+
+    .sb-num {
+      font-family: var(--serif);
+      font-size: clamp(52px, 6vw, 80px);
+      line-height: 1;
+      color: var(--cream);
+      letter-spacing: -0.03em;
+      font-variation-settings: "SOFT" 30;
+    }
+
+    .sb-num em {
+      color: var(--gold);
+      font-style: italic;
+      font-variation-settings: "SOFT" 100;
+    }
+
+    .sb-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(247, 244, 237, .5);
+      margin-top: 12px;
+    }
+
+    /* Marquee: uses styles from styles.css — no overrides needed */
+    .mi {
+      font-family: var(--serif);
+      font-size: clamp(26px, 3vw, 42px);
+      font-style: italic;
+      font-variation-settings: "SOFT" 100;
+      color: var(--ink);
+      opacity: .55;
+      transition: opacity var(--dur-fast);
+    }
+
+    .mi:hover {
+      opacity: 1;
+    }
+
+    .mi .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold-deep);
+      margin: 0 14px;
+      vertical-align: middle;
+    }
+
+    /* ── MISSION ──────────────────────────────────────────────── */
+    .mission-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    @media (max-width: 980px) {
+      .mission-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    .mission-visual {
+      aspect-ratio: 1;
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      background: var(--ink);
+    }
+
+    .mission-visual svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .mission-text h2 {
+      max-width: 18ch;
+      margin-bottom: 28px;
+    }
+
+    .mission-text p {
+      color: var(--muted);
+      max-width: 58ch;
+      line-height: 1.7;
+    }
+
+    /* ── APPROACH (sticky) ────────────────────────────────────── */
+    .approach-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+
+    @media (max-width: 980px) {
+      .approach-wrap {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+
+    .approach-sticky {
+      position: sticky;
+      top: 120px;
+      align-self: start;
+    }
+
+    .approach-item {
+      padding: 36px 0;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 20px;
+      transition: padding-left var(--dur-fast) var(--ease-out);
+    }
+
+    .approach-item:first-child {
+      border-top: 1px solid var(--line);
+    }
+
+    .approach-item:hover {
+      padding-left: 10px;
+    }
+
+    .approach-num {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .14em;
+      color: var(--green);
+      padding-top: 6px;
+    }
+
+    .approach-item h3 {
+      margin-bottom: 10px;
+      transition: color .3s;
+    }
+
+    .approach-item:hover h3 {
+      color: var(--green);
+    }
+
+    .approach-item p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    /* ── PROGRAMS ─────────────────────────────────────────────── */
+    .prog-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 880px) {
+      .prog-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .prog {
+      border-radius: 16px;
+      padding: 44px;
+      position: relative;
+      overflow: hidden;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med);
+      text-decoration: none;
+    }
+
+    .prog:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 40px 80px -40px rgba(14, 42, 31, .3);
+    }
+
+    .prog:hover img {
+      transform: scale(1.05);
+    }
+
+    .prog img {
+      transition: transform .6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    @media (max-width: 680px) {
+      .testi-card[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    .prog-light {
+      background: var(--white);
+      border: 1px solid var(--line);
+      color: var(--ink);
+    }
+
+    .prog-dark {
+      background: var(--ink);
+      color: var(--cream);
+    }
+
+    .prog-gold {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    .prog-cream {
+      background: var(--cream);
+      border: 1px solid var(--line);
+      color: var(--ink);
+    }
+
+    .prog::before {
+      content: "";
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232, 181, 71, .22), transparent 60%);
+      transition: transform var(--dur-slow) var(--ease-out);
+    }
+
+    .prog:hover::before {
+      transform: scale(1.2) translate(-20px, 20px);
+    }
+
+    .prog-ey {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 500;
+    }
+
+    .prog-dark .prog-ey {
+      color: var(--gold);
+    }
+
+    .prog-gold .prog-ey {
+      color: var(--green-deep);
+    }
+
+    .prog-cream .prog-ey {
+      color: var(--green);
+    }
+
+    .prog h3 {
+      margin: 22px 0 14px;
+      max-width: 16ch;
+      font-size: clamp(22px, 2.5vw, 30px);
+    }
+
+    .prog-dark h3 {
+      color: var(--cream);
+    }
+
+    .prog p {
+      font-size: 15px;
+      line-height: 1.55;
+      opacity: .8;
+      max-width: 38ch;
+    }
+
+    .prog-foot {
+      margin-top: auto;
+      padding-top: 28px;
+    }
+
+    .prog-foot .link {
+      color: var(--green);
+    }
+
+    .prog-dark .prog-foot .link {
+      color: var(--gold);
+    }
+
+    .prog-gold .prog-foot .link {
+      color: var(--green-deep);
+    }
+
+    /* ── TESTIMONIAL ──────────────────────────────────────────── */
+    .testi-card {
+      background: var(--ink);
+      border-radius: 20px;
+      padding: clamp(48px, 6vw, 96px);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .testi-card::before {
+      content: "\201C";
+      position: absolute;
+      top: -20px;
+      left: 40px;
+      font-family: var(--serif);
+      font-size: 280px;
+      line-height: 1;
+      color: rgba(232, 181, 71, .12);
+      pointer-events: none;
+      font-variation-settings: "SOFT" 100;
+    }
+
+    .testi-card blockquote {
+      font-family: var(--serif);
+      font-size: clamp(28px, 3.5vw, 52px);
+      line-height: 1.15;
+      color: var(--cream);
+      letter-spacing: -0.015em;
+      max-width: 20ch;
+      margin: 0 auto 32px;
+      font-variation-settings: "SOFT" 60;
+      position: relative;
+      z-index: 1;
+    }
+
+    .testi-card blockquote em {
+      color: var(--gold);
+      font-variation-settings: "SOFT" 100;
+    }
+
+    .testi-card .attr {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(247, 244, 237, .5);
+      position: relative;
+      z-index: 1;
+    }
+
+    .testi-card .attr strong {
+      color: var(--cream);
+      font-weight: 500;
+    }
+
+    .testi-deco {
+      position: absolute;
+      right: -80px;
+      bottom: -80px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232, 181, 71, .22), transparent 65%);
+    }
+
+    /* ── NEWSLETTER CTA ───────────────────────────────────────── */
+    .nl-card {
+      background: var(--cream);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: clamp(48px, 6vw, 96px);
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    @media (max-width: 880px) {
+      .nl-card {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    .nl-card h2 {
+      max-width: 18ch;
+      margin-bottom: 20px;
+    }
+
+    .nl-card p {
+      color: var(--muted);
+      max-width: 50ch;
+    }
+
+    .nl-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .nl-form input {
+      padding: 16px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      font: inherit;
+      font-family: var(--sans);
+      color: var(--ink);
+      transition: border-color .25s, box-shadow .25s;
+    }
+
+    .nl-form input:focus {
+      outline: none;
+      border-color: var(--green);
+      box-shadow: 0 0 0 4px rgba(27, 94, 63, .1);
+    }
+
+    .nl-form button {
+      padding: 16px 28px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: var(--paper);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background .3s, transform .3s;
+    }
+
+    .nl-form button:hover {
+      background: var(--green);
+      transform: translateY(-2px);
+    }
+
+    .nl-meta {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <!-- ═══════════ NAV ═══════════ -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">
+      <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" />
+    </a>
+        <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="programs.html">Programs</a>
+      <a href="case-studies.html">Case Studies</a>
+      <a href="blog.html">Blog</a>
+      <a href="careers.html">Careers</a>
+      <a href="contact.html" class="nav-cta">Book consult</a>
+    </div>
+    <button class="nav-burger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <header class="hero dark-section" style="min-height: 100vh; position: relative; background: var(--green-deep);">
+
+    <div class="mesh-bg">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+    </div>
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    
+    <div style="position:absolute;top:0;right:0;width:50%;height:100%;pointer-events:none;overflow:hidden;">
+      <img src="assets/hero_bg2.png" alt="" data-media-key="img_hero_bg"
+        style="width:100%;height:100%;object-fit:cover;opacity:0.6;mask-image:linear-gradient(to left, rgba(0,0,0,1), transparent 100%);" />
+    </div>
+
+    <div class="wrap">
+      <div class="hero-inner" style="grid-template-columns: 1fr;">
+        <div style="max-width: 800px; z-index: 10;">
+          <h1 class="hero-h1 hero-anim" id="heroTitle">
+            <span class="hero-line"><span>Your Business Is Not Stuck</span></span>
+            <span class="hero-line line2"><span>Because of <em class="hl">Strategy.</em></span></span>
+            <span class="hero-line line3"><span>It Is Stuck Because of <em class="hl">Thinking.</em></span></span>
+          </h1>
+          <p class="reveal" style="font-size: 20px; font-weight: 300; color: rgba(255,255,255,0.8); max-width: 600px; margin-top: 24px; line-height: 1.6;">
+            We transform the way leaders think, teams behave, and businesses grow — by aligning mindset, culture, and systems.
+          </p>
+          <div class="hero-btns reveal" style="margin-top: 40px;">
+            <a href="contact.html" class="btn btn-primary">
+              Diagnose My Business
+              <svg class="btn-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+            </a>
+            <a href="services.html" class="btn btn-outline-white">Start Transformation Journey</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════ STATS BAND SECTION ═══════════ -->
+  <section class="stats-band dark-section" style="background: var(--charcoal); padding: 40px 0;">
+    <div class="wrap reveal">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid rgba(247,244,237,0.12); border-radius: 12px; overflow: hidden;">
+        <div style="padding: 32px 24px; text-align: center; border-right: 1px solid rgba(247,244,237,0.12);">
+          <div style="font-family: var(--serif); font-size: clamp(36px, 4vw, 56px); color: var(--gold-pale); line-height: 1;"><span data-counter="200" data-suffix="+" data-counter-key="lives">200+</span></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(247,244,237,0.7); margin-top: 12px;">Lives Transformed</div>
+        </div>
+        <div style="padding: 32px 24px; text-align: center; border-right: 1px solid rgba(247,244,237,0.12);">
+          <div style="font-family: var(--serif); font-size: clamp(36px, 4vw, 56px); color: var(--gold-pale); line-height: 1;"><span data-counter="50" data-suffix="+" data-counter-key="biz">50+</span></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(247,244,237,0.7); margin-top: 12px;">Businesses Rebuilt</div>
+        </div>
+        <div style="padding: 32px 24px; text-align: center; border-right: 1px solid rgba(247,244,237,0.12);">
+          <div style="font-family: var(--serif); font-size: clamp(36px, 4vw, 56px); color: var(--gold-pale); line-height: 1;"><span data-counter="8" data-suffix="+" data-counter-key="years">8+</span></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(247,244,237,0.7); margin-top: 12px;">Years Experience</div>
+        </div>
+        <div style="padding: 32px 24px; text-align: center;">
+          <div style="font-family: var(--serif); font-size: clamp(36px, 4vw, 56px); color: var(--gold-pale); line-height: 1;"><span data-counter="95" data-suffix="%" data-counter-key="lift">95%</span></div>
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(247,244,237,0.7); margin-top: 12px;">Client Retention</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <style>
+    @media (max-width: 880px) {
+      .stats-band > div > div { grid-template-columns: 1fr 1fr !important; }
+      .stats-band > div > div > div:nth-child(2) { border-right: none !important; }
+      .stats-band > div > div > div:nth-child(1), .stats-band > div > div > div:nth-child(2) { border-bottom: 1px solid rgba(247,244,237,0.12) !important; }
+    }
+  </style>
+
+  <!-- ═══════════ PAIN MIRROR SECTION ═══════════ -->
+  <section class="section" style="background: var(--warm-white); color: var(--charcoal); position: relative; overflow: hidden;">
+    <div class="mesh-bg">
+      <div class="blob blob-1" style="background: var(--green); opacity: 0.2;"></div>
+      <div class="blob blob-2" style="background: var(--gold); opacity: 0.15;"></div>
+    </div>
+    <div class="wrap" style="position: relative; z-index: 2;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
+        <div>
+          <p class="eyebrow reveal" style="color: var(--gold-dark);">The Reality</p>
+          <h2 class="reveal" style="color: var(--charcoal); margin-top: 16px;">If This Feels Familiar… You’re Not Alone</h2>
+          <p class="reveal" style="margin-top: 24px; font-size: 20px;">You are working harder than ever… But still:</p>
+          <ul class="stagger-list" style="margin-top: 24px; font-size: 18px; line-height: 1.8; list-style-type: disc; padding-left: 20px; color: var(--muted);">
+            <li>Team is not taking ownership</li>
+            <li>Sales is inconsistent</li>
+            <li>Growth feels unpredictable</li>
+            <li>You are stuck in daily firefighting</li>
+            <li>Everything depends on you</li>
+          </ul>
+          <div class="reveal" style="margin-top: 32px; padding: 24px; border-left: 4px solid var(--gold); background: rgba(255,255,255,0.05);">
+            <p style="font-size: 18px; font-weight: 500;"><span style="color: var(--gold-primary);">✦</span> This is not a business problem.</p>
+            <p style="font-size: 18px; font-weight: 500; color: var(--gold); margin-top: 8px;"><span style="color: var(--gold-primary);">✦</span> This is a thinking + system problem.</p>
+          </div>
+        </div>
+        <div class="reveal-scale img-zoom" data-parallax="0.05" style="border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+          <img loading="lazy" src="assets/culture_alignment.png" alt="Culture Alignment" data-media-key="img_home_culture" style="width: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);" class="float-anim" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ REALIZATION SECTION ═══════════ -->
+  <section class="section dark-section" style="background: var(--green-primary); color: var(--white);">
+    <div class="wrap">
+      <div style="text-align: center;">
+        <h2 class="reveal" style="max-width: 24ch; margin: 0 auto; color: var(--white);">Most Businesses Don’t Fail Because of Lack of Effort</h2>
+        <p class="reveal" style="margin-top: 24px; font-size: 20px; color: rgba(255,255,255,0.7);">They fail because:</p>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 56px; align-items: center;">
+        <div class="reveal-scale img-zoom" style="border-radius: 20px; overflow: hidden; border: 1px solid var(--line);">
+          <img loading="lazy" src="assets/strategy_abstract.png" alt="Strategy Abstract" data-media-key="img_home_strategy" style="width: 100%; object-fit: cover; aspect-ratio: 1;" class="float-anim" />
+        </div>
+        
+        <div class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div class="card-hover glass" style="padding: 32px; border-radius: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+            <h3 style="font-size: 24px; color: var(--white);">Strategy</h3>
+            <p style="margin-top: 12px; color: rgba(255,255,255,0.7);">is not clear</p>
+          </div>
+          <div class="card-hover glass" style="padding: 32px; border-radius: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+            <h3 style="font-size: 24px; color: var(--white);">Systems</h3>
+            <p style="margin-top: 12px; color: rgba(255,255,255,0.7);">are not built</p>
+          </div>
+          <div class="card-hover glass" style="padding: 32px; border-radius: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+            <h3 style="font-size: 24px; color: var(--white);">Culture</h3>
+            <p style="margin-top: 12px; color: rgba(255,255,255,0.7);">is not aligned</p>
+          </div>
+          <div class="card-hover glass" style="padding: 32px; border-radius: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+            <h3 style="font-size: 24px; color: var(--white);">People</h3>
+            <p style="margin-top: 12px; color: rgba(255,255,255,0.7);">are not thinking like owners</p>
+          </div>
+        </div>
+      </div>
+      
+      <p class="reveal realization-note" style="margin-top: 56px; font-size: 22px; font-style: italic; color: var(--gold-primary); text-align: center; display: flex; align-items: center; justify-content: center; gap: 12px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        And no consultant solves this completely.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════ NUCLEUS DIFFERENCE SECTION ═══════════ -->
+  <section class="section" style="background: var(--warm-white);">
+    <div class="wrap">
+      <div style="text-align: center; margin-bottom: 56px;">
+        <p class="eyebrow reveal">The Difference</p>
+        <h2 class="reveal" style="margin-top: 16px;">We Don’t Fix Businesses. We Rebuild Them.</h2>
+      </div>
+      
+      <div class="reveal card-hover glass" style="border-radius: 20px; overflow: hidden; border: 1px solid var(--border); background: var(--white);">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; background: var(--green-primary); color: var(--white); padding: 24px 40px;">
+          <h3 style="font-size: 20px; color: rgba(255,255,255,0.6);">Typical Consultant</h3>
+          <h3 style="font-size: 20px; color: var(--gold-primary);">Nucleus</h3>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
+          <p style="font-size: 18px; color: var(--muted);">Gives strategy</p>
+          <p style="font-size: 18px; font-weight: 500;">Changes thinking</p>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
+          <p style="font-size: 18px; color: var(--muted);">Focus on process</p>
+          <p style="font-size: 18px; font-weight: 500;">Aligns people + process</p>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
+          <p style="font-size: 18px; color: var(--muted);">Short-term fixes</p>
+          <p style="font-size: 18px; font-weight: 500;">Long-term transformation</p>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px;">
+          <p style="font-size: 18px; color: var(--muted);">External push</p>
+          <p style="font-size: 18px; font-weight: 500;">Internal ownership</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ TRANSFORMATION JOURNEY ═══════════ -->
+  <section class="section dark-section" style="background: var(--green-deep); color: var(--white); position: relative; overflow: hidden;">
+    <div class="mesh-bg">
+      <div class="blob blob-1" style="background: var(--gold); opacity: 0.15; top: 20%;"></div>
+      <div class="blob blob-3" style="background: var(--green); opacity: 0.2; bottom: -10%;"></div>
+    </div>
+    <div class="wrap" style="position: relative; z-index: 2;">
+      <div style="text-align: center; margin-bottom: 64px;">
+        <p class="eyebrow reveal" style="color: var(--gold);">The Process</p>
+        <h2 class="reveal" style="color: var(--white); margin-top: 16px;">The Nucleus Transformation Journey</h2>
+      </div>
+
+      <div class="journey-timeline" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+        <div class="journey-stage reveal-scale card-hover glass-dark" style="padding: 32px; border-radius: 16px;">
+          <div style="font-size: 48px; color: var(--gold); font-family: var(--serif); margin-bottom: 16px;">1</div>
+          <h3 style="font-size: 22px; color: var(--white); margin-bottom: 16px;">CHAOS</h3>
+          <ul style="color: rgba(255,255,255,0.7); list-style-type: none; padding: 0; line-height: 1.8;">
+            <li>• No clarity</li>
+            <li>• Founder dependent</li>
+            <li>• Firefighting mode</li>
+          </ul>
+        </div>
+        <div class="journey-stage reveal-scale card-hover glass-dark" style="transition-delay: 0.1s; padding: 32px; border-radius: 16px;">
+          <div style="font-size: 48px; color: var(--gold); font-family: var(--serif); margin-bottom: 16px;">2</div>
+          <h3 style="font-size: 22px; color: var(--white); margin-bottom: 16px;">STRUCTURE</h3>
+          <ul style="color: rgba(255,255,255,0.7); list-style-type: none; padding: 0; line-height: 1.8;">
+            <li>• Systems built</li>
+            <li>• Roles defined</li>
+            <li>• Processes standardized</li>
+          </ul>
+        </div>
+        <div class="journey-stage reveal-scale card-hover glass-dark" style="transition-delay: 0.2s; padding: 32px; border-radius: 16px;">
+          <div style="font-size: 48px; color: var(--gold); font-family: var(--serif); margin-bottom: 16px;">3</div>
+          <h3 style="font-size: 22px; color: var(--white); margin-bottom: 16px;">ALIGNMENT</h3>
+          <ul style="color: rgba(255,255,255,0.7); list-style-type: none; padding: 0; line-height: 1.8;">
+            <li>• Team accountability</li>
+            <li>• Culture defined</li>
+            <li>• Leadership clarity</li>
+          </ul>
+        </div>
+        <div class="journey-stage reveal-scale card-hover glass-dark" style="transition-delay: 0.3s; padding: 32px; border-radius: 16px; border-color: var(--gold); background: rgba(232, 181, 71, 0.15);">
+          <div style="font-size: 48px; color: var(--gold); font-family: var(--serif); margin-bottom: 16px;">4</div>
+          <h3 style="font-size: 22px; color: var(--white); margin-bottom: 16px;">TRANSFORMATION</h3>
+          <ul style="color: var(--white); list-style-type: none; padding: 0; line-height: 1.8;">
+            <li>• Self-driven organization</li>
+            <li>• Predictable growth</li>
+            <li>• Strong leadership system</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ PHILOSOPHY SECTION ═══════════ -->
+  <section class="section" style="background: var(--warm-white);">
+    <div class="wrap">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
+        <div class="reveal-left">
+          <p class="eyebrow">Our Philosophy</p>
+          <h2 style="margin-top: 16px;">The Nucleus Way</h2>
+          <p data-typewriter="We don't believe in controlling people. We believe in building people who don't need control." style="margin-top: 24px; font-size: 22px; font-style: italic; color: var(--gold-deep);">
+            We don’t believe in controlling people.<br>
+            We believe in building people who don’t need control.
+          </p>
+          <ul style="margin-top: 32px; font-size: 18px; line-height: 2; list-style-type: none; padding: 0;">
+            <li><span style="color: var(--green); margin-right: 12px;">✔</span> People over process</li>
+            <li><span style="color: var(--green); margin-right: 12px;">✔</span> Context over control</li>
+            <li><span style="color: var(--green); margin-right: 12px;">✔</span> Accountability over hierarchy</li>
+          </ul>
+        </div>
+        <div style="position: relative;">
+          <div class="reveal-scale img-zoom" style="border-radius: 20px; overflow: hidden; border: 1px solid var(--line); margin-bottom: -40px; margin-right: -40px; position: relative; z-index: 1;">
+            <img loading="lazy" src="assets/philosophy_zen.png" alt="Philosophy" data-media-key="img_home_philosophy" style="width: 100%; object-fit: cover; aspect-ratio: 4/3;" class="float-anim" />
+          </div>
+          <div class="reveal-scale card-hover" style="background: var(--white); padding: 48px; border-radius: 20px; border: 1px solid var(--line); box-shadow: 0 30px 60px rgba(0,0,0,0.08); position: relative; z-index: 2; max-width: 80%; transform: translateY(-40px);">
+            <h3 style="font-size: 24px; margin-bottom: 24px;">We create organizations where:</h3>
+            <ul style="font-size: 20px; line-height: 2.2; list-style-type: none; padding: 0;">
+              <li style="border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 12px;">• People think like owners</li>
+              <li style="border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 12px;">• Work has meaning</li>
+              <li>• Growth is natural</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ TRANSFORMATION AREAS ═══════════ -->
+  <section class="section" style="background: var(--cream);">
+    <div class="wrap">
+      <p class="eyebrow reveal" style="text-align: center; margin-bottom: 16px;">Services</p>
+      <h2 class="reveal" style="text-align: center; margin-bottom: 48px;">What We Transform</h2>
+      
+      <div class="reveal" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+        <a href="services.html" class="prog prog-light" style="min-height: auto; padding: 32px; border: 1px solid var(--green-pale);">
+          <h3 style="margin: 0; font-size: 20px; color: var(--green-deep);">Leadership & Thinking</h3>
+        </a>
+        <a href="services.html" class="prog prog-light" style="min-height: auto; padding: 32px; border: 1px solid var(--green-pale);">
+          <h3 style="margin: 0; font-size: 20px; color: var(--green-deep);">Culture & Accountability</h3>
+        </a>
+        <a href="services.html" class="prog prog-light" style="min-height: auto; padding: 32px; border: 1px solid var(--green-pale);">
+          <h3 style="margin: 0; font-size: 20px; color: var(--green-deep);">Sales & Growth System</h3>
+        </a>
+        <a href="services.html" class="prog prog-light" style="min-height: auto; padding: 32px; border: 1px solid var(--green-pale);">
+          <h3 style="margin: 0; font-size: 20px; color: var(--green-deep);">Marketing & Brand Positioning</h3>
+        </a>
+        <a href="services.html" class="prog prog-light" style="min-height: auto; padding: 32px; border: 1px solid var(--green-pale);">
+          <h3 style="margin: 0; font-size: 20px; color: var(--green-deep);">Operations & SOP Systems</h3>
+        </a>
+        <a href="services.html" class="prog prog-light" style="min-height: auto; padding: 32px; border: 1px solid var(--green-pale);">
+          <h3 style="margin: 0; font-size: 20px; color: var(--green-deep);">HR & People Development</h3>
+        </a>
+        <a href="services.html" class="prog prog-light" style="min-height: auto; padding: 32px; border: 1px solid var(--green-pale);">
+          <h3 style="margin: 0; font-size: 20px; color: var(--green-deep);">Finance & Business Clarity</h3>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CASE STUDY SECTION ═══════════ -->
+  <section class="section" style="background: var(--cream);">
+    <div class="wrap">
+      <div style="text-align: center; margin-bottom: 56px;">
+        <p class="eyebrow reveal" style="color: var(--green-primary);">Case Study</p>
+        <h2 class="reveal" style="margin-top: 16px; color: var(--green-deep);">Real Transformation, Not Just Advice</h2>
+      </div>
+
+      <div class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+        <div class="card-hover wipe-reveal" style="background: #FFF0F0; padding: 40px; border-radius: 20px; border: 1px solid #FFD6D6;">
+          <h3 style="color: #D32F2F; margin-bottom: 24px; font-size: 24px;">Before:</h3>
+          <ul style="font-size: 18px; line-height: 2; list-style-type: none; padding: 0; color: #5C1010;">
+            <li style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 4px; flex-shrink: 0;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> No sales structure</li>
+            <li style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 4px; flex-shrink: 0;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Team dependency on owner</li>
+            <li style="display: flex; gap: 12px; align-items: flex-start;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 4px; flex-shrink: 0;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Inconsistent revenue</li>
+          </ul>
+        </div>
+        <div class="card-hover wipe-reveal" style="background: #F0FFF4; padding: 40px; border-radius: 20px; border: 1px solid #C6F6D5;">
+          <h3 style="color: #2F855A; margin-bottom: 24px; font-size: 24px;">After:</h3>
+          <ul style="font-size: 18px; line-height: 2; list-style-type: none; padding: 0; color: #1C4532;">
+            <li style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 4px; flex-shrink: 0;"><polyline points="20 6 9 17 4 12"/></svg> Defined sales system</li>
+            <li style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 4px; flex-shrink: 0;"><polyline points="20 6 9 17 4 12"/></svg> Team accountability</li>
+            <li style="display: flex; gap: 12px; align-items: flex-start;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 4px; flex-shrink: 0;"><polyline points="20 6 9 17 4 12"/></svg> Predictable growth</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ TESTIMONIAL SECTION ═══════════ -->
+  <section class="section dark-section" style="background: var(--green-primary); position: relative; overflow: hidden; padding: 120px 0;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: var(--serif); font-size: 300px; color: var(--gold-primary); opacity: 0.05; pointer-events: none; line-height: 1;">"</div>
+    <div class="wrap reveal" style="text-align: center; max-width: 800px; position: relative; z-index: 2;">
+      <div style="width: 80px; height: 80px; margin: 0 auto 32px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden; font-family: var(--serif); color: var(--gold-primary); font-size: 24px;">
+        RM
+      </div>
+      <blockquote style="font-family: var(--serif); font-style: italic; font-size: clamp(24px, 4vw, 40px); line-height: 1.4; color: var(--white); margin: 0 0 40px;">
+        "Nucleus didn't give us a strategy. They changed how we think about business entirely. In 6 months, our team doubled their ownership."
+      </blockquote>
+      <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.6);">
+        <span style="color: var(--gold-primary);">Rahul Mehta</span><br>
+        <span style="display: block; margin-top: 8px;">Founder, Mehta Manufacturing, Surat</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FINAL CTA ═══════════ -->
+  <section class="section dark-section final-cta" style="background: var(--green-deep); color: var(--white); text-align: center; position: relative; overflow: hidden;">
+    <div class="wrap" style="position: relative; z-index: 2;">
+      </p>
+      <div class="hero-btns reveal" style="justify-content: center; margin-top: 48px;">
+        <a href="contact.html" class="btn btn-primary" style="background: var(--gold); color: var(--ink);">
+          Book Business Diagnosis
+        </a>
+        <a href="services.html" class="btn btn-ghost" style="color: var(--white); border-color: rgba(255,255,255,0.3);">
+          Apply for Transformation
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="marquee-container">
+    <div class="marquee-content">
+      STRATEGY • SYSTEMS • CULTURE • ALIGNMENT • GROWTH • STRATEGY • SYSTEMS • CULTURE • ALIGNMENT • GROWTH • STRATEGY • SYSTEMS • CULTURE • ALIGNMENT • GROWTH • STRATEGY • SYSTEMS • CULTURE • ALIGNMENT • GROWTH • 
+    </div>
+  </div>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="footer dark-section" style="background: var(--green-deep);">
+    <div class="footer-watermark">NUCLEUS</div>
+    <div class="wrap" style="position:relative; z-index:10;">
+      <div class="footer-top">
+        <h2 class="footer-tagline">Transforming <em class="gold-word">inner light</em><br>into outer impact.</h2>
+      </div>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="index.html" class="footer-logo"><img src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo"
+              style="height:38px; filter:brightness(0) invert(1); opacity:0.9; margin-bottom: 24px;" /></a>
+          <p class="muted" style="max-width:28ch; font-size:14px; line-height:1.7;">We help young minds and growing
+            businesses clarify purpose and turn dreams into reality.</p>
+        </div>
+                <div class="footer-col">
+          <h5>Explore</h5>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="programs.html">Programs</a></li>
+            <li><a href="case-studies.html">Case Studies</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="careers.html">Careers</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Programs</h5>
+          <ul>
+            <li><a href="programs.html">Be Extraordinary</a></li>
+            <li><a href="programs.html">Business Excellence</a></li>
+            <li><a href="programs.html">Sales Mastery</a></li>
+            <li><a href="programs.html">Outbound Training</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Contact</h5>
+          <ul>
+            <li><a href="tel:+918156076680" data-set="phone" style="opacity:0.9;">+91 8156 076 680</a></li>
+            <li><a href="mailto:hello@nucleusconsultant.in" data-set="email"
+                style="opacity:0.9;">hello@nucleusconsultant.in</a></li>
+            <li class="muted" style="margin-top:16px; font-size:13px; line-height:1.6;" data-set="address">811 IFC, Opp.
+              Fire Station<br>VIP Road, Vesu, Surat – 395007</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 NUCLEUS CONSULTANT. ALL RIGHTS RESERVED.</div>
+        <div>SURAT, INDIA · TRANSFORMING INNER LIGHT</div>
+      </div>
+    </div>
+  </footer>
+
+
+  <script src="assets/site.js"></script>
+</body>
+
+</html>
