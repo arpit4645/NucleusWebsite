@@ -15,12 +15,32 @@
   'use strict';
 
   const SYNC_PREFIXES = ['nucleus_', 'about_', 'founder_', 'img_'];
+  // Never commit these to the repo — they contain tokens / session data
+  const SYNC_EXCLUDE = new Set([
+    'nucleus_github_cfg',   // GitHub PAT — must NEVER leave this browser
+    'nucleus_firebase_cfg', // old Firebase config
+    'nucleus_auth',         // session auth flag
+  ]);
   const DATA_FILE_PATH = 'content/site-data.json';
   const MEDIA_DIR = 'content/media';
   const CFG_KEY = 'nucleus_github_cfg';
 
   function isSyncKey(key) {
-    return key && SYNC_PREFIXES.some(p => key.startsWith(p));
+    if (!key) return false;
+    if (SYNC_EXCLUDE.has(key)) return false;
+    return SYNC_PREFIXES.some(p => key.startsWith(p));
+  }
+
+  // Strip admin password before writing nucleus_site_settings to GitHub
+  function sanitizeValue(key, value) {
+    if (key === 'nucleus_site_settings') {
+      try {
+        const obj = JSON.parse(value);
+        delete obj.adminPwd; // never commit the admin password
+        return JSON.stringify(obj);
+      } catch (e) { return value; }
+    }
+    return value;
   }
 
   let _paused = false;
@@ -107,7 +127,11 @@
 
     const branch = cfg.branch || 'main';
     const apiBase = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${DATA_FILE_PATH}`;
-    const pending = Object.assign({}, _pendingPushes);
+    // Sanitize: strip secrets before they can reach GitHub
+    const pending = {};
+    Object.keys(_pendingPushes).forEach(k => {
+      pending[k] = sanitizeValue(k, _pendingPushes[k]);
+    });
     _pendingPushes = {};
 
     try {
@@ -130,10 +154,11 @@
         throw new Error('GitHub read failed: ' + (err.message || getRes.statusText));
       }
 
-      // Step 2: merge pending into current
+      // Step 2: merge pending into current, strip any secret keys that slipped through
       const merged = Object.assign({}, currentData, pending);
-      // Remove empty-string keys (deletions)
-      Object.keys(merged).forEach(k => { if (merged[k] === '') delete merged[k]; });
+      Object.keys(merged).forEach(k => {
+        if (merged[k] === '' || SYNC_EXCLUDE.has(k)) delete merged[k];
+      });
 
       // Step 3: PUT new content
       const body = {

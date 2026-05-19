@@ -223,42 +223,59 @@
 </head>
 <body>
 
-<div id="loginGate" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;">
-  <div style="background:var(--paper);padding:40px;border-radius:12px;border:1px solid var(--line);width:100%;max-width:320px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.05);">
-    <div style="font-family:var(--serif);font-size:28px;color:var(--gold);margin-bottom:8px;">Nucleus Admin</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:24px;">Please enter your password to continue.</p>
-    <input type="password" id="adminPassword" placeholder="Password" style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:6px;margin-bottom:16px;font-size:14px;background:var(--bg);color:var(--ink);" onkeydown="if(event.key==='Enter') checkLogin()" />
-    <button class="btn btn-primary" id="loginButton" style="width:100%;" onclick="checkLogin()">Login →</button>
-    <p id="loginError" style="color:#d93025;font-size:12px;margin-top:12px;display:none;">Incorrect password.</p>
+<!-- Admin Login Gate (multi-step: password → optional GitHub token) -->
+<div id="loginGate" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;">
+
+  <!-- Step 1: Password -->
+  <div id="loginStep1" style="background:var(--paper);padding:40px;border-radius:16px;border:1px solid var(--line);width:100%;max-width:380px;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,0.08);">
+    <div style="font-family:var(--serif);font-size:30px;color:var(--gold);margin-bottom:4px;">Nucleus</div>
+    <div style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;">Admin Dashboard</div>
+    <input type="password" id="adminPassword" placeholder="Enter admin password" style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:8px;margin-bottom:14px;font-size:14px;background:var(--bg);color:var(--ink);outline:none;transition:border .2s;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--line)'" onkeydown="if(event.key==='Enter') checkLogin()" />
+    <button class="btn btn-primary" id="loginButton" style="width:100%;padding:13px;" onclick="checkLogin()">Login →</button>
+    <p id="loginError" style="color:#d93025;font-size:12px;margin-top:12px;display:none;">Incorrect password. Please try again.</p>
+  </div>
+
+  <!-- Step 2: GitHub token (shown after correct password if token missing) -->
+  <div id="loginStep2" style="display:none;background:var(--paper);border-radius:16px;border:1px solid var(--line);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,0.08);">
+    <div style="padding:32px 32px 0;">
+      <div style="font-family:var(--serif);font-size:26px;color:var(--gold);margin-bottom:4px;">Connect to GitHub</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">This one-time step lets admin changes appear for all site visitors. Your browser remembers the token — you won't be asked again.</p>
+      <div style="background:#f4f7f4;border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:20px;font-size:13px;line-height:1.8;text-align:left;">
+        <strong style="display:block;margin-bottom:8px;color:var(--ink);">Create a token in 1 minute:</strong>
+        <ol style="margin:0;padding-left:20px;color:var(--ink-2);">
+          <li>Click → <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color:var(--green);font-weight:600;">Open GitHub token page</a></li>
+          <li>Token name: <code style="background:#fff;padding:1px 7px;border-radius:4px;font-family:var(--mono);border:1px solid var(--line);">Nucleus Admin</code></li>
+          <li>Expiration: <strong>No expiration</strong></li>
+          <li>Repository access → <strong>Only select repositories</strong> → pick <code style="background:#fff;padding:1px 7px;border-radius:4px;font-family:var(--mono);border:1px solid var(--line);">NucleusWebsite</code></li>
+          <li>Permissions → Repository permissions → <strong>Contents → Read and write</strong></li>
+          <li>Click <strong>Generate token</strong> → copy it → paste below</li>
+        </ol>
+      </div>
+    </div>
+    <div style="padding:0 32px 32px;">
+      <label style="display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">GitHub Personal Access Token</label>
+      <input type="password" id="ghTokenInput" placeholder="github_pat_xxxxxxxxxxxx..." style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:8px;margin-bottom:14px;font-size:13px;font-family:var(--mono);background:var(--bg);color:var(--ink);outline:none;transition:border .2s;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--line)'" onkeydown="if(event.key==='Enter') saveGithubToken()" />
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-primary" style="flex:1;padding:13px;" onclick="saveGithubToken()">Save &amp; Enter Admin →</button>
+        <button class="btn btn-ghost" style="padding:13px 18px;" onclick="skipGithubSetup()" title="Skip — changes will only show on this device">Skip</button>
+      </div>
+      <p id="ghSetupError" style="color:#d93025;font-size:12px;margin-top:12px;display:none;"></p>
+    </div>
   </div>
 </div>
 
-<!-- GitHub Setup Wizard -->
+<!-- Re-enter token wizard (triggered from sidebar gear icon) -->
 <div id="ghSetupGate" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9998;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:var(--paper);padding:32px;border-radius:12px;border:1px solid var(--line);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-    <div style="font-family:var(--serif);font-size:24px;color:var(--gold);margin-bottom:6px;">One-Time Setup</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5;">To sync admin changes to all visitors, add a GitHub Personal Access Token. This is a one-time step — your browser remembers it.</p>
-
-    <div style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:20px;font-size:13px;line-height:1.7;">
-      <strong style="display:block;margin-bottom:8px;color:var(--ink);">How to create a token (1 minute):</strong>
-      <ol style="margin:0;padding-left:22px;color:var(--ink-2);">
-        <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color:var(--green);font-weight:500;">GitHub → New fine-grained token</a></li>
-        <li>Token name: <code style="background:var(--paper);padding:1px 6px;border-radius:3px;font-family:var(--mono);">Nucleus Admin</code></li>
-        <li>Expiration: <strong>No expiration</strong> (or 1 year)</li>
-        <li>Repository access: <strong>Only select repositories</strong> → choose <code style="background:var(--paper);padding:1px 6px;border-radius:3px;font-family:var(--mono);">NucleusWebsite</code></li>
-        <li>Permissions → Repository permissions → <strong>Contents: Read and write</strong></li>
-        <li>Click <strong>Generate token</strong> → copy and paste below</li>
-      </ol>
-    </div>
-
-    <label style="display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">GitHub Token</label>
-    <input type="password" id="ghTokenInput" placeholder="github_pat_..." style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:6px;margin-bottom:16px;font-size:13px;font-family:var(--mono);background:var(--bg);color:var(--ink);" />
-
+  <div style="background:var(--paper);padding:32px;border-radius:16px;border:1px solid var(--line);width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div style="font-family:var(--serif);font-size:24px;color:var(--gold);margin-bottom:6px;">Update GitHub Token</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5;">Paste a new token to restore sync. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color:var(--green);">Create a token →</a></p>
+    <label style="display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">GitHub Personal Access Token</label>
+    <input type="password" id="ghTokenInputModal" placeholder="github_pat_..." style="width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:8px;margin-bottom:16px;font-size:13px;font-family:var(--mono);background:var(--bg);color:var(--ink);" onkeydown="if(event.key==='Enter') saveGithubTokenModal()" />
     <div style="display:flex;gap:10px;">
-      <button class="btn btn-primary" style="flex:1;" onclick="saveGithubToken()">Save &amp; Connect</button>
-      <button class="btn btn-ghost" onclick="document.getElementById('ghSetupGate').style.display='none'">Later</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="saveGithubTokenModal()">Save &amp; Reconnect</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('ghSetupGate').style.display='none'">Cancel</button>
     </div>
-    <p id="ghSetupError" style="color:#d93025;font-size:12px;margin-top:12px;display:none;"></p>
+    <p id="ghSetupErrorModal" style="color:#d93025;font-size:12px;margin-top:12px;display:none;"></p>
   </div>
 </div>
 
@@ -1432,55 +1449,56 @@ function clearLeads() {
 
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
+function _enterAdmin() {
+  document.getElementById('loginGate').style.display = 'none';
+  document.getElementById('adminLayout').style.display = '';
+}
+
 function checkLogin() {
   const pwd = document.getElementById('adminPassword').value;
   let s; try { s = JSON.parse(localStorage.getItem('nucleus_site_settings')) || {}; } catch(e) { s = {}; }
   const realPwd = s.adminPwd || 'nucleusadmin';
-
-  if (pwd === realPwd) {
-    sessionStorage.setItem('nucleus_auth', 'true');
-    document.getElementById('loginGate').style.display = 'none';
-    document.getElementById('adminLayout').style.display = '';
-    maybeShowGithubSetup();
-  } else {
+  if (pwd !== realPwd) {
     document.getElementById('loginError').style.display = 'block';
+    return;
   }
+  sessionStorage.setItem('nucleus_auth', 'true');
+  document.getElementById('loginError').style.display = 'none';
+  // Check if GitHub token already saved
+  const cfg = (window.nucleusGithubGetConfig && window.nucleusGithubGetConfig()) || null;
+  if (!cfg || !cfg.token) {
+    // Show step 2 (token setup) inside the login gate
+    document.getElementById('loginStep1').style.display = 'none';
+    document.getElementById('loginStep2').style.display = 'block';
+  } else {
+    _enterAdmin();
+  }
+}
+
+function skipGithubSetup() {
+  _enterAdmin();
+  showToast('Skipped — changes will only show on this device until you connect GitHub.', 'error');
 }
 
 if (sessionStorage.getItem('nucleus_auth') === 'true') {
-  document.getElementById('loginGate').style.display = 'none';
-  document.getElementById('adminLayout').style.display = '';
-  setTimeout(maybeShowGithubSetup, 500);
+  const _existingCfg = (window.nucleusGithubGetConfig && window.nucleusGithubGetConfig()) || null;
+  if (_existingCfg && _existingCfg.token) {
+    _enterAdmin();
+  } else {
+    // Already authenticated but no token — show step 2
+    document.getElementById('loginStep1').style.display = 'none';
+    document.getElementById('loginStep2').style.display = 'block';
+  }
 }
 
-// ── GitHub Setup Wizard ───────────────────────────────────────────────────────
-function maybeShowGithubSetup() {
-  const cfg = (window.nucleusGithubGetConfig && window.nucleusGithubGetConfig()) || null;
-  if (!cfg || !cfg.token) {
-    showGithubSetup();
-  }
-}
-function showGithubSetup() {
-  const gate = document.getElementById('ghSetupGate');
-  if (gate) gate.style.display = 'flex';
-  const err = document.getElementById('ghSetupError');
-  if (err) err.style.display = 'none';
-}
-async function saveGithubToken() {
-  const tokenInput = document.getElementById('ghTokenInput');
-  const errEl = document.getElementById('ghSetupError');
-  const token = (tokenInput.value || '').trim();
-  if (!token) {
-    errEl.textContent = 'Please paste a token.';
-    errEl.style.display = 'block';
-    return;
-  }
+// ── GitHub Token Setup ────────────────────────────────────────────────────────
+async function _validateAndSaveToken(token, errEl, onSuccess) {
+  if (!token) { errEl.textContent = 'Please paste your token.'; errEl.style.display = 'block'; return; }
   if (!token.startsWith('github_pat_') && !token.startsWith('ghp_')) {
-    errEl.textContent = 'That does not look like a GitHub token. It should start with "github_pat_" or "ghp_".';
-    errEl.style.display = 'block';
-    return;
+    errEl.textContent = 'Token should start with "github_pat_" — copy it exactly from GitHub.';
+    errEl.style.display = 'block'; return;
   }
-  // Test the token by trying to read the repo
+  errEl.style.display = 'none';
   const cfg = window.NUCLEUS_GITHUB_REPO;
   try {
     const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}`, {
@@ -1488,18 +1506,45 @@ async function saveGithubToken() {
     });
     if (!res.ok) {
       const j = await res.json().catch(() => ({}));
-      throw new Error(j.message || 'Token rejected by GitHub (status ' + res.status + ')');
+      throw new Error(j.message || 'Token rejected (status ' + res.status + ')');
     }
   } catch (e) {
-    errEl.textContent = 'Token check failed: ' + e.message;
-    errEl.style.display = 'block';
-    return;
+    errEl.textContent = 'Could not verify token: ' + e.message;
+    errEl.style.display = 'block'; return;
   }
   window.nucleusGithubSetToken(token);
-  document.getElementById('ghSetupGate').style.display = 'none';
-  showToast('GitHub connected! Syncing...', 'success');
-  // Re-init sync now that we have a token
   if (window.initNucleusSync) await window.initNucleusSync();
+  onSuccess();
+}
+
+async function saveGithubToken() {
+  const token = (document.getElementById('ghTokenInput').value || '').trim();
+  const errEl = document.getElementById('ghSetupError');
+  const btn = errEl.closest('div').querySelector('.btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifying...'; }
+  await _validateAndSaveToken(token, errEl, () => {
+    _enterAdmin();
+    showToast('GitHub connected! Admin changes now sync to all visitors.', 'success');
+  });
+  if (btn) { btn.disabled = false; btn.textContent = 'Save & Enter Admin →'; }
+}
+
+function showGithubSetup() {
+  const gate = document.getElementById('ghSetupGate');
+  if (gate) { gate.style.display = 'flex'; }
+  const inp = document.getElementById('ghTokenInputModal');
+  if (inp) inp.value = '';
+  const err = document.getElementById('ghSetupErrorModal');
+  if (err) err.style.display = 'none';
+}
+
+async function saveGithubTokenModal() {
+  const token = (document.getElementById('ghTokenInputModal').value || '').trim();
+  const errEl = document.getElementById('ghSetupErrorModal');
+  await _validateAndSaveToken(token, errEl, () => {
+    document.getElementById('ghSetupGate').style.display = 'none';
+    showToast('GitHub reconnected!', 'success');
+  });
 }
 
 // ── Homepage Content ─────────────────────────────────────────────────────────
