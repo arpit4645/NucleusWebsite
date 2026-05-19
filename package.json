@@ -4,14 +4,21 @@
   "description": "Nucleus Consultant — Premium static website with dynamic blog system",
   "scripts": {
     "start": "live-server --port=3000 --open=index.html --ignore=node_modules",
-    "dev":   "live-server --port=3000 --open=index.html --ignore=node_modules",
-    "blog":  "live-server --port=3000 --open=blog.html   --ignore=node_modules",
+    "dev": "live-server --port=3000 --open=index.html --ignore=node_modules",
+    "blog": "live-server --port=3000 --open=blog.html   --ignore=node_modules",
     "admin": "live-server --port=3000 --open=admin.html  --ignore=node_modules"
   },
-  "keywords": ["nucleus", "consultant", "static-site"],
+  "keywords": [
+    "nucleus",
+    "consultant",
+    "static-site"
+  ],
   "author": "Nucleus Consultant",
   "license": "ISC",
   "devDependencies": {
     "live-server": "^1.2.2"
+  },
+  "dependencies": {
+    "firebase": "^12.13.0"
   }
 }

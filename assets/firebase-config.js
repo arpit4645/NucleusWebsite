@@ -13,10 +13,10 @@
  */
 
 window.NUCLEUS_FIREBASE_CONFIG = {
-  apiKey:            "",
-  authDomain:        "",
-  projectId:         "",
-  storageBucket:     "",
-  messagingSenderId: "",
-  appId:             ""
+  apiKey: "AIzaSyDJEwLj0aZkuYyzVU0vp1LOQAQ5pCCT8VY",
+  authDomain: "nucleus-cms.firebaseapp.com",
+  projectId: "nucleus-cms",
+  storageBucket: "nucleus-cms.firebasestorage.app",
+  messagingSenderId: "122488227458",
+  appId: "1:122488227458:web:47af7dcff07ae93784d69b"
 };
