@@ -47,6 +47,8 @@
   let _debounceTimer = null;
   let _pendingPushes = {};
   let _lastSha = null;
+  let _flushing = false;
+  let _flushQueued = false;
 
   function getConfig() {
     if (window.NUCLEUS_GITHUB_REPO) {
@@ -114,78 +116,92 @@
   };
 
   // ── Push all local content to GitHub via Contents API ──────────────────────
+  async function _doCommit(cfg, branch, apiBase, pending) {
+    const getHeaders = Object.assign({ 'Cache-Control': 'no-cache' }, _ghHeaders(cfg));
+    const getRes = await fetch(
+      apiBase + '?ref=' + encodeURIComponent(branch) + '&t=' + Date.now(),
+      { cache: 'no-store', headers: getHeaders }
+    );
+    let currentData = {};
+    let sha = null;
+    if (getRes.ok) {
+      const file = await getRes.json();
+      sha = file.sha;
+      _lastSha = sha;
+      try {
+        currentData = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\s/g, '')))));
+      } catch (e) { currentData = {}; }
+    } else if (getRes.status !== 404) {
+      const err = await getRes.json().catch(() => ({}));
+      throw new Error('GitHub read failed: ' + (err.message || getRes.statusText));
+    }
+
+    const merged = Object.assign({}, currentData, pending);
+    Object.keys(merged).forEach(k => {
+      if (merged[k] === '' || SYNC_EXCLUDE.has(k)) delete merged[k];
+    });
+
+    const body = {
+      message: 'Update site content via admin panel',
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(merged, null, 2)))),
+      branch: branch
+    };
+    if (sha) body.sha = sha;
+
+    const putRes = await fetch(apiBase, {
+      method: 'PUT',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, _ghHeaders(cfg)),
+      body: JSON.stringify(body)
+    });
+    if (!putRes.ok) {
+      const err = await putRes.json().catch(() => ({}));
+      throw new Error('GitHub commit failed: ' + (err.message || putRes.statusText));
+    }
+    const result = await putRes.json();
+    _lastSha = result.content && result.content.sha;
+  }
+
   window.nucleusSyncFlush = async function () {
+    if (_flushing) { _flushQueued = true; return; }
+
     const cfg = getConfig();
     if (!cfg || !cfg.token || !cfg.owner || !cfg.repo) {
-      if (window._nucleusIsAdmin && Object.keys(_pendingPushes).length > 0) {
-        console.warn('[NucleusSync] Pending changes but no GitHub token — open admin Setup to fix.');
+      if (window._nucleusIsAdmin && Object.keys(_pendingPushes).length > 0)
         _updateSyncBadge(false, 'No GitHub token configured');
-      }
       return;
     }
     if (Object.keys(_pendingPushes).length === 0) return;
 
+    _flushing = true;
     const branch = cfg.branch || 'main';
     const apiBase = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${DATA_FILE_PATH}`;
-    // Sanitize: strip secrets before they can reach GitHub
     const pending = {};
-    Object.keys(_pendingPushes).forEach(k => {
-      pending[k] = sanitizeValue(k, _pendingPushes[k]);
-    });
+    Object.keys(_pendingPushes).forEach(k => { pending[k] = sanitizeValue(k, _pendingPushes[k]); });
     _pendingPushes = {};
 
     try {
-      // Step 1: get current file (for SHA + merge base)
-      let currentData = {};
-      let sha = _lastSha;
-      const getRes = await fetch(apiBase + '?ref=' + encodeURIComponent(branch) + '&t=' + Date.now(), { cache: 'no-store', headers: _ghHeaders(cfg) });
-      if (getRes.ok) {
-        const file = await getRes.json();
-        sha = file.sha;
-        _lastSha = sha;
-        try {
-          const decoded = decodeURIComponent(escape(atob(file.content.replace(/\s/g, ''))));
-          currentData = JSON.parse(decoded);
-        } catch (e) {
-          currentData = {};
+      try {
+        await _doCommit(cfg, branch, apiBase, pending);
+      } catch (e) {
+        if (e.message.includes('does not match')) {
+          console.warn('[NucleusSync] SHA mismatch, retrying with fresh fetch...');
+          await _doCommit(cfg, branch, apiBase, pending);
+        } else {
+          throw e;
         }
-      } else if (getRes.status !== 404) {
-        const err = await getRes.json().catch(() => ({}));
-        throw new Error('GitHub read failed: ' + (err.message || getRes.statusText));
       }
-
-      // Step 2: merge pending into current, strip any secret keys that slipped through
-      const merged = Object.assign({}, currentData, pending);
-      Object.keys(merged).forEach(k => {
-        if (merged[k] === '' || SYNC_EXCLUDE.has(k)) delete merged[k];
-      });
-
-      // Step 3: PUT new content
-      const body = {
-        message: 'Update site content via admin panel',
-        content: btoa(unescape(encodeURIComponent(JSON.stringify(merged, null, 2)))),
-        branch: branch
-      };
-      if (sha) body.sha = sha;
-
-      const putRes = await fetch(apiBase, {
-        method: 'PUT',
-        headers: Object.assign({ 'Content-Type': 'application/json' }, _ghHeaders(cfg)),
-        body: JSON.stringify(body)
-      });
-      if (!putRes.ok) {
-        const err = await putRes.json().catch(() => ({}));
-        throw new Error('GitHub commit failed: ' + (err.message || putRes.statusText));
-      }
-      const result = await putRes.json();
-      _lastSha = result.content && result.content.sha;
       _updateSyncBadge(true);
     } catch (e) {
       console.warn('[NucleusSync] Push error:', e.message);
       _updateSyncBadge(false, e.message);
-      // Restore pending so user can retry
       Object.assign(_pendingPushes, pending);
       if (window._nucleusIsAdmin) _showAdminSyncError('Cloud push failed: ' + e.message);
+    } finally {
+      _flushing = false;
+      if (_flushQueued) {
+        _flushQueued = false;
+        setTimeout(window.nucleusSyncFlush, 500);
+      }
     }
   };
 
