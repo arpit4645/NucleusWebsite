@@ -1000,11 +1000,22 @@ function mttSwitchCard(key, type, btn) {
 }
 
 async function uploadToFirebaseStorage(key, file) {
-  const storageRef = firebase.storage().ref();
-  const fileRef = storageRef.child('media/' + key + '_' + Date.now() + '_' + file.name);
-  const snapshot = await fileRef.put(file);
-  const downloadURL = await snapshot.ref.getDownloadURL();
-  return downloadURL;
+  if (!window.firebase || !window.firebase.storage) {
+    throw new Error('Firebase Storage not initialized. Check Firestore rules in the Firebase console.');
+  }
+  try {
+    const storageRef = firebase.storage().ref();
+    const fileRef = storageRef.child('nucleus_media/' + key + '_' + Date.now() + '_' + file.name);
+    const snapshot = await fileRef.put(file);
+    const downloadURL = await snapshot.ref.getDownloadURL();
+    return downloadURL;
+  } catch (err) {
+    console.error('[Upload] Firebase Storage error:', err.code, err.message);
+    if (err.code === 'storage/unauthorized') {
+      throw new Error('Storage upload failed: permission denied. Update Firebase Storage rules.');
+    }
+    throw err;
+  }
 }
 
 function handleImageUpload(e) {
@@ -1032,8 +1043,8 @@ function handleImageUpload(e) {
       }
       showToast('Cover media uploaded successfully!', 'success');
     }).catch(err => {
-      console.error(err);
-      showToast('Upload failed.', 'error');
+      console.error('[Blog Upload Error]', err);
+      showToast(err.message || 'Upload failed. Check Firebase Storage rules.', 'error');
     });
   } else {
     // Blog cover uses FileReader for immediate preview (small files only)
@@ -1750,16 +1761,17 @@ async function handleUniversalMediaUpload(storageKey, event) {
       localStorage.removeItem(storageKey); // clear old base64
     }
     localStorage.removeItem(storageKey + '_url');
-    
+
     const urlInput = document.getElementById('url-' + storageKey);
     if (urlInput) urlInput.value = '';
-    
+
     localStorage.setItem(storageKey + '_type', isVideo ? 'video' : 'image');
     refreshUniversalMediaPreview(storageKey);
     showToast('Media saved successfully!');
   } catch(err) {
-    console.error('Media save error:', err);
-    showToast('Upload failed.', 'error');
+    console.error('[Universal Media Upload Error]', err);
+    const msg = err.message || 'Upload failed. Check Firebase Storage rules.';
+    showToast(msg, 'error');
   }
   event.target.value = ''; // reset input
 }
@@ -1953,8 +1965,9 @@ async function handleImgCardUpload(key, e, card) {
     }
     showToast(`"${card.dataset.label}" updated!`, 'success');
   } catch(err) {
-    console.error(err);
-    showToast('Upload failed. Try a smaller file.', 'error');
+    console.error('[Image Card Upload Error]', err);
+    const msg = err.message || 'Upload failed. Try a smaller file or check Firebase Storage rules.';
+    showToast(msg, 'error');
   }
 }
 

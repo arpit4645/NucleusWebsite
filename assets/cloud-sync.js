@@ -86,6 +86,17 @@
     document.body.prepend(div);
   }
 
+  window.debugNucleusSync = function() {
+    console.log('[NucleusSync Debug]', {
+      active: window._nucleusSyncActive,
+      isAdmin: window._nucleusIsAdmin,
+      db: !!_db,
+      firebase: !!window.firebase,
+      firestore: !!(window.firebase && window.firebase.firestore),
+      storage: !!(window.firebase && window.firebase.storage)
+    });
+  };
+
   // ── Push pending key-value pairs to Firestore ──────────────────────────────
   window.nucleusSyncFlush = async function () {
     const db = getDB();
