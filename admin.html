@@ -420,6 +420,7 @@
             <div style="font-size:11px;color:var(--muted);margin-top:6px;">Default password is <strong>nucleusadmin</strong>. Leave blank to keep current.</div>
             <button class="btn btn-gold btn-sm" style="margin-top:12px;" onclick="changePassword()">Update Password</button>
             <button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="logout()">Log Out</button>
+            <button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="document.getElementById('firebaseSetupModal').style.display='flex'">Cloud Connection Wizard ☁️</button>
           </div>
 
           <div class="panel">
@@ -789,7 +790,7 @@ Everything depends on you</textarea></div>
 </div>
 
 <!-- Firebase Setup Wizard -->
-<div id="firebaseSetupModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
+<div id="firebaseSetupModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
   <div style="background:var(--paper);border-radius:16px;border:1px solid var(--line);width:100%;max-width:580px;padding:40px;box-shadow:0 24px 64px rgba(0,0,0,0.3);">
     <div style="font-family:var(--serif);font-size:28px;color:var(--ink);margin-bottom:6px;">Connect to Cloud ☁️</div>
     <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">To make admin changes visible on the live site, connect a free Firebase project. This takes ~3 minutes and is a one-time setup.</p>
@@ -815,7 +816,7 @@ Everything depends on you</textarea></div>
 
     <div style="display:flex;gap:10px;">
       <button class="btn btn-gold" style="flex:1;" onclick="saveFirebaseConfig()">Save & Connect →</button>
-      <button class="btn btn-ghost" onclick="document.getElementById('firebaseSetupModal').style.display='none'">Skip (use local only)</button>
+      <button class="btn btn-ghost" onclick="localStorage.setItem('nucleus_setup_skipped','true'); document.getElementById('firebaseSetupModal').style.display='none'">Skip (use local only)</button>
     </div>
     <p style="font-size:11px;color:var(--muted);margin-top:12px;text-align:center;">Your config is saved in <code>assets/firebase-config.js</code> in your project folder.</p>
   </div>
@@ -1987,12 +1988,47 @@ function reloadActiveView() {
   });
 }
 
+function saveFirebaseConfig() {
+  const cfg = {
+    apiKey: document.getElementById('wz_apiKey').value.trim(),
+    authDomain: document.getElementById('wz_authDomain').value.trim(),
+    projectId: document.getElementById('wz_projectId').value.trim(),
+    storageBucket: document.getElementById('wz_storageBucket').value.trim(),
+    messagingSenderId: document.getElementById('wz_messagingSenderId').value.trim(),
+    appId: document.getElementById('wz_appId').value.trim()
+  };
+  if (!cfg.apiKey || !cfg.projectId) {
+    showToast('API Key and Project ID are required.', 'error');
+    return;
+  }
+  localStorage.setItem('nucleus_firebase_cfg', JSON.stringify(cfg));
+  showToast('Firebase configuration saved! Reconnecting...', 'success');
+  document.getElementById('firebaseSetupModal').style.display = 'none';
+  if (window.initNucleusSync) {
+    window.initNucleusSync();
+  } else {
+    location.reload();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const isConfigured = (window.NUCLEUS_FIREBASE_CONFIG && window.NUCLEUS_FIREBASE_CONFIG.apiKey) || localStorage.getItem('nucleus_firebase_cfg');
+  const skipped = localStorage.getItem('nucleus_setup_skipped') === 'true';
+  if (!isConfigured && !skipped) {
+    document.getElementById('firebaseSetupModal').style.display = 'flex';
+  }
+});
+
 document.addEventListener('nucleus-sync-ready', function() {
   const btn = document.getElementById('loginButton');
   if (btn) {
     btn.disabled = false;
     btn.textContent = 'Login →';
   }
+  // If synced successfully, hide setup modal
+  const modal = document.getElementById('firebaseSetupModal');
+  if (modal) modal.style.display = 'none';
+
   renderSidebar();
   reloadActiveView();
 });
