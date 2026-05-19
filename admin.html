@@ -13,7 +13,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
   <!-- Nucleus Cloud Config & Engine -->
   <script src="assets/firebase-config.js"></script>
-  <script src="assets/nucleus-cloud.js"></script>
+  <script src="assets/cloud-sync.js"></script>
   <style>
     :root {
       --ink: #0F2E0F; --green: #1A4A1A; --gold: #F0C040;
@@ -232,7 +232,16 @@
     <div style="font-family:var(--serif);font-size:28px;color:var(--gold);margin-bottom:8px;">Nucleus Admin</div>
     <p style="font-size:13px;color:var(--muted);margin-bottom:24px;">Please enter your password to continue.</p>
     <input type="password" id="adminPassword" placeholder="Password" style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:6px;margin-bottom:16px;font-size:14px;background:var(--bg);color:var(--ink);" onkeydown="if(event.key==='Enter') checkLogin()" />
-    <button class="btn btn-primary" style="width:100%;" onclick="checkLogin()">Login →</button>
+    <button class="btn btn-primary" id="loginButton" style="width:100%;" onclick="checkLogin()">Login →</button>
+    <script>
+      if (window.NUCLEUS_FIREBASE_CONFIG && window.NUCLEUS_FIREBASE_CONFIG.apiKey) {
+        const btn = document.getElementById('loginButton');
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Connecting to Cloud...';
+        }
+      }
+    </script>
     <p id="loginError" style="color:#d93025;font-size:12px;margin-top:12px;display:none;">Incorrect password.</p>
   </div>
 </div>
@@ -983,6 +992,14 @@ function mttSwitchCard(key, type, btn) {
   if (input) input.accept = type === 'image' ? 'image/*' : 'video/*';
 }
 
+async function uploadToFirebaseStorage(key, file) {
+  const storageRef = firebase.storage().ref();
+  const fileRef = storageRef.child('media/' + key + '_' + Date.now() + '_' + file.name);
+  const snapshot = await fileRef.put(file);
+  const downloadURL = await snapshot.ref.getDownloadURL();
+  return downloadURL;
+}
+
 function handleImageUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -990,23 +1007,46 @@ function handleImageUpload(e) {
   const maxBytes = isVideo ? MAX_VID_BYTES : MAX_IMG_BYTES;
   const maxLabel = isVideo ? '500 MB' : '10 MB';
   if (file.size > maxBytes) { showToast(`File too large — max ${maxLabel}.`, 'error'); return; }
-  // Blog cover uses FileReader for immediate preview (small files only)
-  const reader = new FileReader();
-  reader.onload = ev => {
-    currentImageBase64 = ev.target.result;
-    const preview = document.getElementById('imgPreview');
-    if (isVideo) {
-      preview.innerHTML = `
-        <video src="${currentImageBase64}" controls muted
-          style="width:100%;height:100%;object-fit:cover;display:block;"></video>
-        <input type="file" id="imgUpload" accept="video/*" style="display:none" onchange="handleImageUpload(event)" />`;
-    } else {
-      preview.innerHTML = `<img loading="lazy" src="${currentImageBase64}" alt="Preview" style="object-position:${document.getElementById('imgPos').value}; cursor:grab;" draggable="false" />
-        <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);">&#10021; Drag to pan</div>
-        <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
-    }
-  };
-  reader.readAsDataURL(file);
+
+  if (window._nucleusSyncActive) {
+    showToast('Uploading cover media to cloud...', 'success');
+    uploadToFirebaseStorage('blog_cover', file).then(url => {
+      currentImageBase64 = url;
+      const preview = document.getElementById('imgPreview');
+      if (isVideo) {
+        preview.innerHTML = `
+          <video src="${url}" controls muted
+            style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+          <input type="file" id="imgUpload" accept="video/*" style="display:none" onchange="handleImageUpload(event)" />`;
+      } else {
+        preview.innerHTML = `<img loading="lazy" src="${url}" alt="Preview" style="object-position:${document.getElementById('imgPos').value}; cursor:grab;" draggable="false" />
+          <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);">&#10021; Drag to pan</div>
+          <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
+      }
+      showToast('Cover media uploaded successfully!', 'success');
+    }).catch(err => {
+      console.error(err);
+      showToast('Upload failed.', 'error');
+    });
+  } else {
+    // Blog cover uses FileReader for immediate preview (small files only)
+    const reader = new FileReader();
+    reader.onload = ev => {
+      currentImageBase64 = ev.target.result;
+      const preview = document.getElementById('imgPreview');
+      if (isVideo) {
+        preview.innerHTML = `
+          <video src="${currentImageBase64}" controls muted
+            style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+          <input type="file" id="imgUpload" accept="video/*" style="display:none" onchange="handleImageUpload(event)" />`;
+      } else {
+        preview.innerHTML = `<img loading="lazy" src="${currentImageBase64}" alt="Preview" style="object-position:${document.getElementById('imgPos').value}; cursor:grab;" draggable="false" />
+          <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);">&#10021; Drag to pan</div>
+          <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
+      }
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
 function clearImage() {
@@ -1298,20 +1338,20 @@ function logout() {
 }
 
 function saveSettings() {
-  const s = {
-    lives: document.getElementById('set_lives').value,
-    biz: document.getElementById('set_biz').value,
-    years: document.getElementById('set_years').value,
-    lift: document.getElementById('set_lift').value,
-    email: document.getElementById('set_email').value,
-    phone: document.getElementById('set_phone').value,
-    address: document.getElementById('set_address').value,
-    insta: document.getElementById('set_insta').value,
-    linkedin: document.getElementById('set_linkedin').value,
-    twitter: document.getElementById('set_twitter').value,
-    form: document.getElementById('set_form').value,
-    wa: document.getElementById('set_wa').value
-  };
+  let s; try { s = JSON.parse(localStorage.getItem('nucleus_site_settings')) || {}; } catch(e) { s = {}; }
+  s.lives = document.getElementById('set_lives').value;
+  s.biz = document.getElementById('set_biz').value;
+  s.years = document.getElementById('set_years').value;
+  s.lift = document.getElementById('set_lift').value;
+  s.email = document.getElementById('set_email').value;
+  s.phone = document.getElementById('set_phone').value;
+  s.address = document.getElementById('set_address').value;
+  s.insta = document.getElementById('set_insta').value;
+  s.linkedin = document.getElementById('set_linkedin').value;
+  s.twitter = document.getElementById('set_twitter').value;
+  s.form = document.getElementById('set_form').value;
+  s.wa = document.getElementById('set_wa').value;
+
   localStorage.setItem('nucleus_site_settings', JSON.stringify(s));
   showToast('Site settings saved globally!');
 }
@@ -1691,11 +1731,17 @@ async function handleUniversalMediaUpload(storageKey, event) {
     return;
   }
   
-  showToast('Uploading media…', 'success');
+  showToast('Uploading media...', 'success');
   try {
-    await mdbSave(storageKey, file);
-    mdbMark(storageKey);
-    localStorage.removeItem(storageKey); // clear old base64
+    if (window._nucleusSyncActive) {
+      const downloadURL = await uploadToFirebaseStorage(storageKey, file);
+      localStorage.setItem(storageKey, downloadURL);
+      mdbUnmark(storageKey);
+    } else {
+      await mdbSave(storageKey, file);
+      mdbMark(storageKey);
+      localStorage.removeItem(storageKey); // clear old base64
+    }
     localStorage.removeItem(storageKey + '_url');
     
     const urlInput = document.getElementById('url-' + storageKey);
@@ -1850,7 +1896,7 @@ function initImageManager() {
           : `<img class="img-card-preview" src="${objUrl}" alt="${label}" style="aspect-ratio:${aspect};" />`;
       }).catch(()=>{});
     } else if (storedLs) {
-      const isV = storedLs.startsWith('data:video/');
+      const isV = storedLs.startsWith('data:video/') || localStorage.getItem(key + '_type') === 'video' || storedLs.match(/\.(mp4|webm|mov)(\?.*)?$/i);
       wrap.innerHTML = isV
         ? `<video class="img-card-preview" src="${storedLs}" muted loop autoplay playsinline style="aspect-ratio:${aspect};object-fit:cover;"></video>`
         : `<img class="img-card-preview" src="${storedLs}" alt="${label}" style="aspect-ratio:${aspect};" />`;
@@ -1873,24 +1919,32 @@ async function handleImgCardUpload(key, e, card) {
     showToast(`File too large — max ${maxLabel}.`, 'error');
     return;
   }
-  showToast(isVideo ? 'Uploading video…' : 'Uploading image…', 'success');
+  showToast(isVideo ? 'Uploading video to cloud...' : 'Uploading image to cloud...', 'success');
   try {
-    await mdbSave(key, file);
-    mdbMark(key);
-    localStorage.removeItem(key); // clear old base64 if any
+    let finalUrl;
+    if (window._nucleusSyncActive) {
+      finalUrl = await uploadToFirebaseStorage(key, file);
+      localStorage.setItem(key, finalUrl);
+      mdbUnmark(key);
+    } else {
+      await mdbSave(key, file);
+      mdbMark(key);
+      localStorage.removeItem(key); // clear old base64 if any
+      finalUrl = URL.createObjectURL(file);
+    }
+    localStorage.setItem(key + '_type', isVideo ? 'video' : 'image');
     card.classList.add('has-override');
-    const objUrl = URL.createObjectURL(file);
     const aspect = card.dataset.aspect || '16/9';
     const wrap = card.querySelector('.img-card-preview-wrap') || card;
     if (isVideo) {
       const el = wrap.querySelector('.img-card-preview');
-      if (el) el.outerHTML = `<video class="img-card-preview" src="${objUrl}" muted loop autoplay playsinline style="aspect-ratio:${aspect};object-fit:cover;"></video>`;
+      if (el) el.outerHTML = `<video class="img-card-preview" src="${finalUrl}" muted loop autoplay playsinline style="aspect-ratio:${aspect};object-fit:cover;"></video>`;
     } else {
       const el = wrap.querySelector('.img-card-preview');
-      if (el && el.tagName === 'IMG') el.src = objUrl;
-      else if (el) el.outerHTML = `<img class="img-card-preview" src="${objUrl}" alt="" style="aspect-ratio:${aspect};" />`;
+      if (el && el.tagName === 'IMG') el.src = finalUrl;
+      else if (el) el.outerHTML = `<img class="img-card-preview" src="${finalUrl}" alt="" style="aspect-ratio:${aspect};" />`;
     }
-    showToast(`"${card.dataset.label}" updated! Refresh the site to see changes.`, 'success');
+    showToast(`"${card.dataset.label}" updated!`, 'success');
   } catch(err) {
     console.error(err);
     showToast('Upload failed. Try a smaller file.', 'error');
@@ -1915,7 +1969,34 @@ function saveMedia() { showToast('Images are auto-saved on upload!'); }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 document.getElementById('postDate').value = new Date().toISOString().slice(0,10);
-renderSidebar();
+
+function reloadActiveView() {
+  ALL_VIEWS.forEach(v => {
+    const el = document.getElementById('view-' + v);
+    if (el && el.style.display !== 'none') {
+      if (v === 'leads') loadLeads();
+      if (v === 'list') renderAllPosts();
+      if (v === 'homepage') loadHomepage();
+      if (v === 'services') renderServices();
+      if (v === 'casestudies') renderCaseStudies();
+      if (v === 'testimonials') renderTestimonials();
+      if (v === 'about') loadAbout();
+      if (v === 'careers') renderCareers();
+      if (v === 'media') initImageManager();
+    }
+  });
+}
+
+document.addEventListener('nucleus-sync-ready', function() {
+  const btn = document.getElementById('loginButton');
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Login →';
+  }
+  renderSidebar();
+  reloadActiveView();
+});
+
 // Show homepage view by default
 showView('homepage');
 </script>

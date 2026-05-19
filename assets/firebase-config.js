@@ -13,10 +13,14 @@
  */
 
 window.NUCLEUS_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDJEwLj0aZkuYyzVU0vp1LOQAQ5pCCT8VY",
-  authDomain: "nucleus-cms.firebaseapp.com",
-  projectId: "nucleus-cms",
-  storageBucket: "nucleus-cms.firebasestorage.app",
-  messagingSenderId: "122488227458",
-  appId: "1:122488227458:web:47af7dcff07ae93784d69b"
+  apiKey: "AIzaSyC47qltHAil79ZnaMeUwhuLTxMCMwNWGjk",
+  authDomain: "nucleuswebsite-a8a34.firebaseapp.com",
+  databaseURL: "https://nucleuswebsite-a8a34-default-rtdb.firebaseio.com",
+  projectId: "nucleuswebsite-a8a34",
+  storageBucket: "nucleuswebsite-a8a34.firebasestorage.app",
+  messagingSenderId: "906262873959",
+  appId: "1:906262873959:web:e60508773a5ef6fc5a51c2",
+  measurementId: "G-QXCXTRZ36W"
 };
+
+window.FIREBASE_CONFIGURED = true;

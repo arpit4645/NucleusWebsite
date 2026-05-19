@@ -586,6 +586,10 @@
 
     renderBlogPosts();
 
+    document.addEventListener('nucleus-sync-ready', function() {
+      renderBlogPosts();
+    });
+
     // Re-render if admin panel publishes in another tab
     window.addEventListener('storage', function(e) {
       if (e.key === SKEY) renderBlogPosts();

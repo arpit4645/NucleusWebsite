@@ -172,6 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+document.addEventListener('nucleus-sync-ready', () => {
+  if (typeof loadGlobalMediaAndSettings === 'function') {
+    loadGlobalMediaAndSettings();
+  }
+});
+
 /* ============================================================
    Nucleus — Dynamic CMS Media & Settings Sync Engine
    ============================================================ */

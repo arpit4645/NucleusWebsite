@@ -440,6 +440,10 @@
     document.addEventListener('DOMContentLoaded', () => {
       setupImageUpload('hero-upload', 'nucleus_case_studies_hero');
     });
+
+    document.addEventListener('nucleus-sync-ready', () => {
+      setupImageUpload('hero-upload', 'nucleus_case_studies_hero');
+    });
   </script>
 </body>
 </html>
