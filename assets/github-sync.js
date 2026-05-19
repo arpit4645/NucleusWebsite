@@ -138,7 +138,7 @@
       // Step 1: get current file (for SHA + merge base)
       let currentData = {};
       let sha = _lastSha;
-      const getRes = await fetch(apiBase + '?ref=' + encodeURIComponent(branch), { headers: _ghHeaders(cfg) });
+      const getRes = await fetch(apiBase + '?ref=' + encodeURIComponent(branch) + '&t=' + Date.now(), { cache: 'no-store', headers: _ghHeaders(cfg) });
       if (getRes.ok) {
         const file = await getRes.json();
         sha = file.sha;
