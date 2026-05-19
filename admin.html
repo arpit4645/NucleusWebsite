@@ -7,13 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <!-- Firebase SDK (compat v9) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-  <!-- Nucleus Cloud Config & Engine -->
-  <script src="assets/firebase-config.js"></script>
-  <script src="assets/cloud-sync.js"></script>
+  <!-- Nucleus Cloud Sync (GitHub backend) -->
+  <script src="assets/sync-config.js"></script>
+  <script src="assets/github-sync.js"></script>
   <style>
     :root {
       --ink: #0F2E0F; --green: #1A4A1A; --gold: #F0C040;
@@ -233,16 +229,36 @@
     <p style="font-size:13px;color:var(--muted);margin-bottom:24px;">Please enter your password to continue.</p>
     <input type="password" id="adminPassword" placeholder="Password" style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:6px;margin-bottom:16px;font-size:14px;background:var(--bg);color:var(--ink);" onkeydown="if(event.key==='Enter') checkLogin()" />
     <button class="btn btn-primary" id="loginButton" style="width:100%;" onclick="checkLogin()">Login →</button>
-    <script>
-      if (window.NUCLEUS_FIREBASE_CONFIG && window.NUCLEUS_FIREBASE_CONFIG.apiKey) {
-        const btn = document.getElementById('loginButton');
-        if (btn) {
-          btn.disabled = true;
-          btn.textContent = 'Connecting to Cloud...';
-        }
-      }
-    </script>
     <p id="loginError" style="color:#d93025;font-size:12px;margin-top:12px;display:none;">Incorrect password.</p>
+  </div>
+</div>
+
+<!-- GitHub Setup Wizard -->
+<div id="ghSetupGate" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9998;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--paper);padding:32px;border-radius:12px;border:1px solid var(--line);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div style="font-family:var(--serif);font-size:24px;color:var(--gold);margin-bottom:6px;">One-Time Setup</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5;">To sync admin changes to all visitors, add a GitHub Personal Access Token. This is a one-time step — your browser remembers it.</p>
+
+    <div style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:20px;font-size:13px;line-height:1.7;">
+      <strong style="display:block;margin-bottom:8px;color:var(--ink);">How to create a token (1 minute):</strong>
+      <ol style="margin:0;padding-left:22px;color:var(--ink-2);">
+        <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color:var(--green);font-weight:500;">GitHub → New fine-grained token</a></li>
+        <li>Token name: <code style="background:var(--paper);padding:1px 6px;border-radius:3px;font-family:var(--mono);">Nucleus Admin</code></li>
+        <li>Expiration: <strong>No expiration</strong> (or 1 year)</li>
+        <li>Repository access: <strong>Only select repositories</strong> → choose <code style="background:var(--paper);padding:1px 6px;border-radius:3px;font-family:var(--mono);">NucleusWebsite</code></li>
+        <li>Permissions → Repository permissions → <strong>Contents: Read and write</strong></li>
+        <li>Click <strong>Generate token</strong> → copy and paste below</li>
+      </ol>
+    </div>
+
+    <label style="display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">GitHub Token</label>
+    <input type="password" id="ghTokenInput" placeholder="github_pat_..." style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:6px;margin-bottom:16px;font-size:13px;font-family:var(--mono);background:var(--bg);color:var(--ink);" />
+
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="saveGithubToken()">Save &amp; Connect</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('ghSetupGate').style.display='none'">Later</button>
+    </div>
+    <p id="ghSetupError" style="color:#d93025;font-size:12px;margin-top:12px;display:none;"></p>
   </div>
 </div>
 
@@ -270,7 +286,10 @@
         <span style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);">Cloud Sync</span>
         <span id="nucleus-sync-badge" style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.4);" title="Checking...">&#9679; Checking...</span>
       </div>
-      <button onclick="forceSyncNow()" style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);font:inherit;font-size:12px;padding:8px 12px;border-radius:6px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,.13)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">&#8645; Force Sync to Cloud</button>
+      <div style="display:flex;gap:6px;">
+        <button onclick="forceSyncNow()" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);font:inherit;font-size:12px;padding:8px 10px;border-radius:6px;cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,.13)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">&#8645; Sync Now</button>
+        <button onclick="showGithubSetup()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);font:inherit;font-size:12px;padding:8px 10px;border-radius:6px;cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,.13)'" onmouseout="this.style.background='rgba(255,255,255,.07)'" title="Setup / Re-enter GitHub token">&#9881;</button>
+      </div>
     </div>
     <div>
       <p style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);margin:0 0 10px;">Published Posts</p>
@@ -1000,22 +1019,11 @@ function mttSwitchCard(key, type, btn) {
 }
 
 async function uploadToFirebaseStorage(key, file) {
-  if (!window.firebase || !window.firebase.storage) {
-    throw new Error('Firebase Storage not initialized. Check Firestore rules in the Firebase console.');
+  // NOTE: name kept for backward compatibility — now uploads to GitHub.
+  if (!window.nucleusUploadMedia) {
+    throw new Error('Sync engine not loaded.');
   }
-  try {
-    const storageRef = firebase.storage().ref();
-    const fileRef = storageRef.child('nucleus_media/' + key + '_' + Date.now() + '_' + file.name);
-    const snapshot = await fileRef.put(file);
-    const downloadURL = await snapshot.ref.getDownloadURL();
-    return downloadURL;
-  } catch (err) {
-    console.error('[Upload] Firebase Storage error:', err.code, err.message);
-    if (err.code === 'storage/unauthorized') {
-      throw new Error('Storage upload failed: permission denied. Update Firebase Storage rules.');
-    }
-    throw err;
-  }
+  return await window.nucleusUploadMedia(key, file);
 }
 
 function handleImageUpload(e) {
@@ -1428,11 +1436,12 @@ function checkLogin() {
   const pwd = document.getElementById('adminPassword').value;
   let s; try { s = JSON.parse(localStorage.getItem('nucleus_site_settings')) || {}; } catch(e) { s = {}; }
   const realPwd = s.adminPwd || 'nucleusadmin';
-  
+
   if (pwd === realPwd) {
     sessionStorage.setItem('nucleus_auth', 'true');
     document.getElementById('loginGate').style.display = 'none';
     document.getElementById('adminLayout').style.display = '';
+    maybeShowGithubSetup();
   } else {
     document.getElementById('loginError').style.display = 'block';
   }
@@ -1441,6 +1450,56 @@ function checkLogin() {
 if (sessionStorage.getItem('nucleus_auth') === 'true') {
   document.getElementById('loginGate').style.display = 'none';
   document.getElementById('adminLayout').style.display = '';
+  setTimeout(maybeShowGithubSetup, 500);
+}
+
+// ── GitHub Setup Wizard ───────────────────────────────────────────────────────
+function maybeShowGithubSetup() {
+  const cfg = (window.nucleusGithubGetConfig && window.nucleusGithubGetConfig()) || null;
+  if (!cfg || !cfg.token) {
+    showGithubSetup();
+  }
+}
+function showGithubSetup() {
+  const gate = document.getElementById('ghSetupGate');
+  if (gate) gate.style.display = 'flex';
+  const err = document.getElementById('ghSetupError');
+  if (err) err.style.display = 'none';
+}
+async function saveGithubToken() {
+  const tokenInput = document.getElementById('ghTokenInput');
+  const errEl = document.getElementById('ghSetupError');
+  const token = (tokenInput.value || '').trim();
+  if (!token) {
+    errEl.textContent = 'Please paste a token.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!token.startsWith('github_pat_') && !token.startsWith('ghp_')) {
+    errEl.textContent = 'That does not look like a GitHub token. It should start with "github_pat_" or "ghp_".';
+    errEl.style.display = 'block';
+    return;
+  }
+  // Test the token by trying to read the repo
+  const cfg = window.NUCLEUS_GITHUB_REPO;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}`, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github+json' }
+    });
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      throw new Error(j.message || 'Token rejected by GitHub (status ' + res.status + ')');
+    }
+  } catch (e) {
+    errEl.textContent = 'Token check failed: ' + e.message;
+    errEl.style.display = 'block';
+    return;
+  }
+  window.nucleusGithubSetToken(token);
+  document.getElementById('ghSetupGate').style.display = 'none';
+  showToast('GitHub connected! Syncing...', 'success');
+  // Re-init sync now that we have a token
+  if (window.initNucleusSync) await window.initNucleusSync();
 }
 
 // ── Homepage Content ─────────────────────────────────────────────────────────
@@ -2011,23 +2070,26 @@ window._nucleusIsAdmin = true;
 
 async function forceSyncNow() {
   const badge = document.getElementById('nucleus-sync-badge');
-  if (badge) badge.innerHTML = '<span style="color:#ffb300;">&#9679;</span> Syncing...';
-  if (!window._nucleusSyncActive) {
-    showToast('Firebase not connected. Check Firestore rules in the Firebase console.', 'error');
-    if (badge) badge.innerHTML = '<span style="color:#f44336;">&#9679;</span> Local only';
+  const cfg = window.nucleusGithubGetConfig && window.nucleusGithubGetConfig();
+  if (!cfg || !cfg.token) {
+    showToast('No GitHub token. Click the gear icon to set up sync.', 'error');
+    showGithubSetup();
     return;
   }
-  // Queue all local content keys through the interceptor, then flush immediately
+  if (badge) badge.innerHTML = '<span style="color:#ffb300;">&#9679;</span> Syncing...';
   const PREFIXES = ['nucleus_', 'about_', 'founder_', 'img_'];
   Object.keys(localStorage).forEach(k => {
     if (PREFIXES.some(p => k.startsWith(p))) {
       const v = localStorage.getItem(k);
-      if (v !== null) localStorage.setItem(k, v); // goes through cloud-sync interceptor
+      if (v !== null) localStorage.setItem(k, v); // goes through sync interceptor
     }
   });
-  await window.nucleusSyncFlush();
-  showToast('All content pushed to cloud!', 'success');
-  if (badge) badge.innerHTML = '<span style="color:#4caf50;">&#9679;</span> Connected';
+  try {
+    await window.nucleusSyncFlush();
+    showToast('All content pushed to GitHub!', 'success');
+  } catch (e) {
+    showToast('Push failed: ' + e.message, 'error');
+  }
 }
 
 document.addEventListener('nucleus-sync-ready', function() {
