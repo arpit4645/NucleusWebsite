@@ -54,11 +54,37 @@
         _paused = false;
         return true;
       }
+      return true; // connected but no data yet — still a success
     } catch (e) {
       console.warn('[NucleusSync] Pull error:', e.message);
+      _updateSyncBadge(false, e.message);
     }
     return false;
   };
+
+  // ── Admin sync badge helpers ───────────────────────────────────────────────
+  function _updateSyncBadge(ok, errMsg) {
+    const badge = document.getElementById('nucleus-sync-badge');
+    if (!badge) return;
+    if (ok) {
+      badge.innerHTML = '<span style="color:#4caf50;">&#9679;</span> Connected';
+      badge.title = 'Firebase Firestore is syncing correctly.';
+    } else {
+      badge.innerHTML = '<span style="color:#f44336;">&#9679;</span> Local only';
+      badge.title = errMsg || 'Firebase not connected. Changes will not appear to other visitors.';
+    }
+  }
+
+  let _adminErrorShown = false;
+  function _showAdminSyncError(msg) {
+    if (_adminErrorShown) return;
+    _adminErrorShown = true;
+    const div = document.createElement('div');
+    div.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#c62828;color:#fff;padding:14px 20px;z-index:99999;font-size:13px;font-family:monospace;line-height:1.5;';
+    div.innerHTML = '<strong>&#9888; Cloud Sync Error</strong> — ' + msg.replace(/\n/g, '<br>') +
+      ' <button onclick="this.parentNode.remove()" style="float:right;background:none;border:1px solid rgba(255,255,255,.5);color:#fff;padding:2px 10px;cursor:pointer;border-radius:4px;">Dismiss</button>';
+    document.body.prepend(div);
+  }
 
   // ── Push pending key-value pairs to Firestore ──────────────────────────────
   window.nucleusSyncFlush = async function () {
@@ -68,8 +94,13 @@
       const batch = Object.assign({}, _pendingPushes);
       _pendingPushes = {};
       await db.collection(FIRESTORE_COL).doc(FIRESTORE_DOC).set(batch, { merge: true });
+      _updateSyncBadge(true);
     } catch (e) {
       console.warn('[NucleusSync] Push error:', e.message);
+      _updateSyncBadge(false, e.message);
+      if (window._nucleusIsAdmin) {
+        _showAdminSyncError('Cloud push failed: ' + e.message + '\n\nFirestore rules may have expired. See Admin → Sync Status for help.');
+      }
     }
   };
 
@@ -143,6 +174,7 @@
     const pulled = await window.nucleusSyncPull();
     console.log('[NucleusSync] ✅ Firebase connected.', pulled ? 'Cloud data loaded!' : 'No cloud data yet.');
     window._nucleusSyncActive = true;
+    _updateSyncBadge(true);
     document.dispatchEvent(new Event('nucleus-sync-ready'));
   };
 
