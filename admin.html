@@ -7,6 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <!-- Firebase SDK (compat v9) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <!-- Nucleus Cloud Config & Engine -->
+  <script src="assets/firebase-config.js"></script>
+  <script src="assets/nucleus-cloud.js"></script>
   <style>
     :root {
       --ink: #0F2E0F; --green: #1A4A1A; --gold: #F0C040;
@@ -772,13 +779,44 @@ Everything depends on you</textarea></div>
   </main>
 </div>
 
+<!-- Firebase Setup Wizard -->
+<div id="firebaseSetupModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
+  <div style="background:var(--paper);border-radius:16px;border:1px solid var(--line);width:100%;max-width:580px;padding:40px;box-shadow:0 24px 64px rgba(0,0,0,0.3);">
+    <div style="font-family:var(--serif);font-size:28px;color:var(--ink);margin-bottom:6px;">Connect to Cloud ☁️</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">To make admin changes visible on the live site, connect a free Firebase project. This takes ~3 minutes and is a one-time setup.</p>
+
+    <div style="background:#fff8e1;border:1px solid #f0c040;border-radius:8px;padding:16px;margin-bottom:24px;font-size:13px;line-height:1.7;">
+      <strong>Quick Steps:</strong><br>
+      1. Go to <a href="https://console.firebase.google.com" target="_blank" style="color:var(--green);font-weight:600;">console.firebase.google.com</a><br>
+      2. Click <strong>"Add project"</strong> → name it "nucleus-cms" → Create<br>
+      3. Click <strong>"Web"</strong> icon → Register app → Copy the <code style="background:#f0f0f0;padding:2px 6px;border-radius:3px;">firebaseConfig</code> object<br>
+      4. Go to <strong>Firestore Database</strong> → Create → Start in Test Mode<br>
+      5. Go to <strong>Storage</strong> → Get Started → Start in Test Mode<br>
+      6. Paste your config values below:
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div class="field" style="margin:0;"><label>API Key</label><input type="text" id="wz_apiKey" placeholder="AIzaSy..." /></div>
+      <div class="field" style="margin:0;"><label>Auth Domain</label><input type="text" id="wz_authDomain" placeholder="xxx.firebaseapp.com" /></div>
+      <div class="field" style="margin:0;"><label>Project ID</label><input type="text" id="wz_projectId" placeholder="nucleus-cms" /></div>
+      <div class="field" style="margin:0;"><label>Storage Bucket</label><input type="text" id="wz_storageBucket" placeholder="xxx.appspot.com" /></div>
+      <div class="field" style="margin:0;"><label>Messaging Sender ID</label><input type="text" id="wz_messagingSenderId" placeholder="123456789" /></div>
+      <div class="field" style="margin:0;"><label>App ID</label><input type="text" id="wz_appId" placeholder="1:123:web:abc" /></div>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-gold" style="flex:1;" onclick="saveFirebaseConfig()">Save & Connect →</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('firebaseSetupModal').style.display='none'">Skip (use local only)</button>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:12px;text-align:center;">Your config is saved in <code>assets/firebase-config.js</code> in your project folder.</p>
+  </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── IndexedDB Media Store (replaces localStorage for large files) ────────────
-// localStorage has a ~5 MB limit and silently fails for videos.
-// IndexedDB stores Blobs with no practical size limit.
+// ── IndexedDB Media Store (kept for local fallback) ─────────────────────────
 (function(){
   const DB='nucleus_media', ST='files';
   function _open(){

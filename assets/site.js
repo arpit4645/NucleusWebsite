@@ -3,6 +3,28 @@
    Performance-first · GPU-composited · Luxury Standard
    ============================================================ */
 
+// --- 0. DYNAMICALLY LOAD FIREBASE & CLOUD SYNC ---
+// This ensures that all HTML files (frontend + admin) get Firebase loaded
+// automatically without needing to edit <head> in 10 different files.
+(function loadCloudEngine() {
+  const scripts = [
+    "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js",
+    "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js",
+    "assets/firebase-config.js",
+    "assets/cloud-sync.js"
+  ];
+  
+  let loaded = 0;
+  function loadNext() {
+    if (loaded >= scripts.length) return;
+    const s = document.createElement('script');
+    s.src = scripts[loaded];
+    s.onload = () => { loaded++; loadNext(); };
+    document.head.appendChild(s);
+  }
+  loadNext();
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('page-loaded');
 
