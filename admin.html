@@ -1618,15 +1618,22 @@ function renderCaseStudies() {
         <button class="btn btn-danger btn-sm" onclick="removeCaseStudy(${i})">Remove</button>
       </div>
       <div class="field"><label>Client Name</label><input type="text" class="cs-client" value="${escHtml(s.client)}" /></div>
+      <div class="field-row">
+        <div class="field"><label>Industry/Badge e.g. Manufacturing</label><input type="text" class="cs-industry" value="${escHtml(s.industry||'')}" /></div>
+        <div class="field"><label>Duration e.g. 6 months</label><input type="text" class="cs-duration" value="${escHtml(s.duration||'')}" /></div>
+      </div>
+      <div class="field"><label>Location e.g. Surat, Gujarat</label><input type="text" class="cs-location" value="${escHtml(s.location||'')}" /></div>
       <div class="field"><label>Before Points (one per line)</label><textarea class="cs-before" rows="3">${escHtml(s.before)}</textarea></div>
       <div class="field"><label>After Points (one per line)</label><textarea class="cs-after" rows="3">${escHtml(s.after)}</textarea></div>
       <div class="field"><label>Result Summary</label><input type="text" class="cs-result" value="${escHtml(s.result||'')}" /></div>
+      <div class="field"><label>Client Quote</label><textarea class="cs-quote" rows="2">${escHtml(s.quote||'')}</textarea></div>
+      <div class="field"><label>Quote Author &amp; Role</label><input type="text" class="cs-quote_author" value="${escHtml(s.quote_author||'')}" /></div>
     </div>
   `).join('');
 }
 function addCaseStudy() {
   const items = getCaseStudies();
-  items.push({client:'',before:'',after:'',result:''});
+  items.push({client:'',industry:'',duration:'',location:'',before:'',after:'',result:'',quote:'',quote_author:''});
   localStorage.setItem('nucleus_casestudies', JSON.stringify(items));
   renderCaseStudies();
 }
@@ -1638,12 +1645,27 @@ function removeCaseStudy(i) {
 }
 function saveCaseStudies() {
   const clients = document.querySelectorAll('.cs-client');
+  const industries = document.querySelectorAll('.cs-industry');
+  const durations = document.querySelectorAll('.cs-duration');
+  const locations = document.querySelectorAll('.cs-location');
   const befores = document.querySelectorAll('.cs-before');
   const afters = document.querySelectorAll('.cs-after');
   const results = document.querySelectorAll('.cs-result');
+  const quotes = document.querySelectorAll('.cs-quote');
+  const quoteAuthors = document.querySelectorAll('.cs-quote_author');
   const items = [];
   clients.forEach((c,i) => {
-    items.push({client:c.value, before:befores[i].value, after:afters[i].value, result:results[i].value});
+    items.push({
+      client: c.value,
+      industry: industries[i] ? industries[i].value : '',
+      duration: durations[i] ? durations[i].value : '',
+      location: locations[i] ? locations[i].value : '',
+      before: befores[i].value,
+      after: afters[i].value,
+      result: results[i].value,
+      quote: quotes[i] ? quotes[i].value : '',
+      quote_author: quoteAuthors[i] ? quoteAuthors[i].value : ''
+    });
   });
   localStorage.setItem('nucleus_casestudies', JSON.stringify(items));
   showToast('Case studies saved!');
