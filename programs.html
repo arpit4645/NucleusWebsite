@@ -149,9 +149,9 @@
   <header class="page-hero dark-section" style="background: var(--green-deep); color: var(--white); position: relative; overflow: hidden;">
     <div class="hero-bg" style="position: absolute; inset: 0; background: radial-gradient(circle at 80% 20%, rgba(240, 192, 64, 0.15) 0%, transparent 50%); pointer-events: none;"></div>
     <div class="wrap" style="text-align: center; position: relative; z-index: 2;">
-      <p class="eyebrow reveal" style="color: var(--gold-primary);">Training & Development</p>
-      <h1 class="reveal" style="color: var(--white); max-width: 22ch; margin: 16px auto 0;">Programs That Change How People Think</h1>
-      <p class="lead reveal" style="margin: 24px auto 0; color: rgba(255,255,255,0.8); max-width: 60ch;">
+      <p class="eyebrow reveal" style="color: var(--gold-primary);" data-set="nucleus_programs_hero_eyebrow">Training & Development</p>
+      <h1 class="reveal" style="color: var(--white); max-width: 22ch; margin: 16px auto 0;" data-set="nucleus_programs_hero_title">Programs That Change How People Think</h1>
+      <p class="lead reveal" style="margin: 24px auto 0; color: rgba(255,255,255,0.8); max-width: 60ch;" data-set="nucleus_programs_hero_sub">
         Not motivational talks. Not one-day workshops. Structured programs that transform behavior, skills, and mindset.
       </p>
     </div>
@@ -159,93 +159,7 @@
 
   <!-- ═══════════ PROGRAMS GRID ═══════════ -->
   <section class="wrap section">
-    <div class="grid grid-2" data-stagger="150">
-      
-      <!-- P1 -->
-      <div class="prog-card c-dark reveal">
-        <img loading="lazy" src="assets/prog_extraordinary.png" class="prog-img" alt="Be Extraordinary" data-media-key="img_prog_extraordinary" />
-        <div class="prog-content">
-          <h2>Be Extraordinary</h2>
-          <div class="prog-meta">
-            <div><span style="color:var(--muted);">For</span><span>Students, Fresh Grads</span></div>
-            <div><span style="color:var(--muted);">Duration</span><span>2 Days Intensive</span></div>
-          </div>
-          <p>The foundation program for personal transformation. Participants leave with a clear life vision, purpose statement, and action roadmap.</p>
-          <ul class="prog-outcomes">
-            <li>Clarity on life purpose and goals</li>
-            <li>Mindset shift from victim to creator</li>
-            <li>Personal action plan with accountability</li>
-          </ul>
-          <div style="margin-top: auto;">
-            <a href="contact.html" class="btn">Enquire Now →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- P2 -->
-      <div class="prog-card c-white reveal">
-        <img loading="lazy" src="assets/prog_business.png" class="prog-img" alt="Business Excellence" data-media-key="img_prog_business" />
-        <div class="prog-content">
-          <h2>Business Excellence</h2>
-          <div class="prog-meta">
-            <div><span style="color:var(--muted);">For</span><span style="color:var(--green-primary);">Founders, Senior Leaders</span></div>
-            <div><span style="color:var(--muted);">Duration</span><span style="color:var(--green-primary);">3-Day Residential</span></div>
-          </div>
-          <p>The flagship business transformation program. Break through the thinking patterns holding your business back. Return with a complete transformation blueprint.</p>
-          <ul class="prog-outcomes">
-            <li>Identify the #1 bottleneck in your business</li>
-            <li>Complete your Business Transformation Blueprint</li>
-            <li>Peer accountability group of founders</li>
-          </ul>
-          <div style="margin-top: auto;">
-            <a href="contact.html" class="btn btn-primary">Apply Now →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- P3 -->
-      <div class="prog-card c-gold reveal">
-        <img loading="lazy" src="assets/prog_sales.png" class="prog-img" alt="Sales Mastery" data-media-key="img_prog_sales" />
-        <div class="prog-content">
-          <h2>Sales Mastery</h2>
-          <div class="prog-meta">
-            <div><span style="color:rgba(0,0,0,0.5);">For</span><span>Sales Teams & Managers</span></div>
-            <div><span style="color:rgba(0,0,0,0.5);">Duration</span><span>2 Days + 90-Day Follow-up</span></div>
-          </div>
-          <p>Not just sales skills. A complete rewiring of how your team thinks about selling. From fear-based selling to value-based selling.</p>
-          <ul class="prog-outcomes">
-            <li>Sales mindset transformation</li>
-            <li>Full consultative selling framework</li>
-            <li>Scripts, objection handling, and closing</li>
-          </ul>
-          <div style="margin-top: auto;">
-            <a href="contact.html" class="btn">Enquire Now →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- P4 -->
-      <div class="prog-card c-cream reveal">
-        <img loading="lazy" src="assets/prog_outbound.png" class="prog-img" alt="Outbound Mastery" data-media-key="img_prog_outbound" />
-        <div class="prog-content">
-          <h2>Outbound Mastery</h2>
-          <div class="prog-meta">
-            <div><span style="color:var(--muted);">For</span><span style="color:var(--gold-dark);">B2B Sales Teams</span></div>
-            <div><span style="color:var(--muted);">Duration</span><span style="color:var(--gold-dark);">1 Day + Implementation</span></div>
-          </div>
-          <p>Build a systematic outbound engine. From lead identification to first meeting booked. Stop relying on referrals alone.</p>
-          <ul class="prog-outcomes">
-            <li>Outbound prospecting playbook</li>
-            <li>LinkedIn and WhatsApp outreach system</li>
-            <li>30-day implementation challenge</li>
-          </ul>
-          <div style="margin-top: auto;">
-            <a href="contact.html" class="btn" style="background: var(--charcoal); color: var(--white);">Enquire Now →</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div id="programs-dynamic-list" class="grid grid-2" data-stagger="150"></div>
   </section>
 
   <!-- ═══════════ UPCOMING SCHEDULE ═══════════ -->

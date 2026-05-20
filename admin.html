@@ -291,6 +291,7 @@
 
       <button onclick="showView('about')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg> About Page</button>
       <button onclick="showView('careers')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Careers</button>
+      <button onclick="showView('programs')">🎓 Programs</button>
       <button onclick="showView('media')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Media</button>
       <button onclick="showView('editor')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> New Blog Post</button>
       <button onclick="showView('list')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> All Posts</button>
@@ -741,14 +742,66 @@ Everything depends on you</textarea></div>
     <!-- Careers View -->
     <div id="view-careers" style="display:none;">
       <div class="topbar">
-        <h1>Job Listings</h1>
+        <h1>Careers</h1>
         <div class="topbar-actions">
           <button class="btn btn-ghost" onclick="addJob()">+ Add Position</button>
           <button class="btn btn-primary" onclick="saveCareers()">Save All</button>
         </div>
       </div>
       <div class="content">
-        <div id="careersList" style="display:flex;flex-direction:column;gap:16px;max-width:800px;"></div>
+        <div style="display:flex;flex-direction:column;gap:20px;max-width:800px;">
+          <!-- Page Content Panel -->
+          <div class="panel">
+            <h3>Page Content</h3>
+            <div class="field"><label>Hero Title</label><input type="text" id="careers_hero_title" placeholder="Don't Join Us for a Job." /></div>
+            <div class="field"><label>Hero Subtitle (em text)</label><input type="text" id="careers_hero_em" placeholder="Join Us for Transformation." /></div>
+            <div class="field"><label>Section Eyebrow</label><input type="text" id="careers_eyebrow" placeholder="Life At Nucleus" /></div>
+            <div class="field"><label>Section Heading</label><input type="text" id="careers_section_title" placeholder="You don't just work. You grow as a human." /></div>
+            <div class="field"><label>Section Description</label><textarea id="careers_desc" rows="3" placeholder="We are looking for individuals who are driven by purpose..."></textarea></div>
+            <button class="btn btn-primary btn-sm" style="margin-top:8px;" onclick="saveCareersContent()">Save Page Content</button>
+          </div>
+          <!-- Benefits Panel -->
+          <div class="panel">
+            <h3>Benefits Section</h3>
+            <div id="careersBenefitsList" style="display:flex;flex-direction:column;gap:16px;"></div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:16px;" onclick="addCareerBenefit()">+ Add Benefit</button>
+            <button class="btn btn-primary btn-sm" style="margin-top:8px;" onclick="saveCareersBenefits()">Save Benefits</button>
+          </div>
+          <!-- Job Listings Panel -->
+          <div class="panel">
+            <h3>Job Listings</h3>
+            <div id="careersList" style="display:flex;flex-direction:column;gap:16px;"></div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:16px;" onclick="addJob()">+ Add Position</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Programs View -->
+    <div id="view-programs" style="display:none;">
+      <div class="topbar">
+        <h1>Programs</h1>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" onclick="addProgram()">+ Add Program</button>
+          <button class="btn btn-primary" onclick="savePrograms()">Save All</button>
+        </div>
+      </div>
+      <div class="content">
+        <div style="display:flex;flex-direction:column;gap:20px;max-width:800px;">
+          <!-- Page Hero Panel -->
+          <div class="panel">
+            <h3>Page Hero</h3>
+            <div class="field"><label>Eyebrow</label><input type="text" id="programs_hero_eyebrow" placeholder="Training & Development" /></div>
+            <div class="field"><label>Title</label><input type="text" id="programs_hero_title" placeholder="Programs That Change How People Think" /></div>
+            <div class="field"><label>Subtitle</label><textarea id="programs_hero_sub" rows="3" placeholder="Not motivational talks. Not one-day workshops..."></textarea></div>
+            <button class="btn btn-primary btn-sm" style="margin-top:8px;" onclick="saveProgramsHero()">Save Hero</button>
+          </div>
+          <!-- Programs List Panel -->
+          <div class="panel">
+            <h3>Programs List</h3>
+            <div id="programsList" style="display:flex;flex-direction:column;gap:16px;"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -904,7 +957,7 @@ function showToast(msg, type='success') {
 }
 
 // ── Views ───────────────────────────────────────────────────────────────────
-const ALL_VIEWS = ['editor','list','settings','leads','homepage','services','casestudies','testimonials','about','careers','media'];
+const ALL_VIEWS = ['editor','list','settings','leads','homepage','services','casestudies','testimonials','about','careers','programs','media'];
 function showView(view) {
   ALL_VIEWS.forEach(v => {
     const el = document.getElementById('view-' + v);
@@ -921,6 +974,7 @@ function showView(view) {
   if (view === 'testimonials') renderTestimonials();
   if (view === 'about') loadAbout();
   if (view === 'careers') renderCareers();
+  if (view === 'programs') renderPrograms();
   if (view === 'media') initImageManager();
   renderSidebar();
 }
@@ -1897,14 +1951,30 @@ function handleSingleImageUpload(storageKey, e) {
 // ── Careers/Jobs CRUD ────────────────────────────────────────────────────────
 function getCareers() { try { return JSON.parse(localStorage.getItem('nucleus_careers') || '[]'); } catch(e) { return []; } }
 function renderCareers() {
+  // Load page content fields
+  const heroTitle = localStorage.getItem('nucleus_careers_hero_title') || '';
+  const heroEm = localStorage.getItem('nucleus_careers_hero_em') || '';
+  const eyebrow = localStorage.getItem('nucleus_careers_eyebrow') || '';
+  const sectionTitle = localStorage.getItem('nucleus_careers_section_title') || '';
+  const desc = localStorage.getItem('nucleus_careers_desc') || '';
+  if (document.getElementById('careers_hero_title')) document.getElementById('careers_hero_title').value = heroTitle;
+  if (document.getElementById('careers_hero_em')) document.getElementById('careers_hero_em').value = heroEm;
+  if (document.getElementById('careers_eyebrow')) document.getElementById('careers_eyebrow').value = eyebrow;
+  if (document.getElementById('careers_section_title')) document.getElementById('careers_section_title').value = sectionTitle;
+  if (document.getElementById('careers_desc')) document.getElementById('careers_desc').value = desc;
+
+  // Render benefits
+  renderCareersBenefits();
+
+  // Render job listings
   const items = getCareers();
   const el = document.getElementById('careersList');
   if (!items.length) {
-    el.innerHTML = '<div class="panel" style="text-align:center;padding:40px;"><p style="color:var(--muted);">No job listings yet.</p></div>';
+    el.innerHTML = '<p style="color:var(--muted);padding:20px 0;">No job listings yet. Click "+ Add Position" to start.</p>';
     return;
   }
   el.innerHTML = items.map((s,i) => `
-    <div class="panel">
+    <div style="border:1px solid var(--line);border-radius:12px;padding:20px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
         <h3 style="margin:0;font-size:14px;text-transform:none;letter-spacing:0;font-family:var(--sans);color:var(--ink);">Position #${i+1}</h3>
         <button class="btn btn-danger btn-sm" onclick="removeJob(${i})">Remove</button>
@@ -1948,6 +2018,134 @@ function saveCareers() {
   });
   localStorage.setItem('nucleus_careers', JSON.stringify(items));
   showToast('Job listings saved!');
+}
+
+// ── Careers Page Content ─────────────────────────────────────────────────────
+function saveCareersContent() {
+  localStorage.setItem('nucleus_careers_hero_title', document.getElementById('careers_hero_title').value);
+  localStorage.setItem('nucleus_careers_hero_em', document.getElementById('careers_hero_em').value);
+  localStorage.setItem('nucleus_careers_eyebrow', document.getElementById('careers_eyebrow').value);
+  localStorage.setItem('nucleus_careers_section_title', document.getElementById('careers_section_title').value);
+  localStorage.setItem('nucleus_careers_desc', document.getElementById('careers_desc').value);
+  showToast('Careers page content saved!');
+}
+
+// ── Careers Benefits CRUD ────────────────────────────────────────────────────
+function getCareersBenefits() { try { return JSON.parse(localStorage.getItem('nucleus_careers_benefits') || '[]'); } catch(e) { return []; } }
+function renderCareersBenefits() {
+  const items = getCareersBenefits();
+  const el = document.getElementById('careersBenefitsList');
+  if (!el) return;
+  if (!items.length) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:13px;">No benefits added. Using 3 defaults on site.</p>';
+    return;
+  }
+  el.innerHTML = items.map((b,i) => `
+    <div style="border:1px solid var(--line);border-radius:12px;padding:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="margin:0;font-size:14px;text-transform:none;letter-spacing:0;font-family:var(--sans);color:var(--ink);">Benefit #${i+1}</h3>
+        <button class="btn btn-danger btn-sm" onclick="removeCareerBenefit(${i})">Remove</button>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Icon Emoji</label><input type="text" class="cb-icon" value="${escHtml(b.icon||'🚀')}" style="max-width:80px;" /></div>
+        <div class="field"><label>Title</label><input type="text" class="cb-title" value="${escHtml(b.title||'')}" /></div>
+      </div>
+      <div class="field"><label>Description</label><textarea class="cb-desc" rows="3">${escHtml(b.description||'')}</textarea></div>
+    </div>
+  `).join('');
+}
+function addCareerBenefit() {
+  const items = getCareersBenefits();
+  items.push({icon:'🚀', title:'', description:''});
+  localStorage.setItem('nucleus_careers_benefits', JSON.stringify(items));
+  renderCareersBenefits();
+}
+function removeCareerBenefit(i) {
+  const items = getCareersBenefits();
+  items.splice(i,1);
+  localStorage.setItem('nucleus_careers_benefits', JSON.stringify(items));
+  renderCareersBenefits();
+}
+function saveCareersBenefits() {
+  const icons = document.querySelectorAll('.cb-icon');
+  const titles = document.querySelectorAll('.cb-title');
+  const descs = document.querySelectorAll('.cb-desc');
+  const items = [];
+  icons.forEach((ic,i) => {
+    items.push({icon:ic.value, title:titles[i].value, description:descs[i].value});
+  });
+  localStorage.setItem('nucleus_careers_benefits', JSON.stringify(items));
+  showToast('Benefits saved!');
+}
+
+// ── Programs CRUD ─────────────────────────────────────────────────────────────
+function getPrograms() { try { return JSON.parse(localStorage.getItem('nucleus_programs') || '[]'); } catch(e) { return []; } }
+function renderPrograms() {
+  // Load hero fields
+  const eyebrow = localStorage.getItem('nucleus_programs_hero_eyebrow') || '';
+  const title = localStorage.getItem('nucleus_programs_hero_title') || '';
+  const sub = localStorage.getItem('nucleus_programs_hero_sub') || '';
+  if (document.getElementById('programs_hero_eyebrow')) document.getElementById('programs_hero_eyebrow').value = eyebrow;
+  if (document.getElementById('programs_hero_title')) document.getElementById('programs_hero_title').value = title;
+  if (document.getElementById('programs_hero_sub')) document.getElementById('programs_hero_sub').value = sub;
+
+  // Render programs list
+  const items = getPrograms();
+  const el = document.getElementById('programsList');
+  if (!items.length) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:13px;">No programs added yet. Using 4 defaults on site.</p>';
+    return;
+  }
+  el.innerHTML = items.map((p,i) => `
+    <div style="border:1px solid var(--line);border-radius:12px;padding:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="margin:0;font-size:14px;text-transform:none;letter-spacing:0;font-family:var(--sans);color:var(--ink);">Program #${i+1}</h3>
+        <button class="btn btn-danger btn-sm" onclick="removeProgram(${i})">Remove</button>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Icon Emoji</label><input type="text" class="pg-icon" value="${escHtml(p.icon||'⭐')}" style="max-width:80px;" /></div>
+        <div class="field"><label>Title</label><input type="text" class="pg-title" value="${escHtml(p.title||'')}" /></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Audience</label><input type="text" class="pg-audience" value="${escHtml(p.audience||'')}" /></div>
+        <div class="field"><label>Duration</label><input type="text" class="pg-duration" value="${escHtml(p.duration||'')}" /></div>
+      </div>
+      <div class="field"><label>Description</label><textarea class="pg-desc" rows="3">${escHtml(p.description||'')}</textarea></div>
+      <div class="field"><label>Outcomes (one per line)</label><textarea class="pg-outcomes" rows="4">${escHtml(p.outcomes||'')}</textarea></div>
+    </div>
+  `).join('');
+}
+function addProgram() {
+  const items = getPrograms();
+  items.push({icon:'⭐', title:'', audience:'', duration:'', description:'', outcomes:''});
+  localStorage.setItem('nucleus_programs', JSON.stringify(items));
+  renderPrograms();
+}
+function removeProgram(i) {
+  const items = getPrograms();
+  items.splice(i,1);
+  localStorage.setItem('nucleus_programs', JSON.stringify(items));
+  renderPrograms();
+}
+function savePrograms() {
+  const icons = document.querySelectorAll('.pg-icon');
+  const titles = document.querySelectorAll('.pg-title');
+  const audiences = document.querySelectorAll('.pg-audience');
+  const durations = document.querySelectorAll('.pg-duration');
+  const descs = document.querySelectorAll('.pg-desc');
+  const outcomes = document.querySelectorAll('.pg-outcomes');
+  const items = [];
+  icons.forEach((ic,i) => {
+    items.push({icon:ic.value, title:titles[i].value, audience:audiences[i].value, duration:durations[i].value, description:descs[i].value, outcomes:outcomes[i].value});
+  });
+  localStorage.setItem('nucleus_programs', JSON.stringify(items));
+  showToast('Programs saved!');
+}
+function saveProgramsHero() {
+  localStorage.setItem('nucleus_programs_hero_eyebrow', document.getElementById('programs_hero_eyebrow').value);
+  localStorage.setItem('nucleus_programs_hero_title', document.getElementById('programs_hero_title').value);
+  localStorage.setItem('nucleus_programs_hero_sub', document.getElementById('programs_hero_sub').value);
+  showToast('Programs hero saved!');
 }
 
 // ── Image Manager ─────────────────────────────────────────────────────────────
@@ -2101,6 +2299,7 @@ function reloadActiveView() {
       if (v === 'testimonials') renderTestimonials();
       if (v === 'about') loadAbout();
       if (v === 'careers') renderCareers();
+      if (v === 'programs') renderPrograms();
       if (v === 'media') initImageManager();
     }
   });

@@ -490,6 +490,63 @@ async function loadGlobalMediaAndSettings() {
     });
   }
 
+  // B4. Render careers benefits list on careers page
+  const careersBenefitsList = document.getElementById('careers-benefits-list');
+  if (careersBenefitsList) {
+    const DEFAULT_BENEFITS = [
+      {icon:'🚀', title:'Real Responsibility', description:'You won\'t be fetching coffee. From day one, you own real projects that affect real people.'},
+      {icon:'🧠', title:'Constant Growth', description:'Weekly learning sessions, mentorship, and exposure to business problems that challenge your mind.'},
+      {icon:'🤝', title:'Culture of Ownership', description:'We don\'t manage. We trust. You\'ll be held to high standards and given the autonomy to meet them.'}
+    ];
+    let benefits = [];
+    try { benefits = JSON.parse(localStorage.getItem('nucleus_careers_benefits') || '[]'); } catch(e) {}
+    if (!benefits.length) benefits = DEFAULT_BENEFITS;
+    careersBenefitsList.innerHTML = benefits.map(b =>
+      `<div class="benefit-card reveal" style="background:#fff;padding:32px;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,0.06);">
+        <div style="font-size:36px;margin-bottom:16px;">${b.icon}</div>
+        <h3 style="margin:0 0 12px;font-size:20px;">${b.title}</h3>
+        <p style="color:var(--muted);line-height:1.7;">${b.description}</p>
+      </div>`
+    ).join('');
+    careersBenefitsList.querySelectorAll('.reveal').forEach(el => {
+      if (typeof observer !== 'undefined') observer.observe(el);
+    });
+  }
+
+  // B5. Render programs dynamic list on programs page
+  const programsDynamicList = document.getElementById('programs-dynamic-list');
+  if (programsDynamicList) {
+    const DEFAULT_PROGRAMS = [
+      {icon:'⭐', title:'Be Extraordinary', audience:'Business Owners & Entrepreneurs', duration:'2 Days', description:'A transformational workshop that rewires how you see yourself, your business, and your potential.', outcomes:'Clarity on life purpose\nEliminating limiting beliefs\nDesigning your extraordinary life'},
+      {icon:'📊', title:'Business Excellence Program', audience:'SME Founders & CEOs', duration:'3 Months', description:'A deep-dive transformation program for businesses ready to scale with systems and culture.', outcomes:'Complete business diagnosis\nSystems & SOP creation\nCulture & accountability framework'},
+      {icon:'📈', title:'Sales Mastery', audience:'Sales Teams & Founders', duration:'1 Day Workshop', description:'Build a reliable sales system that converts prospects to clients predictably.', outcomes:'Sales process design\nObjection handling mastery\nPipeline management'},
+      {icon:'📣', title:'Outbound Mastery', audience:'B2B Founders & Sales Heads', duration:'1 Day Workshop', description:'Build and run a consistent outbound sales machine that generates qualified leads.', outcomes:'Cold outreach systems\nProspect identification\nFollow-up sequences'}
+    ];
+    let programs = [];
+    try { programs = JSON.parse(localStorage.getItem('nucleus_programs') || '[]'); } catch(e) {}
+    if (!programs.length) programs = DEFAULT_PROGRAMS;
+    programsDynamicList.innerHTML = programs.map(p =>
+      `<div class="prog-card reveal" style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <div style="background:var(--green-deep);padding:32px;color:#fff;">
+          <div style="font-size:48px;margin-bottom:16px;">${p.icon}</div>
+          <h2 style="font-size:28px;margin:0 0 8px;">${p.title}</h2>
+          <p style="opacity:.7;font-size:14px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;margin:0;">${p.audience}</p>
+        </div>
+        <div style="padding:32px;">
+          <p style="color:var(--muted);margin-bottom:24px;line-height:1.7;">${p.description}</p>
+          ${p.outcomes ? `<ul style="list-style:none;padding:0;">${p.outcomes.split('\n').filter(Boolean).map(o=>`<li style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;"><span style="color:var(--green-primary);font-weight:700;flex-shrink:0;">✓</span>${o}</li>`).join('')}</ul>` : ''}
+          <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--green-pale);display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:var(--mono);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;">⏱ ${p.duration}</span>
+            <a href="contact.html" class="btn btn-primary" style="font-size:13px;padding:8px 20px;">Apply Now</a>
+          </div>
+        </div>
+      </div>`
+    ).join('');
+    programsDynamicList.querySelectorAll('.reveal').forEach(el => {
+      if (typeof observer !== 'undefined') observer.observe(el);
+    });
+  }
+
   // C. Load all dynamic media assets (Logo, Hero backgrounds, section cards)
   const mediaElements = document.querySelectorAll('[data-media-key]');
   for (const el of mediaElements) {

@@ -95,9 +95,9 @@
 
   <header class="page-hero dark-section" style="min-height: 80vh; display: flex; align-items: center; background: var(--green-deep); color: var(--white);">
     <div class="wrap" style="text-align: center;">
-      <h1 class="reveal" style="font-size: clamp(48px, 6vw, 84px); color: var(--white); line-height: 1.1;">
+      <h1 class="reveal" style="font-size: clamp(48px, 6vw, 84px); color: var(--white); line-height: 1.1;" data-set="nucleus_careers_hero_title">
         Don’t Join Us for a Job.<br>
-        <em class="gold-word">Join Us for Transformation.</em>
+        <em class="gold-word" data-set="nucleus_careers_hero_em">Join Us for Transformation.</em>
       </h1>
     </div>
   </header>
@@ -105,12 +105,12 @@
   <section class="section" style="background: var(--warm-white);">
     <div class="wrap careers-grid">
       <div class="reveal-left">
-        <p class="eyebrow">Life At Nucleus</p>
-        <h2 style="margin-top: 24px; font-size: 42px;">
+        <p class="eyebrow" data-set="nucleus_careers_eyebrow">Life At Nucleus</p>
+        <h2 style="margin-top: 24px; font-size: 42px;" data-set="nucleus_careers_section_title">
           You don’t just work.<br>
           <em class="gold-word">You grow as a human.</em>
         </h2>
-        <p style="margin-top: 32px; font-size: 20px; color: var(--muted); line-height: 1.8;">
+        <p style="margin-top: 32px; font-size: 20px; color: var(--muted); line-height: 1.8;" data-set="nucleus_careers_desc">
           We are looking for individuals who are driven by purpose and are ready to take extreme ownership. If you are ready to challenge the status quo and grow rapidly, you belong here.
         </p>
         <a href="mailto:hello@nucleusconsultant.in" class="btn btn-primary reveal" style="margin-top: 40px;">
@@ -124,36 +124,7 @@
       
       <div class="reveal-scale">
         <h3 style="font-size: 28px; margin-bottom: 32px;">What You Get</h3>
-        
-        <div class="benefit-item card-hover">
-          <div class="icon-box">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-          </div>
-          <div>
-            <h3>Exposure to real business problems</h3>
-            <p>Work directly with founders and leaders to solve complex, systemic issues that drive real-world impact.</p>
-          </div>
-        </div>
-        
-        <div class="benefit-item card-hover">
-          <div class="icon-box">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          </div>
-          <div>
-            <h3>Mindset + skillset growth</h3>
-            <p>We invest heavily in your personal and professional development. Grow faster here than anywhere else.</p>
-          </div>
-        </div>
-        
-        <div class="benefit-item card-hover">
-          <div class="icon-box">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-          </div>
-          <div>
-            <h3>Leadership development</h3>
-            <p>We build leaders who don't need control. Take charge, take ownership, and lead initiatives from day one.</p>
-          </div>
-        </div>
+        <div id="careers-benefits-list"></div>
       </div>
     </div>
   </section>
