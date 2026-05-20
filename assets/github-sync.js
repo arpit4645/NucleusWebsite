@@ -180,16 +180,25 @@
     _pendingPushes = {};
 
     try {
-      try {
-        await _doCommit(cfg, branch, apiBase, pending);
-      } catch (e) {
-        if (e.message.includes('does not match')) {
-          console.warn('[NucleusSync] SHA mismatch, retrying with fresh fetch...');
+      const MAX_RETRIES = 4;
+      let lastErr = null;
+      for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        try {
           await _doCommit(cfg, branch, apiBase, pending);
-        } else {
-          throw e;
+          lastErr = null;
+          break;
+        } catch (e) {
+          lastErr = e;
+          if (e.message.includes('does not match') && attempt < MAX_RETRIES - 1) {
+            const delay = (attempt + 1) * 1200; // 1.2s, 2.4s, 3.6s
+            console.warn(`[NucleusSync] SHA mismatch (attempt ${attempt + 1}), retrying in ${delay}ms...`);
+            await new Promise(r => setTimeout(r, delay));
+          } else {
+            break;
+          }
         }
       }
+      if (lastErr) throw lastErr;
       _updateSyncBadge(true);
     } catch (e) {
       console.warn('[NucleusSync] Push error:', e.message);
