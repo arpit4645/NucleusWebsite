@@ -1552,6 +1552,8 @@ function saveHomepage() {
     final_btn2: document.getElementById('hp_final_btn2').value
   };
   localStorage.setItem('nucleus_homepage', JSON.stringify(d));
+  // Save flat keys so public pages can render via data-set attributes
+  Object.entries(d).forEach(([k, v]) => localStorage.setItem('nucleus_hp_' + k, v));
   showToast('Homepage content saved!');
 }
 

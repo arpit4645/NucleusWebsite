@@ -838,11 +838,11 @@
       <div class="hero-inner" style="grid-template-columns: 1fr;">
         <div style="max-width: 800px; z-index: 10;">
           <h1 class="hero-h1 hero-anim" id="heroTitle">
-            <span class="hero-line"><span>Your Business Is Not Stuck</span></span>
-            <span class="hero-line line2"><span>Because of <em class="hl">Strategy.</em></span></span>
-            <span class="hero-line line3"><span>It Is Stuck Because of <em class="hl">Thinking.</em></span></span>
+            <span class="hero-line"><span data-set="nucleus_hp_hero_line1">Your Business Is Not Stuck</span></span>
+            <span class="hero-line line2"><span data-set="nucleus_hp_hero_line2">Because of <em class="hl">Strategy.</em></span></span>
+            <span class="hero-line line3"><span data-set="nucleus_hp_hero_line3">It Is Stuck Because of <em class="hl">Thinking.</em></span></span>
           </h1>
-          <p class="reveal" style="font-size: 20px; font-weight: 300; color: rgba(255,255,255,0.8); max-width: 600px; margin-top: 24px; line-height: 1.6;">
+          <p class="reveal" data-set="nucleus_hp_hero_sub" style="font-size: 20px; font-weight: 300; color: rgba(255,255,255,0.8); max-width: 600px; margin-top: 24px; line-height: 1.6;">
             We transform the way leaders think, teams behave, and businesses grow — by aligning mindset, culture, and systems.
           </p>
           <div class="hero-btns reveal" style="margin-top: 40px;">
@@ -1087,7 +1087,7 @@
       <p class="eyebrow reveal" style="text-align: center; margin-bottom: 16px;">Services</p>
       <h2 class="reveal" style="text-align: center; margin-bottom: 48px;">What We Transform</h2>
       
-      <div class="reveal" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+      <div id="hp-services-grid" class="reveal" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
         <a href="services.html" class="prog prog-light" style="min-height: auto; padding: 32px; border: 1px solid var(--green-pale);">
           <h3 style="margin: 0; font-size: 20px; color: var(--green-deep);">Leadership & Thinking</h3>
         </a>
@@ -1121,7 +1121,7 @@
         <h2 class="reveal" style="margin-top: 16px; color: var(--green-deep);">Real Transformation, Not Just Advice</h2>
       </div>
 
-      <div class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+      <div id="hp-case-study" class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
         <div class="card-hover wipe-reveal" style="background: #FFF0F0; padding: 40px; border-radius: 20px; border: 1px solid #FFD6D6;">
           <h3 style="color: #D32F2F; margin-bottom: 24px; font-size: 24px;">Before:</h3>
           <ul style="font-size: 18px; line-height: 2; list-style-type: none; padding: 0; color: #5C1010;">
@@ -1149,12 +1149,12 @@
       <div style="width: 80px; height: 80px; margin: 0 auto 32px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden; font-family: var(--serif); color: var(--gold-primary); font-size: 24px;">
         RM
       </div>
-      <blockquote style="font-family: var(--serif); font-style: italic; font-size: clamp(24px, 4vw, 40px); line-height: 1.4; color: var(--white); margin: 0 0 40px;">
+      <blockquote id="hp-testimonial-quote" style="font-family: var(--serif); font-style: italic; font-size: clamp(24px, 4vw, 40px); line-height: 1.4; color: var(--white); margin: 0 0 40px;">
         "Nucleus didn't give us a strategy. They changed how we think about business entirely. In 6 months, our team doubled their ownership."
       </blockquote>
       <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.6);">
-        <span style="color: var(--gold-primary);">Rahul Mehta</span><br>
-        <span style="display: block; margin-top: 8px;">Founder, Mehta Manufacturing, Surat</span>
+        <span id="hp-testimonial-name" style="color: var(--gold-primary);">Rahul Mehta</span><br>
+        <span id="hp-testimonial-role" style="display: block; margin-top: 8px;">Founder, Mehta Manufacturing, Surat</span>
       </div>
     </div>
   </section>

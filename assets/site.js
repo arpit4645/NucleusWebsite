@@ -309,6 +309,60 @@ async function loadGlobalMediaAndSettings() {
     }
   });
 
+  // C1. Render nucleus_services grid
+  try {
+    const svcs = JSON.parse(localStorage.getItem('nucleus_services') || '[]');
+    const svcGrid = document.getElementById('hp-services-grid');
+    if (svcGrid && svcs.length) {
+      svcGrid.innerHTML = svcs.map(s =>
+        `<a href="services.html" class="prog prog-light" style="min-height:auto;padding:32px;border:1px solid var(--green-pale);">
+          <div style="font-size:28px;margin-bottom:12px;">${s.icon || '🔧'}</div>
+          <h3 style="margin:0;font-size:20px;color:var(--green-deep);">${s.title || ''}</h3>
+          ${s.description ? `<p style="margin:12px 0 0;color:var(--muted);font-size:15px;line-height:1.5;">${s.description}</p>` : ''}
+        </a>`
+      ).join('');
+    }
+  } catch(e) {}
+
+  // C2. Render first case study into hp-case-study
+  try {
+    const cases = JSON.parse(localStorage.getItem('nucleus_casestudies') || '[]');
+    const csEl = document.getElementById('hp-case-study');
+    if (csEl && cases.length) {
+      const c = cases[0];
+      const xSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:4px;flex-shrink:0;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+      const chkSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:4px;flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>`;
+      const beforeItems = (c.before || '').split('\n').filter(Boolean).map(t =>
+        `<li style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">${xSvg} ${t}</li>`).join('');
+      const afterItems = (c.after || '').split('\n').filter(Boolean).map(t =>
+        `<li style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">${chkSvg} ${t}</li>`).join('');
+      csEl.innerHTML = `
+        <div class="card-hover wipe-reveal" style="background:#FFF0F0;padding:40px;border-radius:20px;border:1px solid #FFD6D6;">
+          <h3 style="color:#D32F2F;margin-bottom:24px;font-size:24px;">Before:</h3>
+          <ul style="font-size:18px;line-height:2;list-style-type:none;padding:0;color:#5C1010;">${beforeItems}</ul>
+        </div>
+        <div class="card-hover wipe-reveal" style="background:#F0FFF4;padding:40px;border-radius:20px;border:1px solid #C6F6D5;">
+          <h3 style="color:#2F855A;margin-bottom:24px;font-size:24px;">After:</h3>
+          <ul style="font-size:18px;line-height:2;list-style-type:none;padding:0;color:#1C4532;">${afterItems}</ul>
+          ${c.result ? `<p style="margin-top:24px;font-weight:600;color:#2F855A;">Result: ${c.result}</p>` : ''}
+        </div>`;
+    }
+  } catch(e) {}
+
+  // C3. Render first testimonial into hp-testimonial-*
+  try {
+    const tms = JSON.parse(localStorage.getItem('nucleus_testimonials') || '[]');
+    if (tms.length) {
+      const t = tms[0];
+      const qEl = document.getElementById('hp-testimonial-quote');
+      const nEl = document.getElementById('hp-testimonial-name');
+      const rEl = document.getElementById('hp-testimonial-role');
+      if (qEl && t.quote) qEl.textContent = '“' + t.quote + '”';
+      if (nEl && t.name) nEl.textContent = t.name;
+      if (rEl && (t.role || t.company)) rEl.textContent = [t.role, t.company].filter(Boolean).join(', ');
+    }
+  } catch(e) {}
+
   // C. Load all dynamic media assets (Logo, Hero backgrounds, section cards)
   const mediaElements = document.querySelectorAll('[data-media-key]');
   for (const el of mediaElements) {
