@@ -606,7 +606,7 @@ function injectVideoOrIframe(container, src, isVideo, isYT, isVimeo) {
   const btnHtml = `<button class="universal-mute-btn" aria-label="Toggle mute" style="position:absolute;bottom:16px;right:16px;z-index:99;">${svgMuted}</button>`;
 
   if (isYT) {
-    const ytMatch = src.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\s?]+)/);
+    const ytMatch = src.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^&\s?]+)/);
     if (ytMatch) {
       container.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=1&loop=1&playlist=${ytMatch[1]}&controls=0&rel=0&enablejsapi=1" style="width:100%;height:100%;min-height:inherit;border:none;display:block;object-fit:cover;" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>` + btnHtml;
       const iframe = container.querySelector('iframe');
