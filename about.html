@@ -592,14 +592,22 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      loadTextContent();
-
-      // Load all dynamic media with appropriate fallbacks
+    function loadAllMedia() {
       loadUniversalMedia('about-who-img',        'nucleus_about_who_img',     'assets/strategy_abstract.png');
       loadUniversalMedia('vision-media-container','nucleus_vision_video',      'assets/inner_light.png');
       loadUniversalMedia('about-mission-img',    'nucleus_about_mission_img', 'assets/culture_alignment.png');
       loadUniversalMedia('founder-photo-upload', 'nucleus_founder_photo',     'assets/founder_portrait.png');
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      loadTextContent();
+      loadAllMedia();
+    });
+
+    // Re-run after GitHub sync pull completes so fresh data overwrites cached values
+    document.addEventListener('nucleus-sync-ready', () => {
+      loadTextContent();
+      loadAllMedia();
     });
   </script>
 </body>
