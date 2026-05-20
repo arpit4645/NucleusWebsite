@@ -49,6 +49,8 @@
   let _lastSha = null;
   let _flushing = false;
   let _flushQueued = false;
+  let _failCount = 0;        // consecutive network failures
+  let _backoffTimer = null;  // active backoff timer
 
   function getConfig() {
     if (window.NUCLEUS_GITHUB_REPO) {
@@ -199,17 +201,29 @@
         }
       }
       if (lastErr) throw lastErr;
+      _failCount = 0;
       _updateSyncBadge(true);
     } catch (e) {
       console.warn('[NucleusSync] Push error:', e.message);
       _updateSyncBadge(false, e.message);
       Object.assign(_pendingPushes, pending);
       if (window._nucleusIsAdmin) _showAdminSyncError('Cloud push failed: ' + e.message);
+
+      // Exponential backoff — don't hammer GitHub or spam the error banner
+      _failCount++;
+      const backoffMs = Math.min(60000, 5000 * Math.pow(2, _failCount - 1)); // 5s, 10s, 20s, 40s, 60s cap
+      console.warn(`[NucleusSync] Will retry in ${backoffMs / 1000}s (failure #${_failCount})`);
+      clearTimeout(_backoffTimer);
+      _backoffTimer = setTimeout(() => {
+        _backoffTimer = null;
+        if (Object.keys(_pendingPushes).length > 0) window.nucleusSyncFlush();
+      }, backoffMs);
     } finally {
       _flushing = false;
       if (_flushQueued) {
         _flushQueued = false;
-        setTimeout(window.nucleusSyncFlush, 500);
+        // Only immediately retry for queued flushes when no backoff is active
+        if (!_backoffTimer) setTimeout(window.nucleusSyncFlush, 500);
       }
     }
   };
