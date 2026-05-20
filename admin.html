@@ -1571,14 +1571,15 @@ function renderServices() {
         <button class="btn btn-danger btn-sm" onclick="removeService(${i})">Remove</button>
       </div>
       <div class="field"><label>Title</label><input type="text" class="svc-title" value="${escHtml(s.title)}" /></div>
-      <div class="field"><label>Description</label><textarea class="svc-desc" rows="3">${escHtml(s.description)}</textarea></div>
+      <div class="field"><label>Description</label><textarea class="svc-desc" rows="4">${escHtml(s.description)}</textarea></div>
+      <div class="field"><label>Outcomes / Key Results (one per line — rendered as bullet list on site)</label><textarea class="svc-outcomes" rows="4">${escHtml(s.outcomes||'')}</textarea></div>
       <div class="field"><label>Icon Emoji</label><input type="text" class="svc-icon" value="${escHtml(s.icon||'🔧')}" style="max-width:80px;" /></div>
     </div>
   `).join('');
 }
 function addService() {
   const services = getServices();
-  services.push({title:'',description:'',icon:'🔧'});
+  services.push({title:'',description:'',icon:'🔧',outcomes:''});
   localStorage.setItem('nucleus_services', JSON.stringify(services));
   renderServices();
 }
@@ -1592,9 +1593,10 @@ function saveServices() {
   const titles = document.querySelectorAll('.svc-title');
   const descs = document.querySelectorAll('.svc-desc');
   const icons = document.querySelectorAll('.svc-icon');
+  const outcomes = document.querySelectorAll('.svc-outcomes');
   const services = [];
   titles.forEach((t,i) => {
-    services.push({title:t.value, description:descs[i].value, icon:icons[i].value});
+    services.push({title:t.value, description:descs[i].value, icon:icons[i].value, outcomes:outcomes[i].value});
   });
   localStorage.setItem('nucleus_services', JSON.stringify(services));
   showToast('Services saved!');

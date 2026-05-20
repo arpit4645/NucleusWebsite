@@ -309,6 +309,39 @@ async function loadGlobalMediaAndSettings() {
     }
   });
 
+  // B2. Render services list on services page
+  const servicesList = document.getElementById('services-dynamic-list');
+  if (servicesList) {
+    const DEFAULT_SERVICES = [
+      {icon:'🧠', title:'Leadership & Thinking', description:'Transform how your leaders think and make decisions.'},
+      {icon:'🤝', title:'Culture & Accountability', description:'Build a team culture of ownership and accountability.'},
+      {icon:'📈', title:'Sales & Growth System', description:'Build predictable sales systems that scale.'},
+      {icon:'📣', title:'Marketing & Brand Positioning', description:'Position your brand for premium market visibility.'},
+      {icon:'⚙️', title:'Operations & SOP Systems', description:'Build efficient, documented, repeatable processes.'},
+      {icon:'👥', title:'HR & People Development', description:'Attract, develop and retain high-performance people.'},
+      {icon:'💰', title:'Finance & Business Clarity', description:'Get complete financial visibility and control.'}
+    ];
+    let services = [];
+    try { services = JSON.parse(localStorage.getItem('nucleus_services') || '[]'); } catch(e) {}
+    if (!services.length) services = DEFAULT_SERVICES;
+    servicesList.innerHTML = services.map((s, i) => {
+      const altClass = i % 2 === 1 ? ' alt' : '';
+      const outcomesHtml = s.outcomes ? `<ul class="s-outcomes">${s.outcomes.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>` : '';
+      return `<div class="service-block${altClass} reveal">
+        <div class="service-text">
+          <p class="eyebrow">${s.icon || ''}</p>
+          <h2>${s.title || ''}</h2>
+          <p>${s.description || ''}</p>
+          ${outcomesHtml}
+        </div>
+      </div>`;
+    }).join('');
+    // Re-observe newly added reveal elements
+    servicesList.querySelectorAll('.reveal').forEach(el => {
+      if (typeof observer !== 'undefined') observer.observe(el);
+    });
+  }
+
   // C. Load all dynamic media assets (Logo, Hero backgrounds, section cards)
   const mediaElements = document.querySelectorAll('[data-media-key]');
   for (const el of mediaElements) {
