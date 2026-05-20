@@ -53,26 +53,31 @@
   let _backoffTimer = null;  // active backoff timer
 
   function getConfig() {
+    let cfg = null;
     if (window.NUCLEUS_GITHUB_REPO) {
-      const base = Object.assign({}, window.NUCLEUS_GITHUB_REPO);
+      cfg = Object.assign({}, window.NUCLEUS_GITHUB_REPO);
       try {
         const localCfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
-        return Object.assign(base, localCfg);
-      } catch (e) {
-        return base;
-      }
+        cfg = Object.assign(cfg, localCfg);
+      } catch (e) {}
+    } else {
+      try { cfg = JSON.parse(localStorage.getItem(CFG_KEY) || 'null'); } catch (e) {}
     }
-    try {
-      return JSON.parse(localStorage.getItem(CFG_KEY) || 'null');
-    } catch (e) {
-      return null;
+    // Fall back to cookie if localStorage lost the token
+    if (cfg && !cfg.token) {
+      const m = document.cookie.match(/(?:^|;\s*)nucleus_pat=([^;]+)/);
+      if (m) cfg.token = decodeURIComponent(m[1]);
     }
+    return cfg;
   }
 
   function setToken(token) {
     const existing = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
     existing.token = token;
     localStorage.setItem(CFG_KEY, JSON.stringify(existing));
+    // Cookie backup — survives localStorage clears, lasts 1 year
+    const exp = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = 'nucleus_pat=' + encodeURIComponent(token) + ';expires=' + exp + ';path=/;SameSite=Strict';
   }
 
   window.nucleusGithubSetToken = setToken;
@@ -205,9 +210,15 @@
       _updateSyncBadge(true);
     } catch (e) {
       console.warn('[NucleusSync] Push error:', e.message);
-      _updateSyncBadge(false, e.message);
       Object.assign(_pendingPushes, pending);
-      if (window._nucleusIsAdmin) _showAdminSyncError('Cloud push failed: ' + e.message);
+      const isOffline = !navigator.onLine || e.message === 'Failed to fetch';
+      if (isOffline) {
+        _updateSyncBadge(false, 'Offline — changes saved locally, will sync when connected');
+        // Don't show the error banner when simply offline — auto-retry handles it
+      } else {
+        _updateSyncBadge(false, e.message);
+        if (window._nucleusIsAdmin) _showAdminSyncError('Cloud push failed: ' + e.message);
+      }
 
       // Exponential backoff — don't hammer GitHub or spam the error banner
       _failCount++;
@@ -319,6 +330,24 @@
     console.log('[NucleusSync] ✅ GitHub backend ready.', pulled ? 'Content loaded.' : 'No content file yet.');
     document.dispatchEvent(new Event('nucleus-sync-ready'));
   };
+
+  // ── Online / offline detection ─────────────────────────────────────────────
+  window.addEventListener('offline', function () {
+    _updateSyncBadge(false, 'Offline — changes saved locally, will sync when connected');
+  });
+
+  window.addEventListener('online', function () {
+    if (Object.keys(_pendingPushes).length > 0) {
+      console.log('[NucleusSync] Connection restored — syncing pending changes...');
+      _updateSyncBadge(false, 'Reconnected, syncing...');
+      clearTimeout(_backoffTimer);
+      _backoffTimer = null;
+      _failCount = 0;
+      window.nucleusSyncFlush();
+    } else {
+      _updateSyncBadge(true);
+    }
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', window.initNucleusSync);
