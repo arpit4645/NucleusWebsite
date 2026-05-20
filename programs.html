@@ -115,6 +115,14 @@
     .status-filling { background: #FAF0D0; color: var(--gold-dark); }
     .status-full { background: #FFF0F0; color: #D32F2F; }
 
+    /* Programs grid responsive */
+    @media (max-width: 780px) {
+      #programs-dynamic-list.grid { grid-template-columns: 1fr !important; }
+    }
+    /* Ensure prog-content fills the card height */
+    .prog-card { height: 100%; }
+    .prog-content { height: 100%; }
+
     /* Corporate Note */
     .corporate-note {
       background: var(--green-deep);

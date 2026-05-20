@@ -51,18 +51,26 @@
       border: 1px solid var(--line);
       border-radius: 20px;
       padding: 48px;
-      margin-bottom: 40px;
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 60px;
-      transition: transform 0.3s, box-shadow 0.3s, opacity 0.4s;
+      margin-bottom: 32px;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
+    .case-card:last-child { margin-bottom: 0; }
     .case-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.07);
+    }
+    .ba-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 640px) {
+      .case-card { padding: 28px; }
+      .ba-grid { grid-template-columns: 1fr; gap: 12px; }
     }
     @media (max-width: 880px) {
-      .case-card { grid-template-columns: 1fr; gap: 32px; padding: 32px; }
+      .case-card { padding: 36px; }
     }
     
     .case-badge {
@@ -116,6 +124,9 @@
       padding-left: 20px;
     }
     
+    .hero-split { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    @media (max-width: 768px) { .hero-split { grid-template-columns: 1fr; gap: 40px; } .hero-split .hero-img { display: none; } }
+
     .case-duration {
       font-family: var(--mono);
       font-size: 12px;
@@ -146,7 +157,7 @@
   </nav>
 
   <header class="page-hero dark-section" style="background: var(--green-deep); color: var(--white); padding: 160px 0 100px;">
-    <div class="wrap" style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+    <div class="wrap hero-split">
       <div>
         <h1 class="reveal" style="color: var(--white); line-height: 1.1; margin-bottom: 24px;">
           Real Transformation. Measurable Results.
@@ -155,7 +166,7 @@
           Not promises. Not slides. Actual businesses rebuilt.
         </p>
       </div>
-      <div class="reveal-scale img-zoom upload-zone" id="hero-upload" style="border-radius: 20px; overflow: hidden; border: 1px dashed rgba(255,255,255,0.3); background: url('assets/case_studies_hero_new.png') center/cover; aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); cursor: pointer; position: relative;">
+      <div class="hero-img reveal-scale img-zoom upload-zone" id="hero-upload" style="border-radius: 20px; overflow: hidden; border: 1px dashed rgba(255,255,255,0.3); background: url('assets/case_studies_hero_new.png') center/cover; aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); cursor: pointer; position: relative;">
         <span class="upload-placeholder" style="font-size: 14px; text-align: center; display: none;">Click to upload hero banner image<br>(1400×400px)</span>
       </div>
     </div>

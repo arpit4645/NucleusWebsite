@@ -381,13 +381,21 @@ async function loadGlobalMediaAndSettings() {
     if (!services.length) services = DEFAULT_SERVICES;
     servicesList.innerHTML = services.map((s, i) => {
       const altClass = i % 2 === 1 ? ' alt' : '';
-      const outcomesHtml = s.outcomes ? `<ul class="s-outcomes">${s.outcomes.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>` : '';
+      const outcomesHtml = s.outcomes
+        ? `<ul class="s-outcomes">${s.outcomes.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>`
+        : '';
+      const num = String(i + 1).padStart(2, '0');
       return `<div class="service-block${altClass} reveal">
-        <div class="service-text">
-          <p class="eyebrow">${s.icon || ''}</p>
+        <div class="content-side">
+          <div class="s-icon"><span style="font-size:22px;">${s.icon || '🔧'}</span></div>
           <h2>${s.title || ''}</h2>
-          <p>${s.description || ''}</p>
-          ${outcomesHtml}
+          <p style="color:var(--stone);font-size:18px;line-height:1.8;margin-top:16px;">${s.description || ''}</p>
+          <a href="contact.html" class="btn btn-primary" style="display:inline-flex;margin-top:32px;">Book a Consult &nbsp;&rarr;</a>
+        </div>
+        <div class="visual-side" style="background:var(--warm-white);border-radius:var(--radius-xl);padding:40px;position:relative;overflow:hidden;min-height:260px;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:var(--serif);font-size:clamp(80px,10vw,130px);color:var(--green-primary);opacity:0.06;position:absolute;top:-10px;right:16px;line-height:1;user-select:none;font-weight:900;pointer-events:none;">${num}</div>
+          <p style="font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--green-primary);margin:0 0 20px;position:relative;z-index:1;">What You'll Achieve</p>
+          ${outcomesHtml || `<p style="color:var(--muted);font-size:15px;line-height:1.7;position:relative;z-index:1;">Tailored to your business context — book a free diagnosis to see the measurable difference.</p>`}
         </div>
       </div>`;
     }).join('');
@@ -466,7 +474,7 @@ async function loadGlobalMediaAndSettings() {
           ${location ? `<span style="color:var(--muted);font-size:14px;padding-top:6px;">&#128205; ${location}</span>` : ''}
         </div>
         <h3 style="font-size:28px;margin-bottom:32px;color:var(--green-deep);">${client}</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+        <div class="ba-grid">
           <div style="background:#FFF0F0;padding:28px;border-radius:16px;border:1px solid #FFD6D6;">
             <h4 style="color:#D32F2F;margin-bottom:16px;">Before</h4>
             <ul style="list-style:none;padding:0;color:#5C1010;font-size:16px;line-height:1.8;">
@@ -502,10 +510,12 @@ async function loadGlobalMediaAndSettings() {
     try { benefits = JSON.parse(localStorage.getItem('nucleus_careers_benefits') || '[]'); } catch(e) {}
     if (!benefits.length) benefits = DEFAULT_BENEFITS;
     careersBenefitsList.innerHTML = benefits.map(b =>
-      `<div class="benefit-card reveal" style="background:#fff;padding:32px;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,0.06);">
-        <div style="font-size:36px;margin-bottom:16px;">${b.icon}</div>
-        <h3 style="margin:0 0 12px;font-size:20px;">${b.title}</h3>
-        <p style="color:var(--muted);line-height:1.7;">${b.description}</p>
+      `<div class="benefit-item reveal">
+        <div class="icon-box"><span style="font-size:22px;">${b.icon}</span></div>
+        <div>
+          <h3>${b.title}</h3>
+          <p>${b.description}</p>
+        </div>
       </div>`
     ).join('');
     careersBenefitsList.querySelectorAll('.reveal').forEach(el => {
@@ -525,19 +535,20 @@ async function loadGlobalMediaAndSettings() {
     let programs = [];
     try { programs = JSON.parse(localStorage.getItem('nucleus_programs') || '[]'); } catch(e) {}
     if (!programs.length) programs = DEFAULT_PROGRAMS;
-    programsDynamicList.innerHTML = programs.map(p =>
-      `<div class="prog-card reveal" style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-        <div style="background:var(--green-deep);padding:32px;color:#fff;">
-          <div style="font-size:48px;margin-bottom:16px;">${p.icon}</div>
-          <h2 style="font-size:28px;margin:0 0 8px;">${p.title}</h2>
-          <p style="opacity:.7;font-size:14px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;margin:0;">${p.audience}</p>
-        </div>
-        <div style="padding:32px;">
-          <p style="color:var(--muted);margin-bottom:24px;line-height:1.7;">${p.description}</p>
-          ${p.outcomes ? `<ul style="list-style:none;padding:0;">${p.outcomes.split('\n').filter(Boolean).map(o=>`<li style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;"><span style="color:var(--green-primary);font-weight:700;flex-shrink:0;">✓</span>${o}</li>`).join('')}</ul>` : ''}
-          <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--green-pale);display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-family:var(--mono);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;">⏱ ${p.duration}</span>
-            <a href="contact.html" class="btn btn-primary" style="font-size:13px;padding:8px 20px;">Apply Now</a>
+    const _progThemes = ['c-dark', 'c-white', 'c-gold', 'c-cream'];
+    programsDynamicList.innerHTML = programs.map((p, i) =>
+      `<div class="prog-card ${_progThemes[i % _progThemes.length]} reveal">
+        <div class="prog-content">
+          <p style="font-size:40px;margin:0 0 16px;line-height:1;">${p.icon}</p>
+          <h2 style="font-size:clamp(20px,2.5vw,26px);margin:0 0 16px;">${p.title}</h2>
+          <div class="prog-meta">
+            <div><span>${p.audience}</span></div>
+            <div><span>&#9201; ${p.duration}</span></div>
+          </div>
+          <p>${p.description}</p>
+          ${p.outcomes ? `<ul class="prog-outcomes">${p.outcomes.split('\n').filter(Boolean).map(o => `<li>${o}</li>`).join('')}</ul>` : ''}
+          <div style="margin-top:auto;padding-top:20px;border-top:1px solid rgba(0,0,0,0.08);">
+            <a href="contact.html" class="btn btn-primary" style="font-size:13px;padding:10px 24px;">Apply Now</a>
           </div>
         </div>
       </div>`
