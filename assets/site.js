@@ -309,47 +309,47 @@ async function loadGlobalMediaAndSettings() {
     }
   });
 
-  // C1. Render nucleus_services grid
+  // C1. Render nucleus_services grid on homepage
   try {
     const svcs = JSON.parse(localStorage.getItem('nucleus_services') || '[]');
     const svcGrid = document.getElementById('hp-services-grid');
     if (svcGrid && svcs.length) {
       svcGrid.innerHTML = svcs.map(s =>
-        `<a href="services.html" class="prog prog-light" style="min-height:auto;padding:32px;border:1px solid var(--green-pale);">
-          <div style="font-size:28px;margin-bottom:12px;">${s.icon || '🔧'}</div>
-          <h3 style="margin:0;font-size:20px;color:var(--green-deep);">${s.title || ''}</h3>
-          ${s.description ? `<p style="margin:12px 0 0;color:var(--muted);font-size:15px;line-height:1.5;">${s.description}</p>` : ''}
+        `<a href=”services.html” class=”prog prog-light” style=”min-height:auto;padding:32px;border:1px solid var(--green-pale);”>
+          <div style=”font-size:28px;margin-bottom:12px;”>${s.icon || '🔧'}</div>
+          <h3 style=”margin:0;font-size:20px;color:var(--green-deep);”>${s.title || ''}</h3>
+          ${s.description ? `<p style=”margin:12px 0 0;color:var(--muted);font-size:15px;line-height:1.5;”>${s.description}</p>` : ''}
         </a>`
       ).join('');
     }
   } catch(e) {}
 
-  // C2. Render first case study into hp-case-study
+  // C2. Render first case study snippet on homepage
   try {
     const cases = JSON.parse(localStorage.getItem('nucleus_casestudies') || '[]');
     const csEl = document.getElementById('hp-case-study');
     if (csEl && cases.length) {
       const c = cases[0];
-      const xSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:4px;flex-shrink:0;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
-      const chkSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:4px;flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>`;
+      const xSvg = `<svg width=”20” height=”20” viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”2” stroke-linecap=”round” stroke-linejoin=”round” style=”margin-top:4px;flex-shrink:0;”><line x1=”18” y1=”6” x2=”6” y2=”18”/><line x1=”6” y1=”6” x2=”18” y2=”18”/></svg>`;
+      const chkSvg = `<svg width=”20” height=”20” viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”2” stroke-linecap=”round” stroke-linejoin=”round” style=”margin-top:4px;flex-shrink:0;”><polyline points=”20 6 9 17 4 12”/></svg>`;
       const beforeItems = (c.before || '').split('\n').filter(Boolean).map(t =>
-        `<li style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">${xSvg} ${t}</li>`).join('');
+        `<li style=”display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;”>${xSvg} ${t}</li>`).join('');
       const afterItems = (c.after || '').split('\n').filter(Boolean).map(t =>
-        `<li style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">${chkSvg} ${t}</li>`).join('');
+        `<li style=”display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;”>${chkSvg} ${t}</li>`).join('');
       csEl.innerHTML = `
-        <div class="card-hover wipe-reveal" style="background:#FFF0F0;padding:40px;border-radius:20px;border:1px solid #FFD6D6;">
-          <h3 style="color:#D32F2F;margin-bottom:24px;font-size:24px;">Before:</h3>
-          <ul style="font-size:18px;line-height:2;list-style-type:none;padding:0;color:#5C1010;">${beforeItems}</ul>
+        <div class=”card-hover wipe-reveal” style=”background:#FFF0F0;padding:40px;border-radius:20px;border:1px solid #FFD6D6;”>
+          <h3 style=”color:#D32F2F;margin-bottom:24px;font-size:24px;”>Before:</h3>
+          <ul style=”font-size:18px;line-height:2;list-style-type:none;padding:0;color:#5C1010;”>${beforeItems}</ul>
         </div>
-        <div class="card-hover wipe-reveal" style="background:#F0FFF4;padding:40px;border-radius:20px;border:1px solid #C6F6D5;">
-          <h3 style="color:#2F855A;margin-bottom:24px;font-size:24px;">After:</h3>
-          <ul style="font-size:18px;line-height:2;list-style-type:none;padding:0;color:#1C4532;">${afterItems}</ul>
-          ${c.result ? `<p style="margin-top:24px;font-weight:600;color:#2F855A;">Result: ${c.result}</p>` : ''}
+        <div class=”card-hover wipe-reveal” style=”background:#F0FFF4;padding:40px;border-radius:20px;border:1px solid #C6F6D5;”>
+          <h3 style=”color:#2F855A;margin-bottom:24px;font-size:24px;”>After:</h3>
+          <ul style=”font-size:18px;line-height:2;list-style-type:none;padding:0;color:#1C4532;”>${afterItems}</ul>
+          ${c.result ? `<p style=”margin-top:24px;font-weight:600;color:#2F855A;”>Result: ${c.result}</p>` : ''}
         </div>`;
     }
   } catch(e) {}
 
-  // C3. Render first testimonial into hp-testimonial-*
+  // C3. Render first testimonial on homepage
   try {
     const tms = JSON.parse(localStorage.getItem('nucleus_testimonials') || '[]');
     if (tms.length) {
@@ -357,11 +357,138 @@ async function loadGlobalMediaAndSettings() {
       const qEl = document.getElementById('hp-testimonial-quote');
       const nEl = document.getElementById('hp-testimonial-name');
       const rEl = document.getElementById('hp-testimonial-role');
-      if (qEl && t.quote) qEl.textContent = '“' + t.quote + '”';
+      if (qEl && t.quote) qEl.textContent = '”' + t.quote + '”';
       if (nEl && t.name) nEl.textContent = t.name;
       if (rEl && (t.role || t.company)) rEl.textContent = [t.role, t.company].filter(Boolean).join(', ');
     }
   } catch(e) {}
+
+
+  // B2. Render services list on services page
+  const servicesList = document.getElementById('services-dynamic-list');
+  if (servicesList) {
+    const DEFAULT_SERVICES = [
+      {icon:'🧠', title:'Leadership & Thinking', description:'Transform how your leaders think and make decisions.'},
+      {icon:'🤝', title:'Culture & Accountability', description:'Build a team culture of ownership and accountability.'},
+      {icon:'📈', title:'Sales & Growth System', description:'Build predictable sales systems that scale.'},
+      {icon:'📣', title:'Marketing & Brand Positioning', description:'Position your brand for premium market visibility.'},
+      {icon:'⚙️', title:'Operations & SOP Systems', description:'Build efficient, documented, repeatable processes.'},
+      {icon:'👥', title:'HR & People Development', description:'Attract, develop and retain high-performance people.'},
+      {icon:'💰', title:'Finance & Business Clarity', description:'Get complete financial visibility and control.'}
+    ];
+    let services = [];
+    try { services = JSON.parse(localStorage.getItem('nucleus_services') || '[]'); } catch(e) {}
+    if (!services.length) services = DEFAULT_SERVICES;
+    servicesList.innerHTML = services.map((s, i) => {
+      const altClass = i % 2 === 1 ? ' alt' : '';
+      const outcomesHtml = s.outcomes ? `<ul class="s-outcomes">${s.outcomes.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>` : '';
+      return `<div class="service-block${altClass} reveal">
+        <div class="service-text">
+          <p class="eyebrow">${s.icon || ''}</p>
+          <h2>${s.title || ''}</h2>
+          <p>${s.description || ''}</p>
+          ${outcomesHtml}
+        </div>
+      </div>`;
+    }).join('');
+    // Re-observe newly added reveal elements
+    servicesList.querySelectorAll('.reveal').forEach(el => {
+      if (typeof observer !== 'undefined') observer.observe(el);
+    });
+  }
+
+  // B3. Render case studies list on case-studies page
+  const caseStudiesList = document.getElementById('case-studies-list');
+  if (caseStudiesList) {
+    const DEFAULT_CASE_STUDIES = [
+      {
+        client: 'Manufacturing Enterprise',
+        industry: 'Manufacturing',
+        duration: '18 months',
+        location: 'Surat, Gujarat',
+        before: 'Stagnant growth despite demand\nFounder bottleneck for all decisions\nNo SOP',
+        after: 'Leadership accountability framework\nStandardized SOPs\nCulture code',
+        result: '40% production efficiency increase, 80% reduction in founder dependency, predictable revenue over 18 months',
+        quote: 'We finally have a team that doesn\'t need me for every small decision.',
+        quote_author: 'Founder, Manufacturing Enterprise'
+      },
+      {
+        client: 'B2B Tech Agency',
+        industry: 'Tech',
+        duration: '12 months',
+        location: 'Ahmedabad, Gujarat',
+        before: 'High employee turnover\nSales pipeline only via referrals\nNo onboarding',
+        after: 'Culture redefinition\nOutbound sales system\nPerformance review process',
+        result: 'Employee retention +60%, consistent monthly leads, team grew 8 → 22 in 12 months',
+        quote: 'Our culture is now our biggest competitive advantage in hiring.',
+        quote_author: 'Founder, B2B Tech Agency'
+      },
+      {
+        client: 'Retail Chain (6 stores)',
+        industry: 'Retail',
+        duration: '9 months',
+        location: 'Surat, Gujarat',
+        before: 'No standardized operations\nEach store run differently\nQuality inconsistent',
+        after: 'SOP documentation\nStore manager accountability system\nCustomer experience standards',
+        result: '35% revenue increase across all stores; founder free from daily ops; 2 new locations opened',
+        quote: 'I went from running 6 stores to owning a business that runs itself.',
+        quote_author: 'Founder, Retail Chain'
+      },
+      {
+        client: 'Professional Services Firm',
+        industry: 'Professional Services',
+        duration: '6 months',
+        location: 'India',
+        before: 'Founder doing 80% of client work\nUnable to delegate\nTeam under-skilled',
+        after: 'Service delivery playbook\nTeam skills development\nClient communication standards',
+        result: 'Founder reclaimed 20 hrs/week; team handles 70% of delivery; satisfaction scores up',
+        quote: 'I now work ON my business, not just IN it.',
+        quote_author: 'Founder, Professional Services Firm'
+      }
+    ];
+    let caseStudies = [];
+    try { caseStudies = JSON.parse(localStorage.getItem('nucleus_casestudies') || '[]'); } catch(e) {}
+    if (!caseStudies.length) caseStudies = DEFAULT_CASE_STUDIES;
+    caseStudiesList.innerHTML = caseStudies.map(s => {
+      const client = s.client || '';
+      const industry = s.industry || '';
+      const duration = s.duration || '';
+      const location = s.location || '';
+      const before = s.before || '';
+      const after = s.after || '';
+      const result = s.result || '';
+      const quote = s.quote || '';
+      const quote_author = s.quote_author || '';
+      return `<div class="case-card reveal" style="background:#fff;border-radius:20px;padding:40px;box-shadow:0 4px 24px rgba(0,0,0,0.08);margin-bottom:32px;">
+        <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:24px;">
+          <span style="background:var(--green-primary);color:#fff;padding:6px 16px;border-radius:20px;font-size:12px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;">${industry || 'Case Study'}</span>
+          ${duration ? `<span style="color:var(--muted);font-size:14px;padding-top:6px;">&#9201; ${duration}</span>` : ''}
+          ${location ? `<span style="color:var(--muted);font-size:14px;padding-top:6px;">&#128205; ${location}</span>` : ''}
+        </div>
+        <h3 style="font-size:28px;margin-bottom:32px;color:var(--green-deep);">${client}</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+          <div style="background:#FFF0F0;padding:28px;border-radius:16px;border:1px solid #FFD6D6;">
+            <h4 style="color:#D32F2F;margin-bottom:16px;">Before</h4>
+            <ul style="list-style:none;padding:0;color:#5C1010;font-size:16px;line-height:1.8;">
+              ${before.split('\n').filter(Boolean).map(t=>`<li style="display:flex;gap:10px;margin-bottom:8px;"><span style="color:#D32F2F;flex-shrink:0;">&#x2717;</span>${t}</li>`).join('')}
+            </ul>
+          </div>
+          <div style="background:#F0FFF4;padding:28px;border-radius:16px;border:1px solid #C6F6D5;">
+            <h4 style="color:#2F855A;margin-bottom:16px;">After</h4>
+            <ul style="list-style:none;padding:0;color:#1C4532;font-size:16px;line-height:1.8;">
+              ${after.split('\n').filter(Boolean).map(t=>`<li style="display:flex;gap:10px;margin-bottom:8px;"><span style="color:#2F855A;flex-shrink:0;">&#x2713;</span>${t}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+        ${result ? `<div style="background:var(--gold-pale,#FFF8E7);padding:20px 28px;border-radius:12px;border-left:4px solid var(--gold-primary,#C9A84C);margin-bottom:${quote ? '24' : '0'}px;"><strong>Result:</strong> ${result}</div>` : ''}
+        ${quote ? `<blockquote style="font-style:italic;font-size:18px;color:var(--charcoal);padding:20px 28px;border-left:3px solid var(--green-primary);margin:0;">"${quote}"${quote_author ? `<footer style="margin-top:8px;font-size:13px;font-style:normal;color:var(--muted);">&#8212; ${quote_author}</footer>` : ''}</blockquote>` : ''}
+      </div>`;
+    }).join('');
+    // Re-observe newly added reveal elements
+    caseStudiesList.querySelectorAll('.reveal').forEach(el => {
+      if (typeof observer !== 'undefined') observer.observe(el);
+    });
+  }
 
   // C. Load all dynamic media assets (Logo, Hero backgrounds, section cards)
   const mediaElements = document.querySelectorAll('[data-media-key]');

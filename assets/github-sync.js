@@ -219,32 +219,6 @@
     const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`;
 
     // Convert file to base64
-    const base64 = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result;
-        const comma = result.indexOf(',');
-        resolve(comma >= 0 ? result.slice(comma + 1) : result);
-      };
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
-
-    const res = await fetch(apiUrl, {
-      method: 'PUT',
-      headers: Object.assign({ 'Content-Type': 'application/json' }, _ghHeaders(cfg)),
-      body: JSON.stringify({
-        message: 'Upload media: ' + filename,
-        content: base64,
-        branch: branch
-      })
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error('Media upload failed: ' + (err.message || res.statusText));
-    }
-    const result = await res.json();
-    // Return raw URL (stable, no expiry)
     return `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${branch}/${path}`;
   };
 
@@ -313,7 +287,6 @@
       return;
     }
     const pulled = await window.nucleusSyncPull();
-    // "Active" on admin requires a token; on public, any successful pull counts
     if (window._nucleusIsAdmin) {
       window._nucleusSyncActive = !!cfg.token && pulled;
     } else {
