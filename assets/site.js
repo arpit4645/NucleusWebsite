@@ -457,39 +457,54 @@ async function loadGlobalMediaAndSettings() {
     let caseStudies = [];
     try { caseStudies = JSON.parse(localStorage.getItem('nucleus_casestudies') || '[]'); } catch(e) {}
     if (!caseStudies.length) caseStudies = DEFAULT_CASE_STUDIES;
-    caseStudiesList.innerHTML = caseStudies.map(s => {
+    caseStudiesList.innerHTML = caseStudies.map((s, idx) => {
       const client = s.client || '';
       const industry = s.industry || '';
       const duration = s.duration || '';
       const location = s.location || '';
+      const image = s.image || '';
       const before = s.before || '';
       const after = s.after || '';
       const result = s.result || '';
       const quote = s.quote || '';
       const quote_author = s.quote_author || '';
-      return `<div class="case-card reveal" style="background:#fff;border-radius:20px;padding:40px;box-shadow:0 4px 24px rgba(0,0,0,0.08);margin-bottom:32px;">
-        <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:24px;">
-          <span style="background:var(--green-primary);color:#fff;padding:6px 16px;border-radius:20px;font-size:12px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;">${industry || 'Case Study'}</span>
-          ${duration ? `<span style="color:var(--muted);font-size:14px;padding-top:6px;">&#9201; ${duration}</span>` : ''}
-          ${location ? `<span style="color:var(--muted);font-size:14px;padding-top:6px;">&#128205; ${location}</span>` : ''}
-        </div>
-        <h3 style="font-size:28px;margin-bottom:32px;color:var(--green-deep);">${client}</h3>
+      const isVideo = image && (image.startsWith('data:video') || /\.(mp4|webm|mov)(\?|$)/i.test(image));
+      const mediaHtml = image
+        ? `<div style="width:100%;aspect-ratio:16/9;border-radius:16px 16px 0 0;overflow:hidden;background:#111;position:relative;margin:-40px -40px 32px -40px;width:calc(100% + 80px);">
+            ${isVideo
+              ? `<video src="${image}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>`
+              : `<img loading="lazy" src="${image}" alt="${client}" style="width:100%;height:100%;object-fit:cover;display:block;" />`}
+            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,0.45));"></div>
+            <div style="position:absolute;bottom:20px;left:28px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <span style="background:var(--gold-primary);color:var(--green-deep);padding:5px 14px;border-radius:20px;font-size:11px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;font-weight:600;">${industry || 'Case Study'}</span>
+              ${duration ? `<span style="color:rgba(255,255,255,0.9);font-size:13px;">&#9201; ${duration}</span>` : ''}
+              ${location ? `<span style="color:rgba(255,255,255,0.9);font-size:13px;">&#128205; ${location}</span>` : ''}
+            </div>
+          </div>`
+        : `<div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:20px;">
+            <span style="background:var(--green-primary);color:#fff;padding:5px 14px;border-radius:20px;font-size:11px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;">${industry || 'Case Study'}</span>
+            ${duration ? `<span style="color:var(--muted);font-size:14px;padding-top:4px;">&#9201; ${duration}</span>` : ''}
+            ${location ? `<span style="color:var(--muted);font-size:14px;padding-top:4px;">&#128205; ${location}</span>` : ''}
+          </div>`;
+      return `<div class="case-card reveal" style="background:#fff;border-radius:20px;padding:40px;box-shadow:0 4px 32px rgba(0,0,0,0.09);margin-bottom:32px;overflow:hidden;">
+        ${mediaHtml}
+        <h3 style="font-size:clamp(22px,2.5vw,30px);margin-bottom:28px;color:var(--green-deep);">${client}</h3>
         <div class="ba-grid">
-          <div style="background:#FFF0F0;padding:28px;border-radius:16px;border:1px solid #FFD6D6;">
-            <h4 style="color:#D32F2F;margin-bottom:16px;">Before</h4>
-            <ul style="list-style:none;padding:0;color:#5C1010;font-size:16px;line-height:1.8;">
-              ${before.split('\n').filter(Boolean).map(t=>`<li style="display:flex;gap:10px;margin-bottom:8px;"><span style="color:#D32F2F;flex-shrink:0;">&#x2717;</span>${t}</li>`).join('')}
+          <div style="background:#FFF0F0;padding:24px 28px;border-radius:14px;border:1px solid #FFD6D6;">
+            <h4 style="color:#D32F2F;margin-bottom:14px;font-size:15px;text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono);">Before</h4>
+            <ul style="list-style:none;padding:0;color:#5C1010;font-size:15px;line-height:1.75;">
+              ${before.split('\n').filter(Boolean).map(t=>`<li style="display:flex;gap:10px;margin-bottom:8px;"><span style="color:#D32F2F;flex-shrink:0;font-weight:700;">✕</span>${t}</li>`).join('')}
             </ul>
           </div>
-          <div style="background:#F0FFF4;padding:28px;border-radius:16px;border:1px solid #C6F6D5;">
-            <h4 style="color:#2F855A;margin-bottom:16px;">After</h4>
-            <ul style="list-style:none;padding:0;color:#1C4532;font-size:16px;line-height:1.8;">
-              ${after.split('\n').filter(Boolean).map(t=>`<li style="display:flex;gap:10px;margin-bottom:8px;"><span style="color:#2F855A;flex-shrink:0;">&#x2713;</span>${t}</li>`).join('')}
+          <div style="background:#F0FFF4;padding:24px 28px;border-radius:14px;border:1px solid #C6F6D5;">
+            <h4 style="color:#2F855A;margin-bottom:14px;font-size:15px;text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono);">After</h4>
+            <ul style="list-style:none;padding:0;color:#1C4532;font-size:15px;line-height:1.75;">
+              ${after.split('\n').filter(Boolean).map(t=>`<li style="display:flex;gap:10px;margin-bottom:8px;"><span style="color:#2F855A;flex-shrink:0;font-weight:700;">✓</span>${t}</li>`).join('')}
             </ul>
           </div>
         </div>
-        ${result ? `<div style="background:var(--gold-pale,#FFF8E7);padding:20px 28px;border-radius:12px;border-left:4px solid var(--gold-primary,#C9A84C);margin-bottom:${quote ? '24' : '0'}px;"><strong>Result:</strong> ${result}</div>` : ''}
-        ${quote ? `<blockquote style="font-style:italic;font-size:18px;color:var(--charcoal);padding:20px 28px;border-left:3px solid var(--green-primary);margin:0;">"${quote}"${quote_author ? `<footer style="margin-top:8px;font-size:13px;font-style:normal;color:var(--muted);">&#8212; ${quote_author}</footer>` : ''}</blockquote>` : ''}
+        ${result ? `<div style="background:#FFF8E7;padding:18px 24px;border-radius:12px;border-left:4px solid var(--gold-primary,#C9A84C);margin-bottom:${quote ? '20' : '0'}px;font-size:15px;"><strong style="color:var(--green-deep);">Result:</strong> ${result}</div>` : ''}
+        ${quote ? `<blockquote style="font-style:italic;font-size:17px;line-height:1.65;color:var(--charcoal);padding:18px 24px;border-left:3px solid var(--green-primary);margin:0;background:var(--warm-white);border-radius:0 10px 10px 0;">"${quote}"${quote_author ? `<footer style="margin-top:10px;font-size:13px;font-style:normal;color:var(--muted);font-family:var(--mono);letter-spacing:.06em;">— ${quote_author}</footer>` : ''}</blockquote>` : ''}
       </div>`;
     }).join('');
     // Re-observe newly added reveal elements

@@ -1679,6 +1679,23 @@ function renderCaseStudies() {
         <div class="field"><label>Duration e.g. 6 months</label><input type="text" class="cs-duration" value="${escHtml(s.duration||'')}" /></div>
       </div>
       <div class="field"><label>Location e.g. Surat, Gujarat</label><input type="text" class="cs-location" value="${escHtml(s.location||'')}" /></div>
+      <div class="field">
+        <label>Case Study Image / Video</label>
+        <div id="cs_media_preview_${i}" style="margin-bottom:10px;">
+          ${s.image ? `<div style="position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111;max-width:480px;">
+            ${(s.image.startsWith('data:video') || /\.(mp4|webm|mov)(\?|$)/i.test(s.image))
+              ? `<video src="${escHtml(s.image)}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`
+              : `<img src="${escHtml(s.image)}" style="width:100%;height:100%;object-fit:cover;" />`}
+            <button onclick="clearCaseStudyMedia(${i})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button>
+          </div>` : '<p style="font-size:13px;color:var(--muted);margin:0;">No image uploaded yet.</p>'}
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <input type="file" id="cs_file_${i}" accept="image/*,video/*" style="display:none" onchange="uploadCaseStudyMedia(${i},event)" />
+          <button class="btn btn-sm" onclick="document.getElementById('cs_file_${i}').click()" style="white-space:nowrap;">📷 Upload Image / Video</button>
+          <input type="text" class="cs-image" placeholder="Or paste URL…" value="${escHtml(s.image||'')}" style="flex:1;min-width:180px;" />
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:6px;">Image: max 10 MB (JPG/PNG/WebP) · Video: max 500 MB (MP4/WebM)</p>
+      </div>
       <div class="field"><label>Before Points (one per line)</label><textarea class="cs-before" rows="3">${escHtml(s.before)}</textarea></div>
       <div class="field"><label>After Points (one per line)</label><textarea class="cs-after" rows="3">${escHtml(s.after)}</textarea></div>
       <div class="field"><label>Result Summary</label><input type="text" class="cs-result" value="${escHtml(s.result||'')}" /></div>
@@ -1704,6 +1721,7 @@ function saveCaseStudies() {
   const industries = document.querySelectorAll('.cs-industry');
   const durations = document.querySelectorAll('.cs-duration');
   const locations = document.querySelectorAll('.cs-location');
+  const images = document.querySelectorAll('.cs-image');
   const befores = document.querySelectorAll('.cs-before');
   const afters = document.querySelectorAll('.cs-after');
   const results = document.querySelectorAll('.cs-result');
@@ -1716,6 +1734,7 @@ function saveCaseStudies() {
       industry: industries[i] ? industries[i].value : '',
       duration: durations[i] ? durations[i].value : '',
       location: locations[i] ? locations[i].value : '',
+      image: images[i] ? images[i].value.trim() : '',
       before: befores[i].value,
       after: afters[i].value,
       result: results[i].value,
@@ -1725,6 +1744,53 @@ function saveCaseStudies() {
   });
   localStorage.setItem('nucleus_casestudies', JSON.stringify(items));
   showToast('Case studies saved!');
+}
+
+async function uploadCaseStudyMedia(idx, event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const isVideo = file.type.startsWith('video/');
+  const maxBytes = isVideo ? 500*1024*1024 : 10*1024*1024;
+  if (file.size > maxBytes) { showToast('File too large.', 'error'); return; }
+
+  showToast(isVideo ? 'Uploading video…' : 'Uploading image…', 'success');
+
+  let finalUrl = '';
+  if (window._nucleusSyncActive && window.nucleusUploadMedia) {
+    try {
+      finalUrl = await window.nucleusUploadMedia('nucleus_case_' + idx + '_media', file);
+    } catch(err) {
+      showToast('Cloud upload failed, saving locally.', 'error');
+    }
+  }
+  if (!finalUrl) {
+    finalUrl = await new Promise(res => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result);
+      r.readAsDataURL(file);
+    });
+  }
+
+  const inputs = document.querySelectorAll('.cs-image');
+  if (inputs[idx]) inputs[idx].value = finalUrl;
+
+  const preview = document.getElementById('cs_media_preview_' + idx);
+  if (preview) {
+    preview.innerHTML = `<div style="position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111;max-width:480px;">
+      ${isVideo
+        ? `<video src="${finalUrl}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`
+        : `<img src="${finalUrl}" style="width:100%;height:100%;object-fit:cover;" />`}
+      <button onclick="clearCaseStudyMedia(${idx})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button>
+    </div>`;
+  }
+  showToast('Media ready — click Save Case Studies to apply.', 'success');
+}
+
+function clearCaseStudyMedia(idx) {
+  const inputs = document.querySelectorAll('.cs-image');
+  if (inputs[idx]) inputs[idx].value = '';
+  const preview = document.getElementById('cs_media_preview_' + idx);
+  if (preview) preview.innerHTML = '<p style="font-size:13px;color:var(--muted);margin:0;">No image uploaded yet.</p>';
 }
 
 // ── Testimonials CRUD ────────────────────────────────────────────────────────
