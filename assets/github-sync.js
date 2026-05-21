@@ -124,10 +124,11 @@
 
   // ── Push all local content to GitHub via Contents API ──────────────────────
   async function _doCommit(cfg, branch, apiBase, pending) {
-    const getHeaders = Object.assign({ 'Cache-Control': 'no-cache' }, _ghHeaders(cfg));
+    // Do NOT add Cache-Control header — GitHub CORS preflight blocks it.
+    // Cache-busting is handled by the ?t= query param instead.
     const getRes = await fetch(
       apiBase + '?ref=' + encodeURIComponent(branch) + '&t=' + Date.now(),
-      { cache: 'no-store', headers: getHeaders }
+      { cache: 'no-store', headers: _ghHeaders(cfg) }
     );
     let currentData = {};
     let sha = null;
