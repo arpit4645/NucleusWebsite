@@ -89,21 +89,24 @@
     return h;
   }
 
-  // ── Pull data from GitHub or Netlify-served JSON ───────────────────────────
+  // ── Pull data from GitHub raw (primary) or Vercel-served JSON (fallback) ────
   window.nucleusSyncPull = async function () {
     const cfg = getConfig();
     if (!cfg || !cfg.owner || !cfg.repo) return false;
     try {
-      // Public read: same-domain (Netlify) — fastest, no CORS, no rate limit
-      let res = await fetch('/' + DATA_FILE_PATH + '?t=' + Date.now(), { cache: 'no-store' });
+      // Primary: raw.githubusercontent.com — updates immediately after admin push,
+      // no deployment delay. Vercel-served /content/site-data.json takes 1-2 minutes
+      // to reflect new commits, so we cannot use it as primary.
+      const branch = cfg.branch || 'main';
+      const rawUrl = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${branch}/${DATA_FILE_PATH}?t=${Date.now()}`;
+      let res = await fetch(rawUrl);
       let data = null;
       if (res.ok) {
         data = await res.json();
       } else {
-        // Fallback: GitHub raw (in case Netlify hasn't deployed the file yet)
-        const branch = cfg.branch || 'main';
-        const rawUrl = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${branch}/${DATA_FILE_PATH}?t=${Date.now()}`;
-        res = await fetch(rawUrl, { cache: 'no-store' });
+        // Fallback: same-domain served file (works when raw.githubusercontent.com is
+        // unreachable or the file hasn't been committed yet)
+        res = await fetch('/' + DATA_FILE_PATH + '?t=' + Date.now());
         if (res.ok) data = await res.json();
       }
       if (!data) return true; // no data yet, but we're "connected"
