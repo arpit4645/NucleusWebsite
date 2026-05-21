@@ -124,11 +124,11 @@
 
   // ── Push all local content to GitHub via Contents API ──────────────────────
   async function _doCommit(cfg, branch, apiBase, pending) {
-    // Do NOT add Cache-Control header — GitHub CORS preflight blocks it.
-    // Cache-busting is handled by the ?t= query param instead.
+    // No cache option — { cache: 'no-store' } makes browsers add a Cache-Control
+    // request header which GitHub's CORS preflight rejects. Use ?t= for cache-busting.
     const getRes = await fetch(
       apiBase + '?ref=' + encodeURIComponent(branch) + '&t=' + Date.now(),
-      { cache: 'no-store', headers: _ghHeaders(cfg) }
+      { headers: _ghHeaders(cfg) }
     );
     let currentData = {};
     let sha = null;
@@ -386,7 +386,7 @@
     // Step 1: Basic GET to api.github.com (no token, no auth)
     console.log('Step 1: Testing basic fetch to api.github.com…');
     try {
-      const r = await fetch('https://api.github.com', { cache: 'no-store' });
+      const r = await fetch('https://api.github.com');
       console.log('%c  ✅ Step 1 PASSED — api.github.com reachable, status:', 'color:#4caf50', r.status);
     } catch (e) {
       console.error('%c  ❌ Step 1 FAILED — Cannot reach api.github.com from this page!', 'color:#f44336');
