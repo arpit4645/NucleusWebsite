@@ -278,27 +278,73 @@
   };
 
   // ── Sync badge / error UI ──────────────────────────────────────────────────
+  let _lastSyncError = '';
+
   function _updateSyncBadge(ok, errMsg) {
     const badge = document.getElementById('nucleus-sync-badge');
     if (!badge) return;
     if (ok) {
       badge.innerHTML = '<span style="color:#4caf50;">&#9679;</span> Connected';
       badge.title = 'GitHub sync is working. Changes will appear for all visitors.';
+      badge.style.cursor = 'default';
+      badge.onclick = null;
+      _lastSyncError = '';
     } else {
-      badge.innerHTML = '<span style="color:#f44336;">&#9679;</span> Local only';
-      badge.title = errMsg || 'GitHub not connected. Open Setup to add your token.';
+      _lastSyncError = errMsg || 'Unknown error';
+      badge.innerHTML = '<span style="color:#f44336;">&#9679;</span> Local only &nbsp;<span style="font-size:10px;text-decoration:underline;opacity:.8;">click to fix</span>';
+      badge.title = _lastSyncError;
+      badge.style.cursor = 'pointer';
+      badge.onclick = _showSyncErrorPanel;
     }
+  }
+
+  function _showSyncErrorPanel() {
+    const existing = document.getElementById('_nucleusSyncPanel');
+    if (existing) { existing.remove(); return; }
+    const cfg = getConfig();
+    const hasToken = !!(cfg && cfg.token);
+    const panel = document.createElement('div');
+    panel.id = '_nucleusSyncPanel';
+    panel.style.cssText = 'position:fixed;top:52px;right:16px;width:360px;background:#1a1a1a;color:#fff;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.5);z-index:99999;font-size:13px;font-family:monospace;overflow:hidden;';
+    panel.innerHTML = `
+      <div style="background:#c62828;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;">
+        <strong style="font-size:14px;">&#9888; Sync Failed</strong>
+        <button onclick="document.getElementById('_nucleusSyncPanel').remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;line-height:1;">&times;</button>
+      </div>
+      <div style="padding:16px 18px;">
+        <p style="color:#ffb3b3;margin:0 0 12px;line-height:1.5;word-break:break-word;">${_lastSyncError}</p>
+        <hr style="border:none;border-top:1px solid #333;margin:12px 0;" />
+        <p style="color:#aaa;margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;">Common Causes</p>
+        <ul style="margin:0 0 16px;padding-left:16px;color:#ccc;line-height:1.8;font-family:sans-serif;font-size:12px;">
+          <li>Token missing <strong>Contents → Write</strong> permission</li>
+          <li>Token has expired (set it to "No expiration")</li>
+          <li>Token was revoked — needs to be regenerated</li>
+        </ul>
+        ${hasToken
+          ? `<button onclick="document.getElementById('_nucleusSyncPanel').remove();showGithubSetup();" style="width:100%;padding:10px;background:var(--green,#2d6a4f);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;margin-bottom:8px;">&#128279; Re-enter GitHub Token</button>`
+          : `<button onclick="document.getElementById('_nucleusSyncPanel').remove();showGithubSetup();" style="width:100%;padding:10px;background:var(--green,#2d6a4f);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;margin-bottom:8px;">&#128279; Setup GitHub Token</button>`
+        }
+        <button onclick="document.getElementById('_nucleusSyncPanel').remove();window.nucleusSyncFlush&&window.nucleusSyncFlush();" style="width:100%;padding:10px;background:#333;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;">&#8635; Retry Sync Now</button>
+      </div>`;
+    document.body.appendChild(panel);
   }
 
   let _adminErrorShown = false;
   function _showAdminSyncError(msg) {
     if (_adminErrorShown) return;
     _adminErrorShown = true;
-    setTimeout(() => { _adminErrorShown = false; }, 8000);
+    setTimeout(() => { _adminErrorShown = false; }, 30000);
+    // Remove any previous banner
+    const old = document.getElementById('_nucleusSyncBanner');
+    if (old) old.remove();
     const div = document.createElement('div');
-    div.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#c62828;color:#fff;padding:14px 20px;z-index:99999;font-size:13px;font-family:monospace;line-height:1.5;';
-    div.innerHTML = '<strong>&#9888; Sync Error</strong> — ' + msg.replace(/\n/g, '<br>') +
-      ' <button onclick="this.parentNode.remove()" style="float:right;background:none;border:1px solid rgba(255,255,255,.5);color:#fff;padding:2px 10px;cursor:pointer;border-radius:4px;">Dismiss</button>';
+    div.id = '_nucleusSyncBanner';
+    div.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#c62828;color:#fff;padding:13px 20px;z-index:99998;font-size:13px;font-family:monospace;line-height:1.5;display:flex;align-items:center;gap:12px;';
+    div.innerHTML =
+      '<strong style="white-space:nowrap;">&#9888; Sync Error</strong>' +
+      '<span style="flex:1;word-break:break-all;">' + msg + '</span>' +
+      '<button onclick="showGithubSetup();document.getElementById(\'_nucleusSyncBanner\').remove();" style="white-space:nowrap;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);color:#fff;padding:4px 12px;cursor:pointer;border-radius:4px;font-family:monospace;font-size:12px;">Fix Token</button>' +
+      '<button onclick="this.parentNode.remove();window._adminErrorShown=false;" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0 4px;line-height:1;">&times;</button>';
     document.body.prepend(div);
   }
 

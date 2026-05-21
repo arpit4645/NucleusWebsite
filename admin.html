@@ -1518,23 +1518,54 @@ if (sessionStorage.getItem('nucleus_auth') === 'true') {
 async function _validateAndSaveToken(token, errEl, onSuccess) {
   if (!token) { errEl.textContent = 'Please paste your token.'; errEl.style.display = 'block'; return; }
   if (!token.startsWith('github_pat_') && !token.startsWith('ghp_')) {
-    errEl.textContent = 'Token should start with "github_pat_" — copy it exactly from GitHub.';
+    errEl.textContent = 'Token should start with "github_pat_" or "ghp_" — copy it exactly from GitHub.';
     errEl.style.display = 'block'; return;
   }
   errEl.style.display = 'none';
+  errEl.textContent = '';
   const cfg = window.NUCLEUS_GITHUB_REPO;
+  const headers = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github+json' };
+
+  // Step 1: Check repo is accessible
   try {
-    const res = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}`, {
-      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github+json' }
-    });
-    if (!res.ok) {
-      const j = await res.json().catch(() => ({}));
-      throw new Error(j.message || 'Token rejected (status ' + res.status + ')');
+    const repoRes = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}`, { headers });
+    if (!repoRes.ok) {
+      const j = await repoRes.json().catch(() => ({}));
+      if (repoRes.status === 401) throw new Error('Token invalid or expired — generate a new one.');
+      if (repoRes.status === 404) throw new Error('Repository not found — check token has access to NucleusWebsite repo.');
+      throw new Error(j.message || 'GitHub error ' + repoRes.status);
     }
   } catch (e) {
-    errEl.textContent = 'Could not verify token: ' + e.message;
+    errEl.innerHTML = '&#10060; ' + e.message;
     errEl.style.display = 'block'; return;
   }
+
+  // Step 2: Check Contents Write permission by fetching the data file
+  try {
+    const fileRes = await fetch(
+      `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/content/site-data.json`,
+      { headers }
+    );
+    if (fileRes.status === 403) {
+      throw new Error('Token does not have Contents → Read permission. Re-create the token and enable Contents: Read and write.');
+    }
+    // For fine-grained tokens: check x-accepted-github-permissions header if present
+    const perms = fileRes.headers.get('x-accepted-github-permissions') || '';
+    // If we can read the file (200 or 404 = no file yet), the token has read access.
+    // We can't test write without actually writing, so we check the scopes for classic PATs.
+    const scopes = fileRes.headers.get('x-oauth-scopes') || '';
+    if (scopes && !scopes.includes('repo') && !scopes.includes('public_repo')) {
+      throw new Error('Classic token needs the "repo" scope for write access. Re-create the token with "repo" scope.');
+    }
+  } catch (e) {
+    if (e.message.includes('Token does not have') || e.message.includes('Classic token')) {
+      errEl.innerHTML = '&#10060; ' + e.message;
+      errEl.style.display = 'block'; return;
+    }
+    // Other errors (network, 404 for missing file) are acceptable — token likely works
+  }
+
+  // All checks passed — save and initialize
   window.nucleusGithubSetToken(token);
   if (window.initNucleusSync) await window.initNucleusSync();
   onSuccess();
