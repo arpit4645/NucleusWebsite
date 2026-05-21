@@ -122,26 +122,42 @@
     }
   };
 
+  // ── XHR helper — avoids fetch() auto-injecting Cache-Control (CORS issue) ──
+  function _xhr(method, url, token, bodyStr) {
+    return new Promise(function(resolve, reject) {
+      var x = new XMLHttpRequest();
+      x.open(method, url);
+      x.setRequestHeader('Authorization', 'token ' + token);
+      x.setRequestHeader('Accept', 'application/vnd.github+json');
+      if (bodyStr) x.setRequestHeader('Content-Type', 'application/json');
+      x.onload = function() { resolve({ status: x.status, text: x.responseText }); };
+      x.onerror = function() { reject(new Error('Network request failed')); };
+      x.ontimeout = function() { reject(new Error('Request timed out')); };
+      x.timeout = 30000;
+      x.send(bodyStr || null);
+    });
+  }
+
   // ── Push all local content to GitHub via Contents API ──────────────────────
   async function _doCommit(cfg, branch, apiBase, pending) {
-    // No cache option — { cache: 'no-store' } makes browsers add a Cache-Control
-    // request header which GitHub's CORS preflight rejects. Use ?t= for cache-busting.
-    const getRes = await fetch(
+    // Use XHR instead of fetch — fetch() auto-injects Cache-Control which
+    // GitHub's CORS preflight rejects.
+    const getR = await _xhr('GET',
       apiBase + '?ref=' + encodeURIComponent(branch) + '&t=' + Date.now(),
-      { headers: _ghHeaders(cfg) }
+      cfg.token
     );
     let currentData = {};
     let sha = null;
-    if (getRes.ok) {
-      const file = await getRes.json();
+    if (getR.status === 200) {
+      const file = JSON.parse(getR.text);
       sha = file.sha;
       _lastSha = sha;
       try {
         currentData = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\s/g, '')))));
       } catch (e) { currentData = {}; }
-    } else if (getRes.status !== 404) {
-      const err = await getRes.json().catch(() => ({}));
-      throw new Error('GitHub read failed: ' + (err.message || getRes.statusText));
+    } else if (getR.status !== 404) {
+      const err = JSON.parse(getR.text || '{}');
+      throw new Error('GitHub read failed: ' + (err.message || getR.status));
     }
 
     const merged = Object.assign({}, currentData, pending);
@@ -156,16 +172,12 @@
     };
     if (sha) body.sha = sha;
 
-    const putRes = await fetch(apiBase, {
-      method: 'PUT',
-      headers: Object.assign({ 'Content-Type': 'application/json' }, _ghHeaders(cfg)),
-      body: JSON.stringify(body)
-    });
-    if (!putRes.ok) {
-      const err = await putRes.json().catch(() => ({}));
-      throw new Error('GitHub commit failed: ' + (err.message || putRes.statusText));
+    const putR = await _xhr('PUT', apiBase, cfg.token, JSON.stringify(body));
+    if (putR.status < 200 || putR.status >= 300) {
+      const err = JSON.parse(putR.text || '{}');
+      throw new Error('GitHub commit failed: ' + (err.message || putR.status));
     }
-    const result = await putRes.json();
+    const result = JSON.parse(putR.text);
     _lastSha = result.content && result.content.sha;
   }
 
