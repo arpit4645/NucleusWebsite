@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     threshold: 0.1
   };
 
-  const observer = new IntersectionObserver((entries) => {
+  window._revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('in');
@@ -55,13 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
         
-        observer.unobserve(entry.target);
+        window._revealObserver.unobserve(entry.target);
       }
     });
   }, observerOptions);
 
   document.querySelectorAll('.reveal, .reveal-left, .reveal-scale, [data-stagger], .stagger-list').forEach(el => {
-    observer.observe(el);
+    window._revealObserver.observe(el);
   });
 
   /* ── 2. Navigation Blur & Scroll ────────────────────────────── */
@@ -401,7 +401,7 @@ async function loadGlobalMediaAndSettings() {
     }).join('');
     // Re-observe newly added reveal elements
     servicesList.querySelectorAll('.reveal').forEach(el => {
-      if (typeof observer !== 'undefined') observer.observe(el);
+      if (typeof window._revealObserver !== 'undefined') window._revealObserver.observe(el);
     });
   }
 
@@ -494,7 +494,7 @@ async function loadGlobalMediaAndSettings() {
     }).join('');
     // Re-observe newly added reveal elements
     caseStudiesList.querySelectorAll('.reveal').forEach(el => {
-      if (typeof observer !== 'undefined') observer.observe(el);
+      if (typeof window._revealObserver !== 'undefined') window._revealObserver.observe(el);
     });
   }
 
@@ -519,7 +519,7 @@ async function loadGlobalMediaAndSettings() {
       </div>`
     ).join('');
     careersBenefitsList.querySelectorAll('.reveal').forEach(el => {
-      if (typeof observer !== 'undefined') observer.observe(el);
+      if (typeof window._revealObserver !== 'undefined') window._revealObserver.observe(el);
     });
   }
 
@@ -554,7 +554,7 @@ async function loadGlobalMediaAndSettings() {
       </div>`
     ).join('');
     programsDynamicList.querySelectorAll('.reveal').forEach(el => {
-      if (typeof observer !== 'undefined') observer.observe(el);
+      if (typeof window._revealObserver !== 'undefined') window._revealObserver.observe(el);
     });
   }
 
