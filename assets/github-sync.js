@@ -378,47 +378,84 @@
     });
   };
 
-  // Test write access — call window.testNucleusPush() from browser console
+  // Full diagnostic — run window.testNucleusPush() from browser console on admin page
   window.testNucleusPush = async function () {
-    const cfg = getConfig();
-    if (!cfg || !cfg.token) { console.error('[NucleusSync] No token saved.'); return; }
-    console.log('[NucleusSync] Testing write access to GitHub…');
-    const apiBase = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${DATA_FILE_PATH}`;
-    const branch = cfg.branch || 'main';
+    console.log('%c[NucleusSync] Starting full diagnosis…', 'color:#4caf50;font-weight:bold');
+
+    // Step 1: Basic GET to api.github.com (no token, no auth)
+    console.log('Step 1: Testing basic fetch to api.github.com…');
     try {
-      // Read current file
-      const getRes = await fetch(apiBase + '?ref=' + branch + '&t=' + Date.now(), {
-        headers: Object.assign({ 'Cache-Control': 'no-cache' }, _ghHeaders(cfg))
+      const r = await fetch('https://api.github.com', { cache: 'no-store' });
+      console.log('%c  ✅ Step 1 PASSED — api.github.com reachable, status:', 'color:#4caf50', r.status);
+    } catch (e) {
+      console.error('%c  ❌ Step 1 FAILED — Cannot reach api.github.com from this page!', 'color:#f44336');
+      console.error('  Error:', e.message);
+      console.error('  → Check the page URL — is it http:// or file://? GitHub API requires https://');
+      console.error('  → Check Network tab in DevTools for a blocked request or CSP error');
+      return;
+    }
+
+    // Step 2: Check token
+    const cfg = getConfig();
+    if (!cfg || !cfg.token) {
+      console.error('%c  ❌ Step 2 FAILED — No GitHub token saved in this browser.', 'color:#f44336');
+      console.error('  → Go to admin panel gear icon → re-enter your GitHub token');
+      return;
+    }
+    console.log('%c  ✅ Step 2 PASSED — Token found in localStorage', 'color:#4caf50');
+
+    // Step 3: Authenticated GET to the data file
+    const apiBase = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${DATA_FILE_PATH}`;
+    console.log('Step 3: Authenticated read of content/site-data.json…');
+    try {
+      const r = await fetch(apiBase + '?ref=' + (cfg.branch || 'main'), {
+        headers: { 'Authorization': 'token ' + cfg.token, 'Accept': 'application/vnd.github+json' }
       });
-      console.log('[NucleusSync] GET status:', getRes.status);
-      if (!getRes.ok) {
-        const e = await getRes.json().catch(() => ({}));
-        console.error('[NucleusSync] Read failed:', e.message || getRes.statusText);
-        return;
-      }
-      const file = await getRes.json();
-      console.log('[NucleusSync] Read OK. SHA:', file.sha, '— testing write with same content…');
-      // Write back same content (no-op commit to test write permission)
-      const putRes = await fetch(apiBase, {
+      console.log('  Response status:', r.status);
+      if (r.status === 401) { console.error('%c  ❌ Step 3 FAILED — Token is invalid or expired. Generate a new token.', 'color:#f44336'); return; }
+      if (r.status === 403) { console.error('%c  ❌ Step 3 FAILED — Token lacks Contents:Read permission.', 'color:#f44336'); return; }
+      if (r.status === 404) { console.warn('  ⚠️ File not found (first deploy) — that is OK, write test will create it'); }
+      else if (!r.ok) { const e = await r.json().catch(()=>({})); console.error('%c  ❌ Step 3 FAILED', 'color:#f44336', e.message); return; }
+      else { console.log('%c  ✅ Step 3 PASSED — Authenticated read works', 'color:#4caf50'); }
+      const file = r.ok ? await r.json() : null;
+
+      // Step 4: Test write (PUT same content back)
+      console.log('Step 4: Testing write (PUT same content back)…');
+      const body = file
+        ? { message: 'NucleusSync connectivity test', content: file.content.replace(/\s/g,''), sha: file.sha, branch: cfg.branch||'main' }
+        : { message: 'NucleusSync connectivity test', content: btoa('{}'), branch: cfg.branch||'main' };
+      const putR = await fetch(apiBase, {
         method: 'PUT',
-        headers: Object.assign({ 'Content-Type': 'application/json' }, _ghHeaders(cfg)),
-        body: JSON.stringify({ message: 'Test write from admin', content: file.content.replace(/\s/g, ''), sha: file.sha, branch })
+        headers: { 'Authorization': 'token ' + cfg.token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
       });
-      console.log('[NucleusSync] PUT status:', putRes.status);
-      const putBody = await putRes.json().catch(() => ({}));
-      if (!putRes.ok) {
-        console.error('[NucleusSync] ❌ Write FAILED:', putBody.message || putRes.statusText, '\n→ This is why sync shows "Local only".');
+      console.log('  PUT status:', putR.status);
+      const putBody = await putR.json().catch(()=>({}));
+      if (!putR.ok) {
+        console.error('%c  ❌ Step 4 FAILED — Write rejected by GitHub:', 'color:#f44336', putBody.message || putR.statusText);
+        if (putR.status === 403) console.error('  → Token is missing Contents:Write permission. Regenerate with Read AND Write.');
+        if (putR.status === 422) console.error('  → SHA mismatch. This is usually transient — try saving again.');
+        if (putR.status === 409) console.error('  → Conflict. Try saving again.');
       } else {
-        console.log('[NucleusSync] ✅ Write succeeded! Token has correct permissions.');
+        console.log('%c  ✅ Step 4 PASSED — Write succeeded! Your token has full read+write access.', 'color:#4caf50;font-weight:bold');
+        console.log('%c  ✅ ALL STEPS PASSED — Sync should be working. Force-flush now…', 'color:#4caf50;font-weight:bold');
+        if (Object.keys(_pendingPushes).length) window.nucleusSyncFlush();
       }
     } catch (e) {
-      console.error('[NucleusSync] Network error during test:', e.message);
+      console.error('%c  ❌ FAILED — Fetch threw an error (network block):', 'color:#f44336', e.message);
+      console.error('  → Even authenticated requests are being blocked from this page.');
+      console.error('  → Check the page URL scheme and hosting provider headers.');
     }
   };
 
   // ── Initialize on load ─────────────────────────────────────────────────────
   window.initNucleusSync = async function () {
     const cfg = getConfig();
+    const pageScheme = location.protocol;
+    console.log('[NucleusSync] Page URL:', location.href.slice(0, 80));
+    if (pageScheme === 'file:') {
+      console.warn('[NucleusSync] ⚠️ Page opened as a local FILE — GitHub API calls will be blocked! Open the admin panel from the hosted URL (https://...) instead.');
+    }
     if (!cfg || !cfg.owner || !cfg.repo) {
       console.log('[NucleusSync] No GitHub config (sync-config.js missing or incomplete).');
       document.dispatchEvent(new Event('nucleus-sync-ready'));
