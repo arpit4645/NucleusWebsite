@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Insights — Nucleus Consultant</title>
-  
   <meta property="og:title" content="Nucleus Consultant" />
   <meta property="og:description" content="We help young minds and growing businesses clarify purpose and turn dreams into reality." />
   <meta property="og:image" content="assets/logo.png" />
@@ -23,12 +22,11 @@
       border-bottom: 1px solid var(--line);
       margin-bottom: 80px;
     }
-    @media (max-width: 980px) { .feat { grid-template-columns: 1fr; } }
+    @media (max-width: 980px) { .feat { grid-template-columns: 1fr; gap: 40px; padding: 40px 0 64px; } }
     .feat .visual {
       aspect-ratio: 4/3;
       border-radius: 14px;
-      background:
-        repeating-linear-gradient(45deg, var(--cream) 0 14px, #efe9d9 14px 28px);
+      background: repeating-linear-gradient(45deg, var(--cream) 0 14px, #efe9d9 14px 28px);
       border: 1px solid var(--line);
       position: relative;
       overflow: hidden;
@@ -38,360 +36,228 @@
       position: absolute; inset: 0;
       background: radial-gradient(circle at 30% 30%, rgba(232,181,71,.3), transparent 50%);
     }
-    .feat h2 { font-size: clamp(32px, 4vw, 56px); max-width: 18ch; margin: 20px 0 18px; }
+    .feat h2 { font-size: clamp(32px, 4vw, 52px); max-width: 18ch; margin: 20px 0 18px; }
     .feat p { color: var(--muted); max-width: 56ch; line-height: 1.65; }
+
     .meta-line {
       font-family: var(--mono); font-size: 11px; letter-spacing: .14em;
       text-transform: uppercase; color: var(--muted);
-      display: flex; gap: 16px; align-items: center;
+      display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
     }
-    .meta-line .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--green); }
+    .meta-line .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
 
     .filters {
       display: flex; gap: 10px; flex-wrap: wrap;
-      margin: 32px 0 56px;
+      margin: 0 0 56px;
     }
     .filter {
       padding: 8px 16px;
       border: 1px solid var(--line);
       border-radius: 999px;
       font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
-      cursor: pointer;
-      transition: all .25s;
-      background: transparent;
-      color: var(--stone);
+      cursor: pointer; transition: all .25s;
+      background: transparent; color: var(--stone);
     }
-    .filter:hover { border-color: var(--charcoal); }
-    .filter.active { background: var(--green-deep); color: var(--paper); border-color: var(--charcoal); }
+    .filter:hover { border-color: var(--charcoal); color: var(--charcoal); }
+    .filter.active { background: var(--green-deep); color: #fff; border-color: var(--green-deep); }
 
     .post-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+      margin-bottom: 40px;
     }
-    @media (max-width: 980px) { .post-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 680px) { .post-grid { grid-template-columns: 1fr; } }
-    .post {
-      cursor: pointer;
-      transition: transform .35s;
-    }
+    @media (max-width: 980px) { .post-grid { grid-template-columns: 1fr 1fr; gap: 28px; } }
+    @media (max-width: 640px) { .post-grid { grid-template-columns: 1fr; gap: 24px; } }
+
+    .post { cursor: pointer; transition: transform .35s; }
     .post:hover { transform: translateY(-4px); }
     .post-img {
-      aspect-ratio: 4/3;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      overflow: hidden;
-      position: relative;
+      aspect-ratio: 4/3; border-radius: 10px;
+      margin-bottom: 20px; overflow: hidden; position: relative;
     }
     .post-img.a { background: linear-gradient(135deg, #efe9d9, var(--cream)); }
     .post-img.b { background: var(--green-deep); }
     .post-img.b::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 70% 70%, rgba(232,181,71,.4), transparent 50%); }
-    .post-img.c { background: var(--gold); }
-    .post-img.c::after {
-      content: ""; position: absolute; inset: 30%; border: 1.5px solid #0E2A1F; border-radius: 50%;
-    }
+    .post-img.c { background: var(--gold-primary); }
+    .post-img.c::after { content: ""; position: absolute; inset: 30%; border: 1.5px solid #0E2A1F; border-radius: 50%; }
     .post-img.d { background: linear-gradient(135deg, var(--cream), #d8e5dc); }
     .post-img.d::after { content: ""; position: absolute; inset: 25%; border-top: 1.5px solid var(--green); border-right: 1.5px solid var(--green); transform: rotate(45deg); }
-    .post-img.e {
-      background: var(--warm-white);
-      background-image: repeating-linear-gradient(0deg, transparent 0 14px, rgba(14,42,31,.08) 14px 15px);
-    }
-    .post-img.f { background: linear-gradient(135deg, var(--ink), #1a3a2c); }
-    .post-img.f::after { content: ""; position: absolute; left: 50%; top: 50%; width: 40%; height: 40%; transform: translate(-50%,-50%); border: 1.5px solid var(--gold); border-radius: 50%; }
+    .post-img.e { background: var(--warm-white); background-image: repeating-linear-gradient(0deg, transparent 0 14px, rgba(14,42,31,.08) 14px 15px); }
+    .post-img.f { background: linear-gradient(135deg, var(--charcoal), #1a3a2c); }
+    .post-img.f::after { content: ""; position: absolute; left: 50%; top: 50%; width: 40%; height: 40%; transform: translate(-50%,-50%); border: 1.5px solid var(--gold-primary); border-radius: 50%; }
+    .post-img img { width: 100%; height: 100%; object-fit: cover; }
 
     .post .tag-row { display: flex; gap: 10px; margin-bottom: 12px; }
     .post h3 {
-      font-size: clamp(20px, 1.8vw, 26px);
-      line-height: 1.2;
-      margin-bottom: 10px;
-      transition: color .3s;
-      max-width: 22ch;
+      font-size: clamp(18px, 1.8vw, 24px); line-height: 1.25;
+      margin-bottom: 10px; transition: color .3s; max-width: 22ch;
     }
-    .post:hover h3 { color: var(--green); }
+    .post:hover h3 { color: var(--green-primary); }
     .post p { font-size: 14px; color: var(--muted); line-height: 1.6; }
-    /* Dynamic post cards from admin */
-    .post-img img { width:100%; height:100%; object-fit:cover; }
-    .admin-badge {
-      display:inline-flex; align-items:center; gap:6px;
-      font-family:var(--mono); font-size:9px; letter-spacing:.14em; text-transform:uppercase;
-      background:rgba(27,94,63,.1); color:var(--green); padding:4px 10px; border-radius:99px;
-      margin-bottom:10px;
-    }
-    .feat-content-body {
-      font-size:15px; line-height:1.75; color: var(--stone); max-width:72ch;
-      white-space:pre-wrap; margin-top:20px; display:none;
-    }
-    .feat.expanded .feat-content-body { display:block; }
-    .expand-toggle {
-      background:none; border:none; font:inherit; font-size:14px; font-weight:500;
-      color:var(--green); cursor:pointer; padding:0; margin-top:16px;
-      display:inline-flex; align-items:center; gap:6px;
-    }
-    /* Full article modal */
-    .post-modal-overlay {
-      position:fixed; inset:0; background:rgba(14,42,31,.55); z-index:200;
-      display:flex; align-items:center; justify-content:center; padding:24px;
-      opacity:0; pointer-events:none; transition:opacity .3s;
-    }
-    .post-modal-overlay.open { opacity:1; pointer-events:all; }
-    .post-modal {
-      background: var(--warm-white); border-radius:20px; max-width:780px; width:100%;
-      max-height:90vh; overflow-y:auto; padding:clamp(28px,5vw,60px);
-      transform:translateY(24px); transition:transform .35s;
-      position:relative;
-    }
-    .post-modal-overlay.open .post-modal { transform:none; }
-    .post-modal-close {
-      position:sticky; top:0; float:right; background: var(--green-deep); color: var(--white);
-      border:none; border-radius:99px; padding:8px 16px; font:inherit; font-size:13px;
-      cursor:pointer; margin-bottom:20px;
-    }
-    .post-modal h2 { font-size:clamp(28px,4vw,44px); margin:0 0 16px; }
-    .post-modal .modal-meta { font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:28px; display:flex; gap:14px; flex-wrap:wrap; }
-    .post-modal .modal-body { font-size:16px; line-height:1.8; color: var(--stone); white-space:pre-wrap; }
-    .post-modal .modal-img { width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:12px; margin-bottom:32px; }
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Insights — Nucleus Consultant</title>
-  
-  <meta property="og:title" content="Nucleus Consultant" />
-  <meta property="og:description" content="We help young minds and growing businesses clarify purpose and turn dreams into reality." />
-  <meta property="og:image" content="assets/logo.png" />
-  <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <link rel="icon" href="assets/logo.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css" />
-  <style>
-    .feat {
-      display: grid; grid-template-columns: 1.2fr 1fr;
-      gap: 56px; align-items: center;
-      padding: 56px 0 100px;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 80px;
-    }
-    @media (max-width: 980px) { .feat { grid-template-columns: 1fr; } }
-    .feat .visual {
-      aspect-ratio: 4/3;
-      border-radius: 14px;
-      background:
-        repeating-linear-gradient(45deg, var(--cream) 0 14px, #efe9d9 14px 28px);
-      border: 1px solid var(--line);
-      position: relative;
-      overflow: hidden;
-    }
-    .feat .visual::after {
-      content: "";
-      position: absolute; inset: 0;
-      background: radial-gradient(circle at 30% 30%, rgba(232,181,71,.3), transparent 50%);
-    }
-    .feat h2 { font-size: clamp(32px, 4vw, 56px); max-width: 18ch; margin: 20px 0 18px; }
-    .feat p { color: var(--muted); max-width: 56ch; line-height: 1.65; }
-    .meta-line {
-      font-family: var(--mono); font-size: 11px; letter-spacing: .14em;
-      text-transform: uppercase; color: var(--muted);
-      display: flex; gap: 16px; align-items: center;
-    }
-    .meta-line .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--green); }
-
-    .filters {
-      display: flex; gap: 10px; flex-wrap: wrap;
-      margin: 32px 0 56px;
-    }
-    .filter {
-      padding: 8px 16px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
-      cursor: pointer;
-      transition: all .25s;
-      background: transparent;
-      color: var(--stone);
-    }
-    .filter:hover { border-color: var(--charcoal); }
-    .filter.active { background: var(--green-deep); color: var(--paper); border-color: var(--charcoal); }
-
-    .post-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
-    }
-    @media (max-width: 980px) { .post-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 680px) { .post-grid { grid-template-columns: 1fr; } }
-    .post {
-      cursor: pointer;
-      transition: transform .35s;
-    }
-    .post:hover { transform: translateY(-4px); }
-    .post-img {
-      aspect-ratio: 4/3;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      overflow: hidden;
-      position: relative;
-    }
-    .post-img.a { background: linear-gradient(135deg, #efe9d9, var(--cream)); }
-    .post-img.b { background: var(--green-deep); }
-    .post-img.b::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 70% 70%, rgba(232,181,71,.4), transparent 50%); }
-    .post-img.c { background: var(--gold); }
-    .post-img.c::after {
-      content: ""; position: absolute; inset: 30%; border: 1.5px solid #0E2A1F; border-radius: 50%;
-    }
-    .post-img.d { background: linear-gradient(135deg, var(--cream), #d8e5dc); }
-    .post-img.d::after { content: ""; position: absolute; inset: 25%; border-top: 1.5px solid var(--green); border-right: 1.5px solid var(--green); transform: rotate(45deg); }
-    .post-img.e {
-      background: var(--warm-white);
-      background-image: repeating-linear-gradient(0deg, transparent 0 14px, rgba(14,42,31,.08) 14px 15px);
-    }
-    .post-img.f { background: linear-gradient(135deg, var(--ink), #1a3a2c); }
-    .post-img.f::after { content: ""; position: absolute; left: 50%; top: 50%; width: 40%; height: 40%; transform: translate(-50%,-50%); border: 1.5px solid var(--gold); border-radius: 50%; }
-
-    .post .tag-row { display: flex; gap: 10px; margin-bottom: 12px; }
-    .post h3 {
-      font-size: clamp(20px, 1.8vw, 26px);
-      line-height: 1.2;
-      margin-bottom: 10px;
-      transition: color .3s;
-      max-width: 22ch;
-    }
-    .post:hover h3 { color: var(--green); }
-    .post p { font-size: 14px; color: var(--muted); line-height: 1.6; }
-    /* Dynamic post cards from admin */
-    .post-img img { width:100%; height:100%; object-fit:cover; }
-    .admin-badge {
-      display:inline-flex; align-items:center; gap:6px;
-      font-family:var(--mono); font-size:9px; letter-spacing:.14em; text-transform:uppercase;
-      background:rgba(27,94,63,.1); color:var(--green); padding:4px 10px; border-radius:99px;
-      margin-bottom:10px;
-    }
-    .feat-content-body {
-      font-size:15px; line-height:1.75; color: var(--stone); max-width:72ch;
-      white-space:pre-wrap; margin-top:20px; display:none;
-    }
-    .feat.expanded .feat-content-body { display:block; }
-    .expand-toggle {
-      background:none; border:none; font:inherit; font-size:14px; font-weight:500;
-      color:var(--green); cursor:pointer; padding:0; margin-top:16px;
-      display:inline-flex; align-items:center; gap:6px;
-    }
-    /* Full article modal */
-    .post-modal-overlay {
-      position:fixed; inset:0; background:rgba(14,42,31,.55); z-index:200;
-      display:flex; align-items:center; justify-content:center; padding:24px;
-      opacity:0; pointer-events:none; transition:opacity .3s;
-    }
-    .post-modal-overlay.open { opacity:1; pointer-events:all; }
-    .post-modal {
-      background: var(--warm-white); border-radius:20px; max-width:780px; width:100%;
-      max-height:90vh; overflow-y:auto; padding:clamp(28px,5vw,60px);
-      transform:translateY(24px); transition:transform .35s;
-      position:relative;
-    }
-    .post-modal-overlay.open .post-modal { transform:none; }
-    .post-modal-close {
-      position:sticky; top:0; float:right; background: var(--green-deep); color: var(--white);
-      border:none; border-radius:99px; padding:8px 16px; font:inherit; font-size:13px;
-      cursor:pointer; margin-bottom:20px;
-    }
-    .post-modal h2 { font-size:clamp(28px,4vw,44px); margin:0 0 16px; }
-    .post-modal .modal-meta { font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:28px; display:flex; gap:14px; flex-wrap:wrap; }
-    .post-modal .modal-body { font-size:16px; line-height:1.8; color: var(--stone); white-space:pre-wrap; }
-    .post-modal .modal-img { width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:12px; margin-bottom:32px; }
     .post .meta-line { margin-top: 14px; font-size: 10px; }
+
+    /* Article modal */
+    .post-modal-overlay {
+      position: fixed; inset: 0; background: rgba(11,34,11,.6); z-index: 200;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+      opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    .post-modal-overlay.open { opacity: 1; pointer-events: all; }
+    .post-modal {
+      background: var(--warm-white); border-radius: 20px; max-width: 780px; width: 100%;
+      max-height: 90vh; overflow-y: auto; padding: clamp(28px,5vw,60px);
+      transform: translateY(24px); transition: transform .35s; position: relative;
+    }
+    .post-modal-overlay.open .post-modal { transform: none; }
+    .post-modal-close {
+      position: sticky; top: 0; float: right; background: var(--green-deep); color: #fff;
+      border: none; border-radius: 99px; padding: 8px 18px; font: inherit; font-size: 13px;
+      cursor: pointer; margin-bottom: 20px;
+    }
+    .post-modal h2 { font-size: clamp(26px, 4vw, 42px); margin: 0 0 16px; }
+    .post-modal .modal-meta { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 28px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .post-modal .modal-body { font-size: 16px; line-height: 1.8; color: var(--stone); white-space: pre-wrap; }
+    .post-modal .modal-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 12px; margin-bottom: 32px; }
   </style>
 </head>
 <body>
+
   <!-- ═══════════ NAV ═══════════ -->
   <nav class="nav">
     <a href="index.html" class="nav-logo">
       <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" />
     </a>
-        <div class="nav-links">
+    <div class="nav-links">
       <a href="about.html">About</a>
       <a href="services.html">Services</a>
       <a href="programs.html">Programs</a>
       <a href="case-studies.html">Case Studies</a>
-      <a href="blog.html">Blog</a>
+      <a href="blog.html" class="active">Blog</a>
       <a href="careers.html">Careers</a>
       <a href="contact.html" class="nav-cta">Book consult</a>
-        <h2>The easiest way to increase your sale by 30%.</h2>
-        <p>When a client has decided to purchase, that&rsquo;s the right moment to make additional sale — keeping their benefit in mind. Sixty percent of clients say yes if you offer real value. Here&rsquo;s how to do it without ever feeling pushy.</p>
-        <a href="#" class="link" style="margin-top: 28px;">
-          Read the article
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </a>
-      </div>
-    </article>
-
-    <!-- Dynamic admin posts grid (prepended before static posts) -->
-    <div id="adminPostsGrid"></div>
-
-    <!-- Static posts -->
-    <div class="post-grid" data-stagger="80" id="staticPostsGrid">
-      <article class="post" data-category="Strategy">
-        <div class="post-img a"></div>
-        <div class="tag-row"><span class="tag">Strategy</span></div>
-        <h3>Becoming a brilliant strategist.</h3>
-        <p>The difference between a tactic and a strategy — and why most leaders confuse running ads for thinking.</p>
-        <div class="meta-line"><span>9 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
-      </article>
-
-      <article class="post" data-category="Sales">
-        <div class="post-img b"></div>
-        <div class="tag-row"><span class="tag">Sales</span></div>
-        <h3>The power of questions.</h3>
-        <p>A bus driver, a heavyweight, and a quiet question that changed the situation. The lesson is the same in any boardroom.</p>
-        <div class="meta-line"><span>7 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
-      </article>
-
-      <article class="post" data-category="Leadership">
-        <div class="post-img c"></div>
-        <div class="tag-row"><span class="tag">Leadership</span></div>
-        <h3>10 marketing mistakes smart business owners avoid.</h3>
-        <p>Most marketing failures are pushing without listening. We start with understanding the client — every time.</p>
-        <div class="meta-line"><span>14 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
-      </article>
-
-      <article class="post" data-category="Strategy">
-        <div class="post-img d"></div>
-        <div class="tag-row"><span class="tag">Strategy</span></div>
-        <h3>Unique selling proposition.</h3>
-        <p>Stand above the crowded market by offering a benefit only you can offer at the level you offer it.</p>
-        <div class="meta-line"><span>8 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
-      </article>
-
-      <article class="post" data-category="Purpose">
-        <div class="post-img e"></div>
-        <div class="tag-row"><span class="tag">Purpose</span></div>
-        <h3>What is this life actually for?</h3>
-        <p>The first question we ask every cohort. The answers — and the silences — shape everything we teach.</p>
-        <div class="meta-line"><span>6 MIN</span><span class="dot"></span><span>JUN 2024</span></div>
-      </article>
-
-      <article class="post" data-category="Stories">
-        <div class="post-img f"></div>
-        <div class="tag-row"><span class="tag">Stories</span></div>
-        <h3>How Arrowmech doubled in two years.</h3>
-        <p>A founder&rsquo;s notes on the discipline of looking at the right five numbers every Monday morning.</p>
-        <div class="meta-line"><span>11 MIN</span><span class="dot"></span><span>MAY 2024</span></div>
-      </article>
     </div>
+    <button class="nav-burger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
 
-    <div class="center" style="margin: 100px 0 60px;">
-      <button class="btn btn-ghost reveal">Load more articles</button>
-    </div><!-- end staticPostsGrid -->
+  <!-- ═══════════ HERO ═══════════ -->
+  <header class="page-hero dark-section" style="background: var(--green-deep); color: #fff;">
+    <div class="wrap" style="text-align: center;">
+      <p class="eyebrow reveal" style="color: var(--gold-primary);">Nucleus Insights</p>
+      <h1 class="reveal" style="color: #fff; max-width: 22ch; margin: 16px auto 0;">
+        Ideas That Change How You Think, Lead &amp; Grow.
+      </h1>
+      <p class="lead reveal" style="margin: 24px auto 0; color: rgba(255,255,255,.75); max-width: 56ch;">
+        Practical thinking on leadership, culture, sales, and business transformation — from the field, not the classroom.
+      </p>
+    </div>
+  </header>
+
+  <!-- ═══════════ FEATURED + POSTS ═══════════ -->
+  <section class="section" style="background: var(--warm-white);">
+    <div class="wrap">
+
+      <!-- Featured post container (JS replaces staticFeatured when an admin post is featured) -->
+      <div id="featuredPostContainer">
+        <article class="feat reveal" id="staticFeatured">
+          <div class="visual"></div>
+          <div>
+            <div class="meta-line">
+              <span>Featured</span><span class="dot"></span>
+              <span>Sales</span><span class="dot"></span>
+              <span>5 min read</span>
+            </div>
+            <h2 style="margin-top: 20px;">The easiest way to increase your sale by 30%.</h2>
+            <p style="margin-top: 16px;">When a client has decided to purchase, that's the right moment to make an additional sale — keeping their benefit in mind. Sixty percent of clients say yes if you offer real value. Here's how to do it without ever feeling pushy.</p>
+            <a href="#" class="link" style="margin-top: 28px; display: inline-flex; align-items: center; gap: 8px; font-weight: 500;">
+              Read the article
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </a>
+          </div>
+        </article>
+      </div>
+
+      <!-- Category filters -->
+      <div class="filters reveal">
+        <button class="filter active" data-cat="All">All</button>
+        <button class="filter" data-cat="Leadership">Leadership</button>
+        <button class="filter" data-cat="Sales">Sales</button>
+        <button class="filter" data-cat="Strategy">Strategy</button>
+        <button class="filter" data-cat="Culture">Culture</button>
+        <button class="filter" data-cat="Growth">Growth</button>
+        <button class="filter" data-cat="Purpose">Purpose</button>
+      </div>
+
+      <!-- Dynamic posts from admin (inserted above static grid) -->
+      <div id="adminPostsGrid"></div>
+
+      <!-- Static posts grid -->
+      <div class="post-grid" id="staticPostsGrid" data-stagger="80">
+        <article class="post" data-category="Strategy">
+          <div class="post-img a"></div>
+          <div class="tag-row"><span class="tag">Strategy</span></div>
+          <h3>Becoming a brilliant strategist.</h3>
+          <p>The difference between a tactic and a strategy — and why most leaders confuse running ads for thinking.</p>
+          <div class="meta-line"><span>9 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
+        </article>
+
+        <article class="post" data-category="Sales">
+          <div class="post-img b"></div>
+          <div class="tag-row"><span class="tag">Sales</span></div>
+          <h3>The power of questions.</h3>
+          <p>A bus driver, a heavyweight, and a quiet question that changed the situation. The lesson is the same in any boardroom.</p>
+          <div class="meta-line"><span>7 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
+        </article>
+
+        <article class="post" data-category="Leadership">
+          <div class="post-img c"></div>
+          <div class="tag-row"><span class="tag">Leadership</span></div>
+          <h3>10 marketing mistakes smart business owners avoid.</h3>
+          <p>Most marketing failures are pushing without listening. We start with understanding the client — every time.</p>
+          <div class="meta-line"><span>14 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
+        </article>
+
+        <article class="post" data-category="Strategy">
+          <div class="post-img d"></div>
+          <div class="tag-row"><span class="tag">Strategy</span></div>
+          <h3>Unique selling proposition.</h3>
+          <p>Stand above the crowded market by offering a benefit only you can offer at the level you offer it.</p>
+          <div class="meta-line"><span>8 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
+        </article>
+
+        <article class="post" data-category="Purpose">
+          <div class="post-img e"></div>
+          <div class="tag-row"><span class="tag">Purpose</span></div>
+          <h3>What is this life actually for?</h3>
+          <p>The first question we ask every cohort. The answers — and the silences — shape everything we teach.</p>
+          <div class="meta-line"><span>6 MIN</span><span class="dot"></span><span>JUN 2024</span></div>
+        </article>
+
+        <article class="post" data-category="Stories">
+          <div class="post-img f"></div>
+          <div class="tag-row"><span class="tag">Stories</span></div>
+          <h3>How Arrowmech doubled in two years.</h3>
+          <p>A founder's notes on the discipline of looking at the right five numbers every Monday morning.</p>
+          <div class="meta-line"><span>11 MIN</span><span class="dot"></span><span>MAY 2024</span></div>
+        </article>
+      </div>
+
+      <div class="center" style="margin: 64px 0 40px;">
+        <button class="btn btn-ghost reveal">Load more articles</button>
+      </div>
+
+    </div>
   </section>
 
-  <!-- Post modal -->
-  <div class="post-modal-overlay" id="postModalOverlay" onclick="closeModal(event)">
-    <div class="post-modal" id="postModal">
+  <!-- ═══════════ POST MODAL ═══════════ -->
+  <div class="post-modal-overlay" id="postModalOverlay">
+    <div class="post-modal">
       <button class="post-modal-close" onclick="closePostModal()">✕ Close</button>
       <div id="postModalContent"></div>
     </div>
   </div>
 
-      <!-- ═══════════ FOOTER ═══════════ -->
+  <!-- ═══════════ FOOTER ═══════════ -->
   <footer class="footer">
     <div class="footer-watermark">NUCLEUS</div>
     <div class="wrap" style="position:relative; z-index:10;">
@@ -400,10 +266,12 @@
       </div>
       <div class="footer-grid">
         <div class="footer-col">
-          <a href="index.html" class="footer-logo"><img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" style="height:38px; filter:brightness(0) invert(1); opacity:0.9; margin-bottom: 24px;" /></a>
+          <a href="index.html" class="footer-logo">
+            <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" style="height:38px; filter:brightness(0) invert(1); opacity:0.9; margin-bottom:24px;" />
+          </a>
           <p class="muted" style="max-width:28ch; font-size:14px; line-height:1.7;">We help young minds and growing businesses clarify purpose and turn dreams into reality.</p>
         </div>
-                <div class="footer-col">
+        <div class="footer-col">
           <h5>Explore</h5>
           <ul>
             <li><a href="index.html">Home</a></li>
@@ -427,8 +295,8 @@
         <div class="footer-col">
           <h5>Contact</h5>
           <ul>
-            <li><a href="tel:+918156076680" data-set="phone" style="opacity:0.9;">+91 8156 076 680</a></li>
-            <li><a href="mailto:hello@nucleusconsultant.in" data-set="email" style="opacity:0.9;">hello@nucleusconsultant.in</a></li>
+            <li><a href="tel:+918156076680" data-set="phone" style="opacity:.9;">+91 8156 076 680</a></li>
+            <li><a href="mailto:hello@nucleusconsultant.in" data-set="email" style="opacity:.9;">hello@nucleusconsultant.in</a></li>
             <li class="muted" style="margin-top:16px; font-size:13px; line-height:1.6;" data-set="address">811 IFC, Opp. Fire Station<br>VIP Road, Vesu, Surat – 395007</li>
           </ul>
         </div>
@@ -439,55 +307,43 @@
       </div>
     </div>
   </footer>
+
   <script src="assets/site.js"></script>
   <script>
-    // ── Category filter ──────────────────────────────────────────────────────
+    // Category filter
     document.querySelectorAll('.filter').forEach(function(btn) {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.filter').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-        var cat = btn.textContent.trim();
+        var cat = btn.dataset.cat || btn.textContent.trim();
         document.querySelectorAll('.post').forEach(function(el) {
           el.style.display = (cat === 'All' || (el.dataset.category || '') === cat) ? '' : 'none';
         });
       });
     });
 
-    // ── LocalStorage helpers ─────────────────────────────────────────────────
+    // LocalStorage helpers
     var SKEY = 'nucleus_blog_posts';
     function getPosts() {
-      try { return JSON.parse(localStorage.getItem(SKEY) || '[]'); }
-      catch(e) { return []; }
+      try { return JSON.parse(localStorage.getItem(SKEY) || '[]'); } catch(e) { return []; }
     }
     function esc(s) {
-      return String(s || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    // ── Modal ────────────────────────────────────────────────────────────────
+    // Modal
     function openPost(id) {
       var posts = getPosts();
-      var post;
+      var post = null;
       for (var i = 0; i < posts.length; i++) { if (posts[i].id === id) { post = posts[i]; break; } }
       if (!post) return;
-
-      var overlay = document.getElementById('postModalOverlay');
       var content = document.getElementById('postModalContent');
       content.innerHTML =
-        (post.image ? '<img loading="lazy" class="modal-img" src="' + post.image + '" alt="' + esc(post.title) + '" style="object-position:' + (post.imagePos || 'center') + ';" />' : '') +
+        (post.image ? '<img loading="lazy" class="modal-img" src="' + post.image + '" alt="' + esc(post.title) + '" />' : '') +
         '<h2>' + esc(post.title) + '</h2>' +
-        '<div class="modal-meta">' +
-          '<span>' + esc(post.category) + '</span>' +
-          '<span>' + esc(post.readTime) + '</span>' +
-          '<span>' + esc(post.dateLabel) + '</span>' +
-          '<span>By ' + esc(post.author) + '</span>' +
-        '</div>' +
+        '<div class="modal-meta"><span>' + esc(post.category) + '</span><span>' + esc(post.readTime) + '</span><span>' + esc(post.dateLabel) + '</span><span>By ' + esc(post.author) + '</span></div>' +
         '<div class="modal-body">' + esc(post.content) + '</div>';
-
-      overlay.classList.add('open');
+      document.getElementById('postModalOverlay').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
 
@@ -499,16 +355,13 @@
     document.getElementById('postModalOverlay').addEventListener('click', function(e) {
       if (e.target === this) closePostModal();
     });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePostModal(); });
 
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closePostModal();
-    });
-
-    // ── Render dynamic posts ─────────────────────────────────────────────────
+    // Render dynamic posts from admin
     function renderBlogPosts() {
       var posts = getPosts().filter(function(p) { return p.status === 'published'; });
       var featPost = null;
-      var nonFeat  = [];
+      var nonFeat = [];
       for (var i = 0; i < posts.length; i++) {
         if (posts[i].featured && !featPost) featPost = posts[i];
         else nonFeat.push(posts[i]);
@@ -518,66 +371,54 @@
       var sf = document.getElementById('staticFeatured');
       var ag = document.getElementById('adminPostsGrid');
 
-      // Featured post
       if (featPost) {
         sf.style.display = 'none';
+        var fimg = featPost.image
+          ? '<img loading="lazy" src="' + featPost.image + '" alt="' + esc(featPost.title) + '" style="width:100%;height:100%;object-fit:cover;" />'
+          : '';
         var fEl = document.createElement('article');
         fEl.className = 'feat reveal';
-        var fimg = featPost.image
-          ? '<img loading="lazy" src="' + featPost.image + '" alt="' + esc(featPost.title) + '" style="width:100%;height:100%;object-fit:cover;object-position:' + (featPost.imagePos || 'center') + ';" />'
-          : '<div style="width:100%;height:100%;background:#0E2A1F;display:flex;align-items:center;justify-content:center;"><span style="color:#E8B547;font-family:"Cormorant Garamond",serif;font-size:60px;font-style:italic;">N</span></div>';
         fEl.innerHTML =
           '<div class="visual js-open-feat" style="cursor:pointer;">' + fimg + '</div>' +
           '<div>' +
-            '<div class="meta-line">' +
-              '<span>FEATURED</span><span class="dot"></span>' +
-              '<span>' + esc(featPost.category.toUpperCase()) + '</span><span class="dot"></span>' +
-              '<span>' + esc(featPost.readTime) + '</span>' +
-            '</div>' +
+            '<div class="meta-line"><span>FEATURED</span><span class="dot"></span><span>' + esc(featPost.category.toUpperCase()) + '</span><span class="dot"></span><span>' + esc(featPost.readTime) + '</span></div>' +
             '<h2 class="js-open-feat" style="cursor:pointer;margin-top:20px;">' + esc(featPost.title) + '</h2>' +
             '<p style="margin-top:16px;">' + esc(featPost.excerpt) + '</p>' +
-            '<button class="link js-open-feat" style="background:none;border:none;font:inherit;margin-top:28px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;">' +
-              'Read the article ' +
-              '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>' +
-            '</button>' +
+            '<button class="link js-open-feat" style="background:none;border:none;font:inherit;margin-top:28px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:500;">Read the article <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>' +
           '</div>';
         (function(id) {
           fEl.querySelectorAll('.js-open-feat').forEach(function(el) {
             el.addEventListener('click', function() { openPost(id); });
           });
         })(featPost.id);
-
         fc.innerHTML = '';
         fc.appendChild(fEl);
       } else {
         sf.style.display = '';
         fc.innerHTML = '';
+        fc.appendChild(sf);
       }
 
-      // Non-featured grid
       ag.innerHTML = '';
       if (nonFeat.length) {
         var grid = document.createElement('div');
         grid.className = 'post-grid';
-        grid.style.marginBottom = '40px';
-
+        grid.style.marginBottom = '0';
         nonFeat.forEach(function(p) {
           var el = document.createElement('article');
           el.className = 'post';
           el.dataset.category = p.category;
           el.style.cursor = 'pointer';
           var pimg = p.image
-            ? '<img loading="lazy" src="' + p.image + '" alt="' + esc(p.title) + '" style="width:100%;height:100%;object-fit:cover;object-position:' + (p.imagePos || 'center') + ';" />'
-            : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><span style="color:#E8B547;font-family:"Cormorant Garamond",serif;font-size:40px;font-style:italic;">N</span></div>';
+            ? '<img loading="lazy" src="' + p.image + '" alt="' + esc(p.title) + '" style="width:100%;height:100%;object-fit:cover;" />'
+            : '';
           el.innerHTML =
             '<div class="post-img b">' + pimg + '</div>' +
             '<div class="tag-row"><span class="tag">' + esc(p.category) + '</span></div>' +
             '<h3>' + esc(p.title) + '</h3>' +
             '<p>' + esc(p.excerpt) + '</p>' +
             '<div class="meta-line"><span>' + esc(p.readTime) + '</span><span class="dot"></span><span>' + esc(p.dateLabel) + '</span></div>';
-          (function(id) {
-            el.addEventListener('click', function() { openPost(id); });
-          })(p.id);
+          (function(id) { el.addEventListener('click', function() { openPost(id); }); })(p.id);
           grid.appendChild(el);
         });
         ag.appendChild(grid);
@@ -585,15 +426,8 @@
     }
 
     renderBlogPosts();
-
-    document.addEventListener('nucleus-sync-ready', function() {
-      renderBlogPosts();
-    });
-
-    // Re-render if admin panel publishes in another tab
-    window.addEventListener('storage', function(e) {
-      if (e.key === SKEY) renderBlogPosts();
-    });
+    document.addEventListener('nucleus-sync-ready', renderBlogPosts);
+    window.addEventListener('storage', function(e) { if (e.key === SKEY) renderBlogPosts(); });
   </script>
 </body>
 </html>
