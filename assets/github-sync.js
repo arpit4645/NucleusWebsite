@@ -291,8 +291,12 @@
       _lastSyncError = '';
     } else {
       _lastSyncError = errMsg || 'Unknown error';
-      badge.innerHTML = '<span style="color:#f44336;">&#9679;</span> Local only &nbsp;<span style="font-size:10px;text-decoration:underline;opacity:.8;">click to fix</span>';
-      badge.title = _lastSyncError;
+      // Log clearly so it's visible in browser DevTools
+      console.error('[NucleusSync] ❌ Push failed:', _lastSyncError);
+      // Show truncated error inline in the badge — no click required to see it
+      const shortErr = _lastSyncError.length > 48 ? _lastSyncError.slice(0, 48) + '…' : _lastSyncError;
+      badge.innerHTML = '<span style="color:#f44336;">&#9679;</span> Sync failed: <em style="font-style:normal;opacity:.85;">' + shortErr + '</em>';
+      badge.title = _lastSyncError + '\n\nClick for fix instructions.';
       badge.style.cursor = 'pointer';
       badge.onclick = _showSyncErrorPanel;
     }
@@ -354,8 +358,47 @@
       isAdmin: !!window._nucleusIsAdmin,
       hasConfig: !!getConfig(),
       hasToken: !!(getConfig() && getConfig().token),
-      pendingPushes: Object.keys(_pendingPushes).length
+      pendingPushes: Object.keys(_pendingPushes).length,
+      lastError: _lastSyncError
     });
+  };
+
+  // Test write access — call window.testNucleusPush() from browser console
+  window.testNucleusPush = async function () {
+    const cfg = getConfig();
+    if (!cfg || !cfg.token) { console.error('[NucleusSync] No token saved.'); return; }
+    console.log('[NucleusSync] Testing write access to GitHub…');
+    const apiBase = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${DATA_FILE_PATH}`;
+    const branch = cfg.branch || 'main';
+    try {
+      // Read current file
+      const getRes = await fetch(apiBase + '?ref=' + branch + '&t=' + Date.now(), {
+        headers: Object.assign({ 'Cache-Control': 'no-cache' }, _ghHeaders(cfg))
+      });
+      console.log('[NucleusSync] GET status:', getRes.status);
+      if (!getRes.ok) {
+        const e = await getRes.json().catch(() => ({}));
+        console.error('[NucleusSync] Read failed:', e.message || getRes.statusText);
+        return;
+      }
+      const file = await getRes.json();
+      console.log('[NucleusSync] Read OK. SHA:', file.sha, '— testing write with same content…');
+      // Write back same content (no-op commit to test write permission)
+      const putRes = await fetch(apiBase, {
+        method: 'PUT',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, _ghHeaders(cfg)),
+        body: JSON.stringify({ message: 'Test write from admin', content: file.content.replace(/\s/g, ''), sha: file.sha, branch })
+      });
+      console.log('[NucleusSync] PUT status:', putRes.status);
+      const putBody = await putRes.json().catch(() => ({}));
+      if (!putRes.ok) {
+        console.error('[NucleusSync] ❌ Write FAILED:', putBody.message || putRes.statusText, '\n→ This is why sync shows "Local only".');
+      } else {
+        console.log('[NucleusSync] ✅ Write succeeded! Token has correct permissions.');
+      }
+    } catch (e) {
+      console.error('[NucleusSync] Network error during test:', e.message);
+    }
   };
 
   // ── Initialize on load ─────────────────────────────────────────────────────
