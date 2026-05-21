@@ -211,10 +211,18 @@
     } catch (e) {
       console.warn('[NucleusSync] Push error:', e.message);
       Object.assign(_pendingPushes, pending);
-      const isOffline = !navigator.onLine || e.message === 'Failed to fetch';
-      if (isOffline) {
-        _updateSyncBadge(false, 'Offline — changes saved locally, will sync when connected');
-        // Don't show the error banner when simply offline — auto-retry handles it
+
+      const trulyOffline = !navigator.onLine;
+      const fetchBlocked = e.message === 'Failed to fetch' || e.message === 'NetworkError when attempting to fetch resource';
+
+      if (trulyOffline) {
+        _updateSyncBadge(false, 'You are offline — changes saved locally, will sync when reconnected');
+      } else if (fetchBlocked) {
+        // Browser reached the internet (navigator.onLine=true) but couldn't reach api.github.com.
+        // Most common causes: browser extension (uBlock, AdBlock, Privacy Badger) or firewall.
+        const msg = 'Cannot reach GitHub API — likely blocked by a browser extension or firewall. Disable extensions and retry.';
+        _updateSyncBadge(false, msg);
+        if (window._nucleusIsAdmin) _showAdminSyncError(msg);
       } else {
         _updateSyncBadge(false, e.message);
         if (window._nucleusIsAdmin) _showAdminSyncError('Cloud push failed: ' + e.message);
@@ -320,9 +328,16 @@
         <hr style="border:none;border-top:1px solid #333;margin:12px 0;" />
         <p style="color:#aaa;margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;">Common Causes</p>
         <ul style="margin:0 0 16px;padding-left:16px;color:#ccc;line-height:1.8;font-family:sans-serif;font-size:12px;">
+          ${_lastSyncError.includes('extension') || _lastSyncError.includes('blocked') || _lastSyncError.includes('Cannot reach') ? `
+          <li><strong style="color:#fff;">Disable browser extensions</strong> (uBlock, AdBlock, Privacy Badger) and try again</li>
+          <li>If on a VPN, disconnect and retry</li>
+          <li>Open <a href="https://api.github.com" target="_blank" style="color:#90caf9;">api.github.com</a> in a new tab — if it loads, GitHub is reachable</li>
+          <li>Try a different browser (Chrome / Edge / Firefox)</li>
+          ` : `
           <li>Token missing <strong>Contents → Write</strong> permission</li>
-          <li>Token has expired (set it to "No expiration")</li>
-          <li>Token was revoked — needs to be regenerated</li>
+          <li>Token has expired — set it to "No expiration"</li>
+          <li>Token was revoked — generate a new one</li>
+          `}
         </ul>
         ${hasToken
           ? `<button onclick="document.getElementById('_nucleusSyncPanel').remove();showGithubSetup();" style="width:100%;padding:10px;background:var(--green,#2d6a4f);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;margin-bottom:8px;">&#128279; Re-enter GitHub Token</button>`
