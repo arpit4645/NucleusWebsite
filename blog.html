@@ -16,28 +16,36 @@
   <link rel="stylesheet" href="assets/styles.css" />
   <style>
     .feat {
-      display: grid; grid-template-columns: 1.2fr 1fr;
-      gap: 56px; align-items: center;
-      padding: 56px 0 100px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center;
+      padding: 64px 0 80px;
       border-bottom: 1px solid var(--line);
-      margin-bottom: 80px;
+      margin-bottom: 64px;
     }
-    @media (max-width: 980px) { .feat { grid-template-columns: 1fr; gap: 40px; padding: 40px 0 64px; } }
+    @media (max-width: 900px) { .feat { grid-template-columns: 1fr; gap: 36px; padding: 48px 0 56px; } }
     .feat .visual {
-      aspect-ratio: 4/3;
-      border-radius: 14px;
-      background: repeating-linear-gradient(45deg, var(--cream) 0 14px, #efe9d9 14px 28px);
+      aspect-ratio: 16/10;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--green-deep) 0%, #1a4a2c 100%);
       border: 1px solid var(--line);
       position: relative;
       overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feat .visual::before {
+      content: "INSIGHTS";
+      font-family: var(--serif); font-size: clamp(40px, 6vw, 72px);
+      color: rgba(255,255,255,0.06); letter-spacing: 0.08em;
+      position: absolute; white-space: nowrap;
     }
     .feat .visual::after {
       content: "";
-      position: absolute; inset: 0;
-      background: radial-gradient(circle at 30% 30%, rgba(232,181,71,.3), transparent 50%);
+      position: absolute; width: 200px; height: 200px;
+      border: 1.5px solid rgba(232,181,71,.35); border-radius: 50%;
+      top: 20%; left: 15%;
     }
-    .feat h2 { font-size: clamp(32px, 4vw, 52px); max-width: 18ch; margin: 20px 0 18px; }
-    .feat p { color: var(--muted); max-width: 56ch; line-height: 1.65; }
+    .feat h2 { font-size: clamp(28px, 3.5vw, 46px); max-width: 20ch; margin: 20px 0 16px; line-height: 1.2; }
+    .feat p { color: var(--muted); max-width: 54ch; line-height: 1.7; font-size: 16px; }
 
     .meta-line {
       font-family: var(--mono); font-size: 11px; letter-spacing: .14em;
@@ -47,26 +55,25 @@
     .meta-line .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
 
     .filters {
-      display: flex; gap: 10px; flex-wrap: wrap;
-      margin: 0 0 56px;
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin: 0 0 48px;
     }
     .filter {
-      padding: 8px 16px;
+      padding: 8px 18px;
       border: 1px solid var(--line);
       border-radius: 999px;
-      font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+      font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
       cursor: pointer; transition: all .25s;
       background: transparent; color: var(--stone);
     }
-    .filter:hover { border-color: var(--charcoal); color: var(--charcoal); }
+    .filter:hover { border-color: var(--green-primary); color: var(--green-primary); }
     .filter.active { background: var(--green-deep); color: #fff; border-color: var(--green-deep); }
 
     .post-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
-      margin-bottom: 40px;
     }
     @media (max-width: 980px) { .post-grid { grid-template-columns: 1fr 1fr; gap: 28px; } }
-    @media (max-width: 640px) { .post-grid { grid-template-columns: 1fr; gap: 24px; } }
+    @media (max-width: 600px) { .post-grid { grid-template-columns: 1fr; gap: 24px; } }
 
     .post { cursor: pointer; transition: transform .35s; }
     .post:hover { transform: translateY(-4px); }
@@ -163,15 +170,14 @@
           <div class="visual"></div>
           <div>
             <div class="meta-line">
-              <span>Featured</span><span class="dot"></span>
-              <span>Sales</span><span class="dot"></span>
-              <span>5 min read</span>
+              <span>FEATURED</span><span class="dot"></span>
+              <span>SALES</span><span class="dot"></span>
+              <span>5 MIN READ</span>
             </div>
-            <h2 style="margin-top: 20px;">The easiest way to increase your sale by 30%.</h2>
+            <h2 style="margin-top: 20px;">The easiest way to increase your sales by 30%.</h2>
             <p style="margin-top: 16px;">When a client has decided to purchase, that's the right moment to make an additional sale — keeping their benefit in mind. Sixty percent of clients say yes if you offer real value. Here's how to do it without ever feeling pushy.</p>
-            <a href="#" class="link" style="margin-top: 28px; display: inline-flex; align-items: center; gap: 8px; font-weight: 500;">
-              Read the article
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <a href="contact.html" class="btn btn-primary" style="margin-top: 32px; display: inline-flex;">
+              Start your transformation &nbsp;&rarr;
             </a>
           </div>
         </article>
@@ -188,61 +194,10 @@
         <button class="filter" data-cat="Purpose">Purpose</button>
       </div>
 
-      <!-- Dynamic posts from admin (inserted above static grid) -->
-      <div id="adminPostsGrid"></div>
+      <!-- Unified posts grid: JS renders admin posts first, then static posts -->
+      <div class="post-grid" id="allPostsGrid" data-stagger="80"></div>
 
-      <!-- Static posts grid -->
-      <div class="post-grid" id="staticPostsGrid" data-stagger="80">
-        <article class="post" data-category="Strategy">
-          <div class="post-img a"></div>
-          <div class="tag-row"><span class="tag">Strategy</span></div>
-          <h3>Becoming a brilliant strategist.</h3>
-          <p>The difference between a tactic and a strategy — and why most leaders confuse running ads for thinking.</p>
-          <div class="meta-line"><span>9 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
-        </article>
-
-        <article class="post" data-category="Sales">
-          <div class="post-img b"></div>
-          <div class="tag-row"><span class="tag">Sales</span></div>
-          <h3>The power of questions.</h3>
-          <p>A bus driver, a heavyweight, and a quiet question that changed the situation. The lesson is the same in any boardroom.</p>
-          <div class="meta-line"><span>7 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
-        </article>
-
-        <article class="post" data-category="Leadership">
-          <div class="post-img c"></div>
-          <div class="tag-row"><span class="tag">Leadership</span></div>
-          <h3>10 marketing mistakes smart business owners avoid.</h3>
-          <p>Most marketing failures are pushing without listening. We start with understanding the client — every time.</p>
-          <div class="meta-line"><span>14 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
-        </article>
-
-        <article class="post" data-category="Strategy">
-          <div class="post-img d"></div>
-          <div class="tag-row"><span class="tag">Strategy</span></div>
-          <h3>Unique selling proposition.</h3>
-          <p>Stand above the crowded market by offering a benefit only you can offer at the level you offer it.</p>
-          <div class="meta-line"><span>8 MIN</span><span class="dot"></span><span>JUL 2024</span></div>
-        </article>
-
-        <article class="post" data-category="Purpose">
-          <div class="post-img e"></div>
-          <div class="tag-row"><span class="tag">Purpose</span></div>
-          <h3>What is this life actually for?</h3>
-          <p>The first question we ask every cohort. The answers — and the silences — shape everything we teach.</p>
-          <div class="meta-line"><span>6 MIN</span><span class="dot"></span><span>JUN 2024</span></div>
-        </article>
-
-        <article class="post" data-category="Stories">
-          <div class="post-img f"></div>
-          <div class="tag-row"><span class="tag">Stories</span></div>
-          <h3>How Arrowmech doubled in two years.</h3>
-          <p>A founder's notes on the discipline of looking at the right five numbers every Monday morning.</p>
-          <div class="meta-line"><span>11 MIN</span><span class="dot"></span><span>MAY 2024</span></div>
-        </article>
-      </div>
-
-      <div class="center" style="margin: 64px 0 40px;">
+      <div class="center" style="margin: 72px 0 24px;">
         <button class="btn btn-ghost reveal">Load more articles</button>
       </div>
 
@@ -316,7 +271,7 @@
         document.querySelectorAll('.filter').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
         var cat = btn.dataset.cat || btn.textContent.trim();
-        document.querySelectorAll('.post').forEach(function(el) {
+        document.getElementById('allPostsGrid').querySelectorAll('.post').forEach(function(el) {
           el.style.display = (cat === 'All' || (el.dataset.category || '') === cat) ? '' : 'none';
         });
       });
@@ -357,7 +312,17 @@
     });
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePostModal(); });
 
-    // Render dynamic posts from admin
+    // Static post cards HTML (always shown at bottom of grid)
+    var STATIC_POSTS_HTML = [
+      '<article class="post" data-category="Strategy"><div class="post-img a"></div><div class="tag-row"><span class="tag">Strategy</span></div><h3>Becoming a brilliant strategist.</h3><p>The difference between a tactic and a strategy — and why most leaders confuse running ads for thinking.</p><div class="meta-line"><span>9 MIN</span><span class="dot"></span><span>JUL 2024</span></div></article>',
+      '<article class="post" data-category="Sales"><div class="post-img b"></div><div class="tag-row"><span class="tag">Sales</span></div><h3>The power of questions.</h3><p>A bus driver, a heavyweight, and a quiet question that changed the situation. The lesson is the same in any boardroom.</p><div class="meta-line"><span>7 MIN</span><span class="dot"></span><span>JUL 2024</span></div></article>',
+      '<article class="post" data-category="Leadership"><div class="post-img c"></div><div class="tag-row"><span class="tag">Leadership</span></div><h3>10 marketing mistakes smart business owners avoid.</h3><p>Most marketing failures are pushing without listening. We start with understanding the client — every time.</p><div class="meta-line"><span>14 MIN</span><span class="dot"></span><span>JUL 2024</span></div></article>',
+      '<article class="post" data-category="Strategy"><div class="post-img d"></div><div class="tag-row"><span class="tag">Strategy</span></div><h3>Unique selling proposition.</h3><p>Stand above the crowded market by offering a benefit only you can offer at the level you offer it.</p><div class="meta-line"><span>8 MIN</span><span class="dot"></span><span>JUL 2024</span></div></article>',
+      '<article class="post" data-category="Purpose"><div class="post-img e"></div><div class="tag-row"><span class="tag">Purpose</span></div><h3>What is this life actually for?</h3><p>The first question we ask every cohort. The answers — and the silences — shape everything we teach.</p><div class="meta-line"><span>6 MIN</span><span class="dot"></span><span>JUN 2024</span></div></article>',
+      '<article class="post" data-category="Stories"><div class="post-img f"></div><div class="tag-row"><span class="tag">Stories</span></div><h3>How Arrowmech doubled in two years.</h3><p>A founder\'s notes on the discipline of looking at the right five numbers every Monday morning.</p><div class="meta-line"><span>11 MIN</span><span class="dot"></span><span>MAY 2024</span></div></article>'
+    ];
+
+    // Render dynamic posts from admin into unified grid
     function renderBlogPosts() {
       var posts = getPosts().filter(function(p) { return p.status === 'published'; });
       var featPost = null;
@@ -367,24 +332,23 @@
         else nonFeat.push(posts[i]);
       }
 
+      // Featured post
       var fc = document.getElementById('featuredPostContainer');
       var sf = document.getElementById('staticFeatured');
-      var ag = document.getElementById('adminPostsGrid');
-
       if (featPost) {
         sf.style.display = 'none';
         var fimg = featPost.image
-          ? '<img loading="lazy" src="' + featPost.image + '" alt="' + esc(featPost.title) + '" style="width:100%;height:100%;object-fit:cover;" />'
+          ? '<img loading="lazy" src="' + featPost.image + '" alt="' + esc(featPost.title) + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />'
           : '';
         var fEl = document.createElement('article');
         fEl.className = 'feat reveal';
         fEl.innerHTML =
           '<div class="visual js-open-feat" style="cursor:pointer;">' + fimg + '</div>' +
           '<div>' +
-            '<div class="meta-line"><span>FEATURED</span><span class="dot"></span><span>' + esc(featPost.category.toUpperCase()) + '</span><span class="dot"></span><span>' + esc(featPost.readTime) + '</span></div>' +
+            '<div class="meta-line"><span>FEATURED</span><span class="dot"></span><span>' + esc((featPost.category||'').toUpperCase()) + '</span><span class="dot"></span><span>' + esc(featPost.readTime) + '</span></div>' +
             '<h2 class="js-open-feat" style="cursor:pointer;margin-top:20px;">' + esc(featPost.title) + '</h2>' +
             '<p style="margin-top:16px;">' + esc(featPost.excerpt) + '</p>' +
-            '<button class="link js-open-feat" style="background:none;border:none;font:inherit;margin-top:28px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:500;">Read the article <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>' +
+            '<button class="btn btn-primary js-open-feat" style="margin-top:32px;">Read the article &nbsp;&rarr;</button>' +
           '</div>';
         (function(id) {
           fEl.querySelectorAll('.js-open-feat').forEach(function(el) {
@@ -399,29 +363,33 @@
         fc.appendChild(sf);
       }
 
-      ag.innerHTML = '';
-      if (nonFeat.length) {
-        var grid = document.createElement('div');
-        grid.className = 'post-grid';
-        grid.style.marginBottom = '0';
-        nonFeat.forEach(function(p) {
-          var el = document.createElement('article');
-          el.className = 'post';
-          el.dataset.category = p.category;
-          el.style.cursor = 'pointer';
-          var pimg = p.image
-            ? '<img loading="lazy" src="' + p.image + '" alt="' + esc(p.title) + '" style="width:100%;height:100%;object-fit:cover;" />'
-            : '';
-          el.innerHTML =
-            '<div class="post-img b">' + pimg + '</div>' +
-            '<div class="tag-row"><span class="tag">' + esc(p.category) + '</span></div>' +
-            '<h3>' + esc(p.title) + '</h3>' +
-            '<p>' + esc(p.excerpt) + '</p>' +
-            '<div class="meta-line"><span>' + esc(p.readTime) + '</span><span class="dot"></span><span>' + esc(p.dateLabel) + '</span></div>';
-          (function(id) { el.addEventListener('click', function() { openPost(id); }); })(p.id);
-          grid.appendChild(el);
+      // Unified grid: admin non-featured posts first, then static posts
+      var grid = document.getElementById('allPostsGrid');
+      var adminCards = nonFeat.map(function(p) {
+        var pimg = p.image
+          ? '<img loading="lazy" src="' + p.image + '" alt="' + esc(p.title) + '" style="width:100%;height:100%;object-fit:cover;" />'
+          : '';
+        return '<article class="post" data-category="' + esc(p.category) + '" data-id="' + esc(p.id) + '" style="cursor:pointer;">' +
+          '<div class="post-img b">' + pimg + '</div>' +
+          '<div class="tag-row"><span class="tag">' + esc(p.category) + '</span></div>' +
+          '<h3>' + esc(p.title) + '</h3>' +
+          '<p>' + esc(p.excerpt) + '</p>' +
+          '<div class="meta-line"><span>' + esc(p.readTime) + '</span><span class="dot"></span><span>' + esc(p.dateLabel) + '</span></div>' +
+          '</article>';
+      });
+      grid.innerHTML = adminCards.concat(STATIC_POSTS_HTML).join('');
+      // Wire click handlers for admin cards
+      grid.querySelectorAll('.post[data-id]').forEach(function(el) {
+        var id = el.dataset.id;
+        el.addEventListener('click', function() { openPost(id); });
+      });
+      // Re-apply active filter
+      var activeFilter = document.querySelector('.filter.active');
+      if (activeFilter) {
+        var cat = activeFilter.dataset.cat;
+        grid.querySelectorAll('.post').forEach(function(el) {
+          el.style.display = (cat === 'All' || (el.dataset.category || '') === cat) ? '' : 'none';
         });
-        ag.appendChild(grid);
       }
     }
 
