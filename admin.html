@@ -1689,7 +1689,29 @@ function saveServices() {
   showToast('Services saved!');
 }
 
-// ── Case Studies CRUD ────────────────────────────────────────────────────────
+// ── Media preview helper ────────────────────────────────────────────────
+function getMediaPreviewHtml(url, idx) {
+  if (!url) return '<p style="font-size:13px;color:var(--muted);margin:0;">No image uploaded yet.</p>';
+
+  const isYT = url.includes('youtube.com') || url.includes('youtu.be');
+  const isVimeo = url.includes('vimeo.com');
+  const isVideo = !isYT && !isVimeo && (url.startsWith('data:video') || /\.(mp4|webm|mov)(\?|$)/i.test(url));
+
+  let mediaContent = '';
+  if (isYT) {
+    const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^&\s?]+)/);
+    mediaContent = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=1&controls=1" style="width:100%;height:100%;border:none;"></iframe>` : '';
+  } else if (isVimeo) {
+    const vmMatch = url.match(/vimeo\.com\/(\d+)/);
+    mediaContent = vmMatch ? `<iframe src="https://player.vimeo.com/video/${vmMatch[1]}?autoplay=1&muted=1" style="width:100%;height:100%;border:none;"></iframe>` : '';
+  } else if (isVideo) {
+    mediaContent = `<video src="${url}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
+  } else {
+    mediaContent = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" />`;
+  }
+
+  return mediaContent ? `<div style="position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111;max-width:480px;">${mediaContent}<button onclick="clearCaseStudyMedia(${idx})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button></div>` : '';
+}────
 function getCaseStudies() { try { return JSON.parse(localStorage.getItem('nucleus_casestudies') || '[]'); } catch(e) { return []; } }
 function renderCaseStudies() {
   const items = getCaseStudies();
@@ -1713,19 +1735,14 @@ function renderCaseStudies() {
       <div class="field">
         <label>Case Study Image / Video</label>
         <div id="cs_media_preview_${i}" style="margin-bottom:10px;">
-          ${s.image ? `<div style="position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111;max-width:480px;">
-            ${(s.image.startsWith('data:video') || /\.(mp4|webm|mov)(\?|$)/i.test(s.image))
-              ? `<video src="${escHtml(s.image)}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`
-              : `<img src="${escHtml(s.image)}" style="width:100%;height:100%;object-fit:cover;" />`}
-            <button onclick="clearCaseStudyMedia(${i})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button>
-          </div>` : '<p style="font-size:13px;color:var(--muted);margin:0;">No image uploaded yet.</p>'}
+          ${getMediaPreviewHtml(s.image || '', i)}
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           <input type="file" id="cs_file_${i}" accept="image/*,video/*" style="display:none" onchange="uploadCaseStudyMedia(${i},event)" />
           <button class="btn btn-sm" onclick="document.getElementById('cs_file_${i}').click()" style="white-space:nowrap;">📷 Upload Image / Video</button>
-          <input type="text" class="cs-image" placeholder="Or paste URL…" value="${escHtml(s.image||'')}" style="flex:1;min-width:180px;" />
+          <input type="text" class="cs-image" placeholder="Or paste URL (YouTube/Vimeo/image/video)…" value="${escHtml(s.image||'')}" style="flex:1;min-width:180px;" onchange="updateCaseStudyMediaPreview(${i})" />
         </div>
-        <p style="font-size:11px;color:var(--muted);margin-top:6px;">Image: max 10 MB (JPG/PNG/WebP) · Video: max 500 MB (MP4/WebM)</p>
+        <p style="font-size:11px;color:var(--muted);margin-top:6px;">Image: max 10 MB · Video: max 500 MB · YouTube/Vimeo URLs supported</p>
       </div>
       <div class="field"><label>Before Points (one per line)</label><textarea class="cs-before" rows="3">${escHtml(s.before)}</textarea></div>
       <div class="field"><label>After Points (one per line)</label><textarea class="cs-after" rows="3">${escHtml(s.after)}</textarea></div>
@@ -1810,14 +1827,18 @@ async function uploadCaseStudyMedia(idx, event) {
 
   const preview = document.getElementById('cs_media_preview_' + idx);
   if (preview) {
-    preview.innerHTML = `<div style="position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111;max-width:480px;">
-      ${isVideo
-        ? `<video src="${finalUrl}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`
-        : `<img src="${finalUrl}" style="width:100%;height:100%;object-fit:cover;" />`}
-      <button onclick="clearCaseStudyMedia(${idx})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button>
-    </div>`;
+    preview.innerHTML = getMediaPreviewHtml(finalUrl, idx);
   }
   showToast(uploadedToGitHub ? 'Image uploaded to GitHub — click Save Case Studies to apply.' : 'Image saved locally — click Save Case Studies to apply.', 'success');
+}
+
+function updateCaseStudyMediaPreview(idx) {
+  const inputs = document.querySelectorAll('.cs-image');
+  const preview = document.getElementById('cs_media_preview_' + idx);
+  if (inputs[idx] && preview) {
+    const url = inputs[idx].value.trim();
+    preview.innerHTML = getMediaPreviewHtml(url, idx);
+  }
 }
 
 function clearCaseStudyMedia(idx) {

@@ -468,12 +468,31 @@ async function loadGlobalMediaAndSettings() {
       const result = s.result || '';
       const quote = s.quote || '';
       const quote_author = s.quote_author || '';
-      const isVideo = image && (image.startsWith('data:video') || /\.(mp4|webm|mov)(\?|$)/i.test(image));
-      const mediaHtml = image
+
+      const isYT = image && (image.includes('youtube.com') || image.includes('youtu.be'));
+      const isVimeo = image && image.includes('vimeo.com');
+      const isVideo = image && !isYT && !isVimeo && (image.startsWith('data:video') || /\.(mp4|webm|mov)(\?|$)/i.test(image));
+
+      let mediaContent = '';
+      if (isYT) {
+        const ytMatch = image.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^&\s?]+)/);
+        if (ytMatch) {
+          mediaContent = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=1&loop=1&playlist=${ytMatch[1]}&controls=1&rel=0&enablejsapi=1" style="width:100%;height:100%;border:none;display:block;" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>`;
+        }
+      } else if (isVimeo) {
+        const vmMatch = image.match(/vimeo\.com\/(\d+)/);
+        if (vmMatch) {
+          mediaContent = `<iframe src="https://player.vimeo.com/video/${vmMatch[1]}?autoplay=1&muted=1&loop=1&background=1&api=1" style="width:100%;height:100%;border:none;display:block;" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>`;
+        }
+      } else if (isVideo) {
+        mediaContent = `<video src="${image}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>`;
+      } else if (image) {
+        mediaContent = `<img loading="lazy" src="${image}" alt="${client}" style="width:100%;height:100%;object-fit:cover;display:block;" />`;
+      }
+
+      const mediaHtml = mediaContent
         ? `<div style="width:100%;aspect-ratio:16/9;border-radius:16px 16px 0 0;overflow:hidden;background:#111;position:relative;margin:-40px -40px 32px -40px;width:calc(100% + 80px);">
-            ${isVideo
-              ? `<video src="${image}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>`
-              : `<img loading="lazy" src="${image}" alt="${client}" style="width:100%;height:100%;object-fit:cover;display:block;" />`}
+            ${mediaContent}
             <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,0.45));"></div>
             <div style="position:absolute;bottom:20px;left:28px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
               <span style="background:var(--gold-primary);color:var(--green-deep);padding:5px 14px;border-radius:20px;font-size:11px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;font-weight:600;">${industry || 'Case Study'}</span>
