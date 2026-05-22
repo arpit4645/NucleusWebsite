@@ -264,20 +264,59 @@
   };
 
   // ── Upload media file (image/video) to GitHub repo ─────────────────────────
+  // GitHub Contents API limit: ~1MB for reliable uploads. Large files (>800KB)
+  // should be stored as base64 data URLs in localStorage instead.
   window.nucleusUploadMedia = async function (key, file) {
     const cfg = getConfig();
     if (!cfg || !cfg.token || !cfg.owner || !cfg.repo) {
       throw new Error('GitHub not configured. Open admin Setup to add your token.');
     }
+
+    // For files over 800KB, GitHub Contents API becomes unreliable.
+    // Fall back to base64 so the caller can store it in localStorage.
+    if (file.size > 800 * 1024) {
+      return new Promise(function(resolve, reject) {
+        var r = new FileReader();
+        r.onload = function(e) { resolve(e.target.result); };
+        r.onerror = function() { reject(new Error('Failed to read file')); };
+        r.readAsDataURL(file);
+      });
+    }
+
     const branch = cfg.branch || 'main';
     const safeKey = key.replace(/[^a-z0-9_-]/gi, '_');
     const safeName = file.name.replace(/[^a-z0-9._-]/gi, '_');
     const filename = `${safeKey}_${Date.now()}_${safeName}`;
     const path = `${MEDIA_DIR}/${filename}`;
     const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`;
+    const rawUrl = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${branch}/${path}`;
 
-    // Convert file to base64
-    return `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${branch}/${path}`;
+    // Read file as base64
+    const b64 = await new Promise(function(resolve, reject) {
+      var r = new FileReader();
+      r.onload = function(e) {
+        // e.target.result is "data:image/png;base64,AAAA..." — strip the prefix
+        var result = e.target.result;
+        var comma = result.indexOf(',');
+        resolve(comma >= 0 ? result.slice(comma + 1) : result);
+      };
+      r.onerror = function() { reject(new Error('Failed to read file')); };
+      r.readAsDataURL(file);
+    });
+
+    // Upload via XHR (same helper used for data pushes — avoids CORS Cache-Control issue)
+    const body = JSON.stringify({
+      message: 'Upload media: ' + filename,
+      content: b64,
+      branch: branch
+    });
+    const res = await _xhr('PUT', apiUrl, cfg.token, body);
+    if (res.status < 200 || res.status >= 300) {
+      var errObj = {};
+      try { errObj = JSON.parse(res.text); } catch(e) {}
+      throw new Error('GitHub upload failed: ' + (errObj.message || res.status));
+    }
+    return rawUrl;
   };
 
   // ── Intercept localStorage writes ──────────────────────────────────────────
