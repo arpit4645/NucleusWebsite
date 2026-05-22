@@ -1,4 +1,5 @@
 {
+  "ignoreCommand": "git diff --quiet HEAD~1 -- . ':(exclude)content/'",
   "headers": [
     {
       "source": "/assets/(.*)\\.js",
@@ -8,6 +9,12 @@
     },
     {
       "source": "/assets/(.*)\\.css",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
+      "source": "/content/site-data.json",
       "headers": [
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]

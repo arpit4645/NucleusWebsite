@@ -1787,11 +1787,14 @@ async function uploadCaseStudyMedia(idx, event) {
   showToast(isVideo ? 'Uploading video…' : 'Uploading image…', 'success');
 
   let finalUrl = '';
+  let uploadedToGitHub = false;
   if (window._nucleusSyncActive && window.nucleusUploadMedia) {
     try {
       finalUrl = await window.nucleusUploadMedia('nucleus_case_' + idx + '_media', file);
+      // nucleusUploadMedia returns a data URL for large files, raw.github URL for small files
+      uploadedToGitHub = finalUrl && finalUrl.startsWith('https://');
     } catch(err) {
-      showToast('Cloud upload failed, saving locally.', 'error');
+      showToast('Cloud upload failed: ' + err.message + '. Storing locally instead.', 'error');
     }
   }
   if (!finalUrl) {
@@ -1814,7 +1817,7 @@ async function uploadCaseStudyMedia(idx, event) {
       <button onclick="clearCaseStudyMedia(${idx})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button>
     </div>`;
   }
-  showToast('Media ready — click Save Case Studies to apply.', 'success');
+  showToast(uploadedToGitHub ? 'Image uploaded to GitHub — click Save Case Studies to apply.' : 'Image saved locally — click Save Case Studies to apply.', 'success');
 }
 
 function clearCaseStudyMedia(idx) {
