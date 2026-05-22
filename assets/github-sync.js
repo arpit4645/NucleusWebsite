@@ -31,15 +31,36 @@
     return SYNC_PREFIXES.some(p => key.startsWith(p));
   }
 
-  // Strip admin password before writing nucleus_site_settings to GitHub
+  // Strip admin password and large base64 blobs before writing to GitHub.
+  // base64 images embedded in site-data.json bloat the file past GitHub's
+  // 1MB Contents API limit, causing push failures.
   function sanitizeValue(key, value) {
     if (key === 'nucleus_site_settings') {
       try {
         const obj = JSON.parse(value);
-        delete obj.adminPwd; // never commit the admin password
+        delete obj.adminPwd;
         return JSON.stringify(obj);
       } catch (e) { return value; }
     }
+    // Strip base64 data URLs from any JSON array (e.g. nucleus_casestudies)
+    // before pushing. Images uploaded to GitHub have raw.githubusercontent.com
+    // URLs which are fine; base64 blobs are local-only.
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        const stripped = parsed.map(item => {
+          if (typeof item !== 'object' || !item) return item;
+          const copy = Object.assign({}, item);
+          Object.keys(copy).forEach(k => {
+            if (typeof copy[k] === 'string' && copy[k].startsWith('data:')) {
+              copy[k] = ''; // replace base64 blob with empty — keeps the slot
+            }
+          });
+          return copy;
+        });
+        return JSON.stringify(stripped);
+      }
+    } catch (e) {}
     return value;
   }
 
@@ -224,6 +245,8 @@
       if (lastErr) throw lastErr;
       _failCount = 0;
       _updateSyncBadge(true);
+      // Fire event so public pages re-render with the newly pushed data
+      document.dispatchEvent(new Event('nucleus-sync-ready'));
     } catch (e) {
       console.warn('[NucleusSync] Push error:', e.message);
       Object.assign(_pendingPushes, pending);
