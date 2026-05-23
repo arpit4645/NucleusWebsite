@@ -1016,23 +1016,26 @@ async function handleAnyUpload(storageKey, e, onSuccess) {
   const file = e.target.files[0];
   if (!file) return;
   const isVideo = file.type.startsWith('video/');
-  const maxBytes = isVideo ? MAX_VID_BYTES : MAX_IMG_BYTES;
-  const maxLabel = isVideo ? '500 MB' : '10 MB';
-  if (file.size > maxBytes) {
-    showToast(`File too large — max ${maxLabel} for ${isVideo?'videos':'images'}.`, 'error');
+  if (file.size > (isVideo ? MAX_VID_BYTES : 50 * 1024 * 1024)) {
+    showToast(`File too large — max ${isVideo ? '500 MB' : '50 MB'}.`, 'error');
     return;
   }
-  showToast(isVideo ? 'Uploading video… please wait.' : 'Uploading image…', 'success');
+  showToast(isVideo ? 'Uploading video…' : 'Uploading image…', 'success');
   try {
-    await mdbSave(storageKey, file);
-    mdbMark(storageKey);
-    localStorage.removeItem(storageKey); // clear any old base64
-    const objUrl = URL.createObjectURL(file);
-    if (typeof onSuccess === 'function') onSuccess(objUrl, isVideo);
-    else showToast((isVideo?'Video':'Image') + ' saved!');
+    const result = await _uploadFileToCloud(storageKey, file);
+    if (result.url) {
+      localStorage.setItem(storageKey, result.url);
+      mdbUnmark(storageKey);
+    } else {
+      localStorage.removeItem(storageKey);
+    }
+    const displayUrl = result.url || result.blobUrl;
+    if (typeof onSuccess === 'function') onSuccess(displayUrl, isVideo);
+    else if (!result.synced) showToast((isVideo ? 'Video' : 'Image') + ' saved locally. Set up cloud storage in Settings to sync across devices.', 'success');
+    else showToast((isVideo ? 'Video' : 'Image') + ' uploaded and synced!');
   } catch(err) {
     console.error('Media save error:', err);
-    showToast('Save failed. Try a smaller file or use a URL.', 'error');
+    showToast('Upload failed: ' + (err.message || 'unknown error'), 'error');
   }
 }
 
@@ -1078,59 +1081,94 @@ function mttSwitchCard(key, type, btn) {
 }
 
 async function uploadToFirebaseStorage(key, file) {
-  // NOTE: name kept for backward compatibility — now uploads to GitHub.
-  if (!window.nucleusUploadMedia) {
-    throw new Error('Sync engine not loaded.');
-  }
+  // Kept for backward compatibility — delegates to nucleusUploadMedia.
+  if (!window.nucleusUploadMedia) throw new Error('Sync engine not loaded.');
   return await window.nucleusUploadMedia(key, file);
 }
 
-function handleImageUpload(e) {
+/**
+ * _uploadFileToCloud — unified upload helper used by every upload handler.
+ *
+ * Priority order:
+ *   Images : GitHub (Contents API ≤900KB / Git Data API ≤50MB) → Cloudinary → IndexedDB
+ *   Videos : Cloudinary → IndexedDB  (GitHub cannot host video files)
+ *
+ * Returns { url, synced, blobUrl? }
+ *   url     — https:// URL if cloud upload succeeded, null if local-only
+ *   synced  — true when the URL will be visible to all visitors via raw.githubusercontent.com or CDN
+ *   blobUrl — blob: URL for immediate preview when url is null (local-only)
+ */
+async function _uploadFileToCloud(storageKey, file, onProgress) {
+  const isVideo = file.type.startsWith('video/');
+  const cldCfg = JSON.parse(localStorage.getItem('nucleus_cloudinary_cfg') || '{}');
+  const hasCloudinary = !!(cldCfg.cloudName && cldCfg.uploadPreset);
+
+  // ── Images: try GitHub first ───────────────────────────────────────────────
+  if (!isVideo && window.nucleusUploadMedia) {
+    try {
+      const url = await window.nucleusUploadMedia(storageKey, file);
+      if (url && url.startsWith('https://')) {
+        return { url, synced: true };
+      }
+      // nucleusUploadMedia returned data: URL — token missing or other issue, fall through
+    } catch(e) {
+      if (!hasCloudinary) throw e; // no fallback available, let caller show the error
+    }
+  }
+
+  // ── Videos + images that failed GitHub: try Cloudinary ───────────────────
+  if (hasCloudinary) {
+    showToast(isVideo ? 'Uploading video to Cloudinary…' : 'File too large for GitHub — uploading to Cloudinary…', 'success');
+    const url = await uploadToCloudinary(file, storageKey + '_' + Date.now(), onProgress || null);
+    return { url, synced: true };
+  }
+
+  // ── Last resort: IndexedDB (local-only, visible only on this device) ───────
+  await mdbSave(storageKey, file);
+  mdbMark(storageKey);
+  return { url: null, synced: false, blobUrl: URL.createObjectURL(file) };
+}
+
+function _setBlogCoverPreview(url, isVideo) {
+  const preview = document.getElementById('imgPreview');
+  const pos = (document.getElementById('imgPos') || {}).value || '50% 50%';
+  if (isVideo) {
+    preview.innerHTML = `
+      <video src="${url}" controls muted
+        style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+      <input type="file" id="imgUpload" accept="video/*" style="display:none" onchange="handleImageUpload(event)" />`;
+  } else {
+    preview.innerHTML = `<img loading="lazy" src="${url}" alt="Preview" style="object-position:${pos}; cursor:grab;" draggable="false" />
+      <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);">&#10021; Drag to pan</div>
+      <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
+  }
+}
+
+async function handleImageUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
   const isVideo = file.type.startsWith('video/');
-  const maxBytes = isVideo ? MAX_VID_BYTES : MAX_IMG_BYTES;
-  const maxLabel = isVideo ? '500 MB' : '10 MB';
-  if (file.size > maxBytes) { showToast(`File too large — max ${maxLabel}.`, 'error'); return; }
-
-  if (window._nucleusSyncActive) {
-    showToast('Uploading cover media to cloud...', 'success');
-    uploadToFirebaseStorage('blog_cover', file).then(url => {
-      currentImageBase64 = url;
-      const preview = document.getElementById('imgPreview');
-      if (isVideo) {
-        preview.innerHTML = `
-          <video src="${url}" controls muted
-            style="width:100%;height:100%;object-fit:cover;display:block;"></video>
-          <input type="file" id="imgUpload" accept="video/*" style="display:none" onchange="handleImageUpload(event)" />`;
-      } else {
-        preview.innerHTML = `<img loading="lazy" src="${url}" alt="Preview" style="object-position:${document.getElementById('imgPos').value}; cursor:grab;" draggable="false" />
-          <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);">&#10021; Drag to pan</div>
-          <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
-      }
-      showToast('Cover media uploaded successfully!', 'success');
-    }).catch(err => {
-      console.error('[Blog Upload Error]', err);
-      showToast(err.message || 'Upload failed. Check Firebase Storage rules.', 'error');
-    });
-  } else {
-    // Blog cover uses FileReader for immediate preview (small files only)
-    const reader = new FileReader();
-    reader.onload = ev => {
-      currentImageBase64 = ev.target.result;
-      const preview = document.getElementById('imgPreview');
-      if (isVideo) {
-        preview.innerHTML = `
-          <video src="${currentImageBase64}" controls muted
-            style="width:100%;height:100%;object-fit:cover;display:block;"></video>
-          <input type="file" id="imgUpload" accept="video/*" style="display:none" onchange="handleImageUpload(event)" />`;
-      } else {
-        preview.innerHTML = `<img loading="lazy" src="${currentImageBase64}" alt="Preview" style="object-position:${document.getElementById('imgPos').value}; cursor:grab;" draggable="false" />
-          <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);">&#10021; Drag to pan</div>
-          <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
-      }
-    };
-    reader.readAsDataURL(file);
+  if (file.size > (isVideo ? MAX_VID_BYTES : 50 * 1024 * 1024)) {
+    showToast(`File too large — max ${isVideo ? '500 MB' : '50 MB'}.`, 'error');
+    return;
+  }
+  showToast(isVideo ? 'Uploading cover video…' : 'Uploading cover image…', 'success');
+  try {
+    const result = await _uploadFileToCloud('blog_cover', file);
+    const url = result.url || result.blobUrl;
+    currentImageBase64 = url;
+    _setBlogCoverPreview(url, isVideo);
+    if (!result.synced) {
+      showToast(isVideo
+        ? 'Cover video saved locally. Set up Cloudinary in Settings → Cloud Storage to publish it.'
+        : 'Cover image saved locally. Set up GitHub token in Settings to sync across devices.',
+        'success');
+    } else {
+      showToast('Cover media uploaded and synced!', 'success');
+    }
+  } catch(err) {
+    console.error('[Blog Cover Upload Error]', err);
+    showToast(err.message || 'Upload failed.', 'error');
   }
 }
 
@@ -1898,77 +1936,55 @@ async function uploadCaseStudyMedia(idx, event) {
   const file = event.target.files[0];
   if (!file) return;
   const isVideo = file.type.startsWith('video/');
-
   if (isVideo && file.size > 2 * 1024 * 1024 * 1024) { showToast('Video too large (max 2 GB).', 'error'); return; }
-  if (!isVideo && file.size > 10 * 1024 * 1024) { showToast('Image too large (max 10 MB).', 'error'); return; }
+  if (!isVideo && file.size > 50 * 1024 * 1024) { showToast('Image too large (max 50 MB).', 'error'); return; }
 
-  const cldCfg = JSON.parse(localStorage.getItem('nucleus_cloudinary_cfg') || '{}');
-  const hasCloudinary = !!(cldCfg.cloudName && cldCfg.uploadPreset);
+  const mdbKey = 'nucleus_case_' + idx + '_media';
 
-  let finalUrl = '';
-  let storageLabel = '';
-
+  // Show progress bar container for videos
   if (isVideo) {
-    if (!hasCloudinary) {
-      showToast('⚠️ Cloudinary not set up — go to Settings → Cloud Storage first. Storing locally for now.', 'error');
-      finalUrl = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file); });
-      storageLabel = 'Saved locally (Cloudinary not configured)';
-    } else {
-      // Show progress panel
-      const preview = document.getElementById('cs_media_preview_' + idx);
-      if (preview) {
-        preview.innerHTML = `<div style="background:#111;border-radius:10px;padding:24px;max-width:480px;">
-          <p style="color:#fff;font-size:13px;margin:0 0 12px;">Uploading video to Cloudinary…</p>
-          <div style="background:#333;border-radius:99px;height:8px;overflow:hidden;">
-            <div id="cld_progress_${idx}" style="background:#4caf50;height:100%;width:0%;transition:width .3s;"></div>
-          </div>
-          <p id="cld_pct_${idx}" style="color:#aaa;font-size:12px;margin:8px 0 0;">0%</p>
-        </div>`;
-      }
-      try {
-        const publicId = 'nucleus_case_' + idx + '_' + Date.now();
-        finalUrl = await uploadToCloudinary(file, publicId, (pct) => {
-          const bar = document.getElementById('cld_progress_' + idx);
-          const label = document.getElementById('cld_pct_' + idx);
-          if (bar) bar.style.width = pct + '%';
-          if (label) label.textContent = pct + '%';
-        });
-        storageLabel = 'Video uploaded to Cloudinary';
-      } catch(err) {
-        showToast('Cloudinary upload failed: ' + err.message, 'error');
-        finalUrl = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file); });
-        storageLabel = 'Saved locally (Cloudinary error)';
-      }
-    }
-  } else {
-    // Image: try GitHub (< 800KB), else Cloudinary if available, else base64
-    showToast('Uploading image…', 'success');
-    if (window._nucleusSyncActive && window.nucleusUploadMedia) {
-      try {
-        finalUrl = await window.nucleusUploadMedia('nucleus_case_' + idx + '_media', file);
-        storageLabel = finalUrl.startsWith('https://raw.github') ? 'Uploaded to GitHub' : (hasCloudinary ? 'Large image — trying Cloudinary' : 'Saved locally');
-        if (!finalUrl.startsWith('https://') && hasCloudinary) {
-          // nucleusUploadMedia returned base64 (file > 800KB) — try Cloudinary instead
-          finalUrl = await uploadToCloudinary(file, 'nucleus_case_img_' + idx + '_' + Date.now(), null);
-          storageLabel = 'Uploaded to Cloudinary';
-        }
-      } catch(err) {
-        showToast('Cloud upload failed: ' + err.message, 'error');
-      }
-    }
-    if (!finalUrl) {
-      finalUrl = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file); });
-      storageLabel = 'Saved locally';
+    const preview = document.getElementById('cs_media_preview_' + idx);
+    if (preview) {
+      preview.innerHTML = `<div style="background:#111;border-radius:10px;padding:24px;max-width:480px;">
+        <p style="color:#fff;font-size:13px;margin:0 0 12px;">Uploading video…</p>
+        <div style="background:#333;border-radius:99px;height:8px;overflow:hidden;">
+          <div id="cld_progress_${idx}" style="background:#4caf50;height:100%;width:0%;transition:width .3s;"></div>
+        </div>
+        <p id="cld_pct_${idx}" style="color:#aaa;font-size:12px;margin:8px 0 0;">0%</p>
+      </div>`;
     }
   }
 
-  const inputs = document.querySelectorAll('.cs-image');
-  if (inputs[idx]) inputs[idx].value = finalUrl;
+  showToast(isVideo ? 'Uploading video…' : 'Uploading image…', 'success');
+  try {
+    const onProgress = isVideo ? (pct) => {
+      const bar = document.getElementById('cld_progress_' + idx);
+      const label = document.getElementById('cld_pct_' + idx);
+      if (bar) bar.style.width = pct + '%';
+      if (label) label.textContent = pct + '%';
+    } : null;
 
-  const preview = document.getElementById('cs_media_preview_' + idx);
-  if (preview) preview.innerHTML = getMediaPreviewHtml(finalUrl, idx);
+    const result = await _uploadFileToCloud(mdbKey, file, onProgress);
+    const finalUrl = result.url || result.blobUrl;
 
-  showToast(storageLabel + ' — click Save Case Studies to apply.', 'success');
+    const inputs = document.querySelectorAll('.cs-image');
+    if (inputs[idx]) inputs[idx].value = result.url || ''; // only store https:// URLs in the JSON field
+
+    const preview = document.getElementById('cs_media_preview_' + idx);
+    if (preview) preview.innerHTML = getMediaPreviewHtml(finalUrl, idx);
+
+    if (!result.synced) {
+      showToast(isVideo
+        ? '⚠️ Video saved locally — set up Cloudinary in Settings → Cloud Storage to publish it on your site.'
+        : '⚠️ Image saved locally — set up GitHub token in Settings to sync across devices.',
+        'error');
+    } else {
+      showToast((result.url.includes('cloudinary') ? 'Cloudinary' : 'GitHub') + ' upload done — click Save Case Studies to apply.', 'success');
+    }
+  } catch(err) {
+    console.error('[Case Study Upload Error]', err);
+    showToast(err.message || 'Upload failed.', 'error');
+  }
 }
 
 function updateCaseStudyMediaPreview(idx) {
@@ -2153,40 +2169,38 @@ function saveUniversalMediaUrl(storageKey) {
 async function handleUniversalMediaUpload(storageKey, event) {
   const file = event.target.files[0];
   if (!file) return;
-  
   const isVideo = file.type.startsWith('video/');
-  const maxBytes = isVideo ? 500 * 1024 * 1024 : 10 * 1024 * 1024;
-  
-  if (file.size > maxBytes) {
-    showToast(`File too large — max ${isVideo?'500 MB':'10 MB'}.`, 'error');
+  if (file.size > (isVideo ? 500 * 1024 * 1024 : 50 * 1024 * 1024)) {
+    showToast(`File too large — max ${isVideo ? '500 MB' : '50 MB'}.`, 'error');
     return;
   }
-  
-  showToast('Uploading media...', 'success');
+  showToast(isVideo ? 'Uploading video…' : 'Uploading image…', 'success');
   try {
-    if (window._nucleusSyncActive) {
-      const downloadURL = await uploadToFirebaseStorage(storageKey, file);
-      localStorage.setItem(storageKey, downloadURL);
+    const result = await _uploadFileToCloud(storageKey, file);
+    if (result.url) {
+      localStorage.setItem(storageKey, result.url);
       mdbUnmark(storageKey);
     } else {
-      await mdbSave(storageKey, file);
-      mdbMark(storageKey);
-      localStorage.removeItem(storageKey); // clear old base64
+      localStorage.removeItem(storageKey);
     }
     localStorage.removeItem(storageKey + '_url');
-
     const urlInput = document.getElementById('url-' + storageKey);
     if (urlInput) urlInput.value = '';
-
     localStorage.setItem(storageKey + '_type', isVideo ? 'video' : 'image');
     refreshUniversalMediaPreview(storageKey);
-    showToast('Media saved successfully!');
+    if (!result.synced) {
+      showToast(isVideo
+        ? 'Video saved locally. Set up Cloudinary in Settings → Cloud Storage to share across devices.'
+        : 'Image saved locally. Set up GitHub token in Settings to sync across devices.',
+        'success');
+    } else {
+      showToast('Media uploaded and synced!');
+    }
   } catch(err) {
     console.error('[Universal Media Upload Error]', err);
-    const msg = err.message || 'Upload failed. Check Firebase Storage rules.';
-    showToast(msg, 'error');
+    showToast(err.message || 'Upload failed.', 'error');
   }
-  event.target.value = ''; // reset input
+  event.target.value = '';
 }
 
 function clearUniversalMedia(storageKey) {
@@ -2489,42 +2503,41 @@ async function handleImgCardUpload(key, e, card) {
   const file = e.target.files[0];
   if (!file) return;
   const isVideo = file.type.startsWith('video/');
-  const maxBytes = isVideo ? MAX_VID_BYTES : MAX_IMG_BYTES;
-  const maxLabel = isVideo ? '500 MB' : '10 MB';
+  const maxBytes = isVideo ? MAX_VID_BYTES : 50 * 1024 * 1024;
   if (file.size > maxBytes) {
-    showToast(`File too large — max ${maxLabel}.`, 'error');
+    showToast(`File too large — max ${isVideo ? '500 MB' : '50 MB'}.`, 'error');
     return;
   }
-  showToast(isVideo ? 'Uploading video to cloud...' : 'Uploading image to cloud...', 'success');
+  showToast(isVideo ? 'Uploading video…' : 'Uploading image…', 'success');
   try {
-    let finalUrl;
-    if (window._nucleusSyncActive) {
-      finalUrl = await uploadToFirebaseStorage(key, file);
-      localStorage.setItem(key, finalUrl);
+    const result = await _uploadFileToCloud(key, file);
+    if (result.url) {
+      localStorage.setItem(key, result.url);
       mdbUnmark(key);
     } else {
-      await mdbSave(key, file);
-      mdbMark(key);
-      localStorage.removeItem(key); // clear old base64 if any
-      finalUrl = URL.createObjectURL(file);
+      localStorage.removeItem(key);
     }
     localStorage.setItem(key + '_type', isVideo ? 'video' : 'image');
+    const displayUrl = result.url || result.blobUrl;
     card.classList.add('has-override');
     const aspect = card.dataset.aspect || '16/9';
     const wrap = card.querySelector('.img-card-preview-wrap') || card;
     if (isVideo) {
       const el = wrap.querySelector('.img-card-preview');
-      if (el) el.outerHTML = `<video class="img-card-preview" src="${finalUrl}" muted loop autoplay playsinline style="aspect-ratio:${aspect};object-fit:cover;"></video>`;
+      if (el) el.outerHTML = `<video class="img-card-preview" src="${displayUrl}" muted loop autoplay playsinline style="aspect-ratio:${aspect};object-fit:cover;"></video>`;
     } else {
       const el = wrap.querySelector('.img-card-preview');
-      if (el && el.tagName === 'IMG') el.src = finalUrl;
-      else if (el) el.outerHTML = `<img class="img-card-preview" src="${finalUrl}" alt="" style="aspect-ratio:${aspect};" />`;
+      if (el && el.tagName === 'IMG') el.src = displayUrl;
+      else if (el) el.outerHTML = `<img class="img-card-preview" src="${displayUrl}" alt="" style="aspect-ratio:${aspect};" />`;
     }
-    showToast(`"${card.dataset.label}" updated!`, 'success');
+    if (!result.synced) {
+      showToast(`"${card.dataset.label}" saved locally. Set up Cloudinary in Settings to sync across devices.`, 'success');
+    } else {
+      showToast(`"${card.dataset.label}" uploaded and synced!`, 'success');
+    }
   } catch(err) {
     console.error('[Image Card Upload Error]', err);
-    const msg = err.message || 'Upload failed. Try a smaller file or check Firebase Storage rules.';
-    showToast(msg, 'error');
+    showToast(err.message || 'Upload failed.', 'error');
   }
 }
 
