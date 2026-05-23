@@ -1,5 +1,5 @@
 {
-  "ignoreCommand": "[ $(git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -cvE '^content/') -eq 0 ]",
+  "ignoreCommand": "git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -qvE '^content/'",
   "headers": [
     {
       "source": "/assets/(.*)\\.js",
