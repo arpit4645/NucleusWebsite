@@ -143,10 +143,10 @@
               const existing = JSON.parse(localStorage.getItem('nucleus_site_settings') || '{}');
               if (existing.adminPwd) incoming.adminPwd = existing.adminPwd;
               localStorage.setItem(k, JSON.stringify(incoming));
-              return;
             } catch (e) {}
+          } else {
+            localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
           }
-          localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
         }
       });
       _paused = false;
