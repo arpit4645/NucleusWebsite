@@ -364,17 +364,52 @@ async function loadGlobalMediaAndSettings() {
   } catch(e) {}
 
 
-  // B2. Render services list on services page
+  // B2. Render services page (hero, list, steps, pricing)
   const servicesList = document.getElementById('services-dynamic-list');
   if (servicesList) {
+    // Hero text
+    const svcHero = JSON.parse(localStorage.getItem('nucleus_services_hero') || '{}');
+    const heroTitle = document.getElementById('svc-hero-title');
+    const heroSub   = document.getElementById('svc-hero-sub');
+    if (heroTitle && svcHero.title) heroTitle.innerHTML = svcHero.title;
+    if (heroSub   && svcHero.sub)   heroSub.textContent  = svcHero.sub;
+
+    // Pricing note
+    const svcPricing = JSON.parse(localStorage.getItem('nucleus_services_pricing') || '{}');
+    const priceQ = document.getElementById('svc-pricing-quote');
+    const priceCta = document.getElementById('svc-pricing-cta');
+    if (priceQ && svcPricing.quote) priceQ.textContent = svcPricing.quote;
+    if (priceCta && svcPricing.cta) priceCta.textContent = svcPricing.cta + ' →';
+
+    // How We Work steps
+    const DEFAULT_STEPS = [
+      {icon:'🔍', title:'Diagnose', desc:'2-hour deep-dive into your business to identify the real bottlenecks. Completely free.'},
+      {icon:'⭐', title:'Design',   desc:'Custom transformation roadmap built specifically for your context and team size.'},
+      {icon:'⚡', title:'Deploy',   desc:'Hands-on implementation with your team over a 6 to 12-month partnership.'}
+    ];
+    const svcSteps = JSON.parse(localStorage.getItem('nucleus_services_steps') || 'null') || DEFAULT_STEPS;
+    const stepsEl = document.getElementById('svc-steps-render');
+    if (stepsEl) {
+      stepsEl.innerHTML = svcSteps.map((s, i) => `
+        <div class="step-card reveal">
+          <div class="icon"><span style="font-size:28px;">${s.icon || ''}</span></div>
+          <h3>${i+1}. ${s.title || ''}</h3>
+          <p>${s.desc || ''}</p>
+        </div>`).join('');
+      stepsEl.querySelectorAll('.reveal').forEach(el => {
+        if (typeof window._revealObserver !== 'undefined') window._revealObserver.observe(el);
+      });
+    }
+
+    // Services list
     const DEFAULT_SERVICES = [
-      {icon:'🧠', title:'Leadership & Thinking', description:'Transform how your leaders think and make decisions.'},
-      {icon:'🤝', title:'Culture & Accountability', description:'Build a team culture of ownership and accountability.'},
-      {icon:'📈', title:'Sales & Growth System', description:'Build predictable sales systems that scale.'},
-      {icon:'📣', title:'Marketing & Brand Positioning', description:'Position your brand for premium market visibility.'},
-      {icon:'⚙️', title:'Operations & SOP Systems', description:'Build efficient, documented, repeatable processes.'},
-      {icon:'👥', title:'HR & People Development', description:'Attract, develop and retain high-performance people.'},
-      {icon:'💰', title:'Finance & Business Clarity', description:'Get complete financial visibility and control.'}
+      {icon:'🧠', title:'Leadership & Thinking',      description:'Transform how your leaders think and make decisions.',    outcomes:'Clearer decision-making\nReduced founder dependency\nLeadership accountability'},
+      {icon:'🤝', title:'Culture & Accountability',   description:'Build a team culture of ownership and accountability.',  outcomes:'Team ownership mindset\nAccountability systems\nCulture code documented'},
+      {icon:'📈', title:'Sales & Growth System',      description:'Build predictable sales systems that scale.',            outcomes:'Consistent monthly leads\nOutbound sales process\nRevenue forecasting'},
+      {icon:'📣', title:'Marketing & Brand Positioning', description:'Position your brand for premium market visibility.',  outcomes:'Clear brand positioning\nDigital presence\nPremium market entry'},
+      {icon:'⚙️', title:'Operations & SOP Systems',  description:'Build efficient, documented, repeatable processes.',     outcomes:'SOPs for every function\nReduced operational chaos\nScalable workflows'},
+      {icon:'👥', title:'HR & People Development',   description:'Attract, develop and retain high-performance people.',   outcomes:'Hiring framework\nOnboarding process\nPerformance reviews'},
+      {icon:'💰', title:'Finance & Business Clarity', description:'Get complete financial visibility and control.',         outcomes:'Cash flow clarity\nP&L understanding\nInvestment decisions'}
     ];
     let services = [];
     try { services = JSON.parse(localStorage.getItem('nucleus_services') || '[]'); } catch(e) {}
@@ -384,13 +419,22 @@ async function loadGlobalMediaAndSettings() {
       const outcomesHtml = s.outcomes
         ? `<ul class="s-outcomes">${s.outcomes.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>`
         : '';
+      const whoHtml = s.who
+        ? `<div class="s-who"><strong>Who It's For</strong><p>${s.who}</p></div>`
+        : '';
+      const tagHtml = s.tag
+        ? `<span style="display:inline-block;background:var(--gold-primary);color:var(--green-deep);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:3px 10px;border-radius:20px;margin-bottom:16px;">${s.tag}</span><br>`
+        : '';
       const num = String(i + 1).padStart(2, '0');
+      const ctaLabel = s.cta || 'Book a Consult';
       return `<div class="service-block${altClass} reveal">
         <div class="content-side">
+          ${tagHtml}
           <div class="s-icon"><span style="font-size:22px;">${s.icon || '🔧'}</span></div>
           <h2>${s.title || ''}</h2>
           <p style="color:var(--stone);font-size:18px;line-height:1.8;margin-top:16px;">${s.description || ''}</p>
-          <a href="contact.html" class="btn btn-primary" style="display:inline-flex;margin-top:32px;">Book a Consult &nbsp;&rarr;</a>
+          ${whoHtml}
+          <a href="contact.html" class="btn btn-primary" style="display:inline-flex;margin-top:32px;">${ctaLabel} &nbsp;&rarr;</a>
         </div>
         <div class="visual-side" style="background:var(--warm-white);border-radius:var(--radius-xl);padding:40px;position:relative;overflow:hidden;min-height:260px;display:flex;flex-direction:column;justify-content:center;">
           <div style="font-family:var(--serif);font-size:clamp(80px,10vw,130px);color:var(--green-primary);opacity:0.06;position:absolute;top:-10px;right:16px;line-height:1;user-select:none;font-weight:900;pointer-events:none;">${num}</div>
@@ -399,7 +443,6 @@ async function loadGlobalMediaAndSettings() {
         </div>
       </div>`;
     }).join('');
-    // Re-observe newly added reveal elements
     servicesList.querySelectorAll('.reveal').forEach(el => {
       if (typeof window._revealObserver !== 'undefined') window._revealObserver.observe(el);
     });

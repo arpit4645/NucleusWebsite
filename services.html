@@ -129,8 +129,8 @@
   <!-- ═══════════ HERO ═══════════ -->
   <header class="page-hero dark-section" style="background: var(--green-deep); color: var(--white);">
     <div class="wrap" style="text-align: center;">
-      <h1 class="reveal" style="color: var(--white); max-width: 20ch; margin: 0 auto;">We Don't Sell Services. <em class="gold-word">We Deliver Transformation.</em></h1>
-      <p class="lead reveal" style="margin: 24px auto 0; color: rgba(255,255,255,0.8); max-width: 60ch;">
+      <h1 class="reveal" id="svc-hero-title" style="color: var(--white); max-width: 20ch; margin: 0 auto;">We Don't Sell Services. <em class="gold-word">We Deliver Transformation.</em></h1>
+      <p class="lead reveal" id="svc-hero-sub" style="margin: 24px auto 0; color: rgba(255,255,255,0.8); max-width: 60ch;">
         Every engagement is designed to create lasting change in thinking, culture, and systems — not just a project deliverable.
       </p>
     </div>
@@ -150,23 +150,8 @@
         <p class="eyebrow reveal" style="color: var(--gold-primary);">How We Work</p>
         <h2 class="reveal" style="color: var(--white); margin-top: 16px;">Our 3-Step Process</h2>
       </div>
-
-      <div class="grid grid-3" data-stagger="150">
-        <div class="step-card">
-          <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-          <h3>1. Diagnose</h3>
-          <p>2-hour deep-dive into your business to identify the real bottlenecks. Completely free.</p>
-        </div>
-        <div class="step-card">
-          <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-          <h3>2. Design</h3>
-          <p>Custom transformation roadmap built specifically for your context and team size.</p>
-        </div>
-        <div class="step-card">
-          <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-          <h3>3. Deploy</h3>
-          <p>Hands-on implementation with your team over a 6 to 12-month partnership.</p>
-        </div>
+      <div class="grid grid-3" data-stagger="150" id="svc-steps-render">
+        <!-- rendered by site.js -->
       </div>
     </div>
   </section>
@@ -174,8 +159,8 @@
   <!-- ═══════════ PRICING NOTE ═══════════ -->
   <section class="pricing-note">
     <div class="wrap reveal">
-      <p>"Every engagement is custom-scoped based on your team size, challenges, and goals. Most clients see a 10x return on investment within 12 months."</p>
-      <a href="contact.html" class="btn btn-primary">Get a Custom Quote &nbsp;→</a>
+      <p id="svc-pricing-quote">"Every engagement is custom-scoped based on your team size, challenges, and goals. Most clients see a 10x return on investment within 12 months."</p>
+      <a href="contact.html" class="btn btn-primary" id="svc-pricing-cta">Get a Custom Quote &nbsp;→</a>
     </div>
   </section>
 

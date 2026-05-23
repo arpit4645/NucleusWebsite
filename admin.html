@@ -828,7 +828,54 @@ Everything depends on you</textarea></div>
         </div>
       </div>
       <div class="content">
-        <div id="servicesList" style="display:flex;flex-direction:column;gap:16px;max-width:800px;"></div>
+        <div style="display:flex;flex-direction:column;gap:20px;max-width:800px;">
+
+          <!-- Page Hero -->
+          <div class="panel">
+            <h3>Page Hero</h3>
+            <div class="field"><label>Headline</label><input type="text" id="svc_hero_title" placeholder="We Don't Sell Services. We Deliver Transformation." /></div>
+            <div class="field"><label>Subtitle</label><textarea id="svc_hero_sub" rows="2" placeholder="Every engagement is designed to create lasting change..."></textarea></div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveServicesHero()">Save Hero</button>
+              <span class="save-indicator" id="si-svc-hero"></span>
+            </div>
+          </div>
+
+          <!-- How We Work -->
+          <div class="panel">
+            <h3>How We Work — 3 Steps</h3>
+            <div id="svc-steps-list" style="display:flex;flex-direction:column;gap:20px;"></div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveServicesSteps()">Save Steps</button>
+              <span class="save-indicator" id="si-svc-steps"></span>
+            </div>
+          </div>
+
+          <!-- Pricing Note -->
+          <div class="panel">
+            <h3>Pricing Note</h3>
+            <div class="field"><label>Quote Text</label><textarea id="svc_pricing_quote" rows="2" placeholder='"Every engagement is custom-scoped..."'></textarea></div>
+            <div class="field"><label>CTA Button Label</label><input type="text" id="svc_pricing_cta" placeholder="Get a Custom Quote" /></div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveServicesPricing()">Save Pricing Note</button>
+              <span class="save-indicator" id="si-svc-pricing"></span>
+            </div>
+          </div>
+
+          <!-- Services List -->
+          <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+              <h3 style="margin:0;">Services List</h3>
+              <button class="btn btn-ghost btn-sm" onclick="addService()">+ Add Service</button>
+            </div>
+            <div id="servicesList" style="display:flex;flex-direction:column;gap:20px;"></div>
+            <div class="section-save-row" style="margin-top:12px;">
+              <button class="btn-section-save" onclick="saveServices()">Save All Services</button>
+              <span class="save-indicator" id="si-svc-list"></span>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
 
@@ -2022,49 +2069,156 @@ function saveHomepage() {
 
 // ── Services CRUD ────────────────────────────────────────────────────────────
 function getServices() { try { return JSON.parse(localStorage.getItem('nucleus_services') || '[]'); } catch(e) { return []; } }
+
 function renderServices() {
+  // Load page hero fields
+  const hero = JSON.parse(localStorage.getItem('nucleus_services_hero') || '{}');
+  const el = id => document.getElementById(id);
+  if (el('svc_hero_title') && hero.title) el('svc_hero_title').value = hero.title;
+  if (el('svc_hero_sub') && hero.sub) el('svc_hero_sub').value = hero.sub;
+
+  // Load pricing fields
+  const pricing = JSON.parse(localStorage.getItem('nucleus_services_pricing') || '{}');
+  if (el('svc_pricing_quote') && pricing.quote) el('svc_pricing_quote').value = pricing.quote;
+  if (el('svc_pricing_cta') && pricing.cta) el('svc_pricing_cta').value = pricing.cta;
+
+  // Render How We Work steps
+  const defaultSteps = [
+    {num:'1', icon:'🔍', title:'Diagnose', desc:'2-hour deep-dive into your business to identify the real bottlenecks. Completely free.'},
+    {num:'2', icon:'⭐', title:'Design', desc:'Custom transformation roadmap built specifically for your context and team size.'},
+    {num:'3', icon:'⚡', title:'Deploy', desc:'Hands-on implementation with your team over a 6 to 12-month partnership.'}
+  ];
+  const steps = JSON.parse(localStorage.getItem('nucleus_services_steps') || 'null') || defaultSteps;
+  const stepsEl = el('svc-steps-list');
+  if (stepsEl) {
+    stepsEl.innerHTML = steps.map((s,i) => `
+      <div style="border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--paper);">
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;">Step ${i+1}</span>
+        </div>
+        <div class="field-row" style="margin-bottom:8px;">
+          <div class="field" style="max-width:80px;"><label>Icon</label><input type="text" class="svc-step-icon" value="${escHtml(s.icon||'')}" /></div>
+          <div class="field"><label>Title</label><input type="text" class="svc-step-title" value="${escHtml(s.title||'')}" /></div>
+        </div>
+        <div class="field"><label>Description</label><textarea class="svc-step-desc" rows="2">${escHtml(s.desc||'')}</textarea></div>
+      </div>`).join('');
+  }
+
+  // Render services list
   const services = getServices();
-  const el = document.getElementById('servicesList');
+  const listEl = el('servicesList');
+  if (!listEl) return;
   if (!services.length) {
-    el.innerHTML = '<div class="panel" style="text-align:center;padding:40px;"><p style="color:var(--muted);">No services yet. Click "+ Add Service" to start.</p></div>';
+    listEl.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);border:1px dashed var(--line);border-radius:10px;">No services yet. Click "+ Add Service" to get started.</div>';
     return;
   }
-  el.innerHTML = services.map((s,i) => `
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <h3 style="margin:0;font-size:14px;text-transform:none;letter-spacing:0;font-family:var(--sans);color:var(--ink);">Service #${i+1}</h3>
-        <button class="btn btn-danger btn-sm" onclick="removeService(${i})">Remove</button>
+  listEl.innerHTML = services.map((s,i) => `
+    <div style="border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--paper);">
+      <div style="background:var(--ink);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Service ${i+1} ${s.tag ? '· <span style="color:#a78bfa;">'+escHtml(s.tag)+'</span>' : ''}</span>
+        <div style="display:flex;gap:8px;">
+          ${i > 0 ? `<button class="btn btn-ghost btn-sm" onclick="moveService(${i},-1)" title="Move up">↑</button>` : ''}
+          ${i < services.length-1 ? `<button class="btn btn-ghost btn-sm" onclick="moveService(${i},1)" title="Move down">↓</button>` : ''}
+          <button class="btn btn-danger btn-sm" onclick="removeService(${i})">Remove</button>
+        </div>
       </div>
-      <div class="field"><label>Title</label><input type="text" class="svc-title" value="${escHtml(s.title)}" /></div>
-      <div class="field"><label>Description</label><textarea class="svc-desc" rows="4">${escHtml(s.description)}</textarea></div>
-      <div class="field"><label>Outcomes / Key Results (one per line — rendered as bullet list on site)</label><textarea class="svc-outcomes" rows="4">${escHtml(s.outcomes||'')}</textarea></div>
-      <div class="field"><label>Icon Emoji</label><input type="text" class="svc-icon" value="${escHtml(s.icon||'🔧')}" style="max-width:80px;" /></div>
-    </div>
-  `).join('');
+      <div style="padding:20px;display:flex;flex-direction:column;gap:12px;">
+        <div class="field-row">
+          <div class="field" style="max-width:80px;"><label>Icon</label><input type="text" class="svc-icon" value="${escHtml(s.icon||'🔧')}" /></div>
+          <div class="field"><label>Title</label><input type="text" class="svc-title" value="${escHtml(s.title||'')}" /></div>
+          <div class="field" style="max-width:140px;"><label>Badge / Tag <span style="opacity:.5">(optional)</span></label><input type="text" class="svc-tag" value="${escHtml(s.tag||'')}" placeholder="Most Popular" /></div>
+        </div>
+        <div class="field"><label>Short Description</label><textarea class="svc-desc" rows="3">${escHtml(s.description||'')}</textarea></div>
+        <div class="field"><label>Key Outcomes <span style="opacity:.6;font-weight:400">(one per line — shown as ✓ checklist on site)</span></label><textarea class="svc-outcomes" rows="4">${escHtml(s.outcomes||'')}</textarea></div>
+        <div class="field"><label>Who It's For <span style="opacity:.6;font-weight:400">(shown in a callout box)</span></label><input type="text" class="svc-who" value="${escHtml(s.who||'')}" placeholder="Founders of growing SMEs with 5–50 employees" /></div>
+        <div class="field"><label>CTA Button Label</label><input type="text" class="svc-cta" value="${escHtml(s.cta||'')}" placeholder="Book a Consult" /></div>
+      </div>
+    </div>`).join('');
 }
+
 function addService() {
   const services = getServices();
-  services.push({title:'',description:'',icon:'🔧',outcomes:''});
+  services.push({title:'New Service',description:'',icon:'🔧',outcomes:'',who:'',tag:'',cta:'Book a Consult'});
   localStorage.setItem('nucleus_services', JSON.stringify(services));
   renderServices();
+  showToast('New service added — fill in the details and save.');
 }
+
 function removeService(i) {
+  if (!confirm('Remove this service?')) return;
   const services = getServices();
   services.splice(i,1);
   localStorage.setItem('nucleus_services', JSON.stringify(services));
   renderServices();
 }
+
+function moveService(i, dir) {
+  const services = getServices();
+  const j = i + dir;
+  if (j < 0 || j >= services.length) return;
+  [services[i], services[j]] = [services[j], services[i]];
+  localStorage.setItem('nucleus_services', JSON.stringify(services));
+  renderServices();
+}
+
 function saveServices() {
-  const titles = document.querySelectorAll('.svc-title');
-  const descs = document.querySelectorAll('.svc-desc');
-  const icons = document.querySelectorAll('.svc-icon');
-  const outcomes = document.querySelectorAll('.svc-outcomes');
-  const services = [];
+  const icons     = document.querySelectorAll('.svc-icon');
+  const titles    = document.querySelectorAll('.svc-title');
+  const tags      = document.querySelectorAll('.svc-tag');
+  const descs     = document.querySelectorAll('.svc-desc');
+  const outcomes  = document.querySelectorAll('.svc-outcomes');
+  const whos      = document.querySelectorAll('.svc-who');
+  const ctas      = document.querySelectorAll('.svc-cta');
+  const services  = [];
   titles.forEach((t,i) => {
-    services.push({title:t.value, description:descs[i].value, icon:icons[i].value, outcomes:outcomes[i].value});
+    services.push({
+      icon:        icons[i]?.value    || '🔧',
+      title:       t.value,
+      tag:         tags[i]?.value     || '',
+      description: descs[i]?.value    || '',
+      outcomes:    outcomes[i]?.value || '',
+      who:         whos[i]?.value     || '',
+      cta:         ctas[i]?.value     || 'Book a Consult'
+    });
   });
   localStorage.setItem('nucleus_services', JSON.stringify(services));
+  const ind = document.getElementById('si-svc-list');
+  if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
   showToast('Services saved!');
+}
+
+function saveServicesHero() {
+  const hero = {
+    title: document.getElementById('svc_hero_title')?.value || '',
+    sub:   document.getElementById('svc_hero_sub')?.value   || ''
+  };
+  localStorage.setItem('nucleus_services_hero', JSON.stringify(hero));
+  const ind = document.getElementById('si-svc-hero');
+  if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+  showToast('Services hero saved!');
+}
+
+function saveServicesSteps() {
+  const icons  = document.querySelectorAll('.svc-step-icon');
+  const titles = document.querySelectorAll('.svc-step-title');
+  const descs  = document.querySelectorAll('.svc-step-desc');
+  const steps  = [];
+  titles.forEach((t,i) => steps.push({ icon: icons[i]?.value||'', title: t.value, desc: descs[i]?.value||'' }));
+  localStorage.setItem('nucleus_services_steps', JSON.stringify(steps));
+  const ind = document.getElementById('si-svc-steps');
+  if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+  showToast('How We Work steps saved!');
+}
+
+function saveServicesPricing() {
+  const pricing = {
+    quote: document.getElementById('svc_pricing_quote')?.value || '',
+    cta:   document.getElementById('svc_pricing_cta')?.value   || ''
+  };
+  localStorage.setItem('nucleus_services_pricing', JSON.stringify(pricing));
+  const ind = document.getElementById('si-svc-pricing');
+  if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+  showToast('Pricing note saved!');
 }
 
 // ── Cloudinary Config ─────────────────────────────────────────────────────────
