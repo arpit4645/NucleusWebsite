@@ -219,6 +219,154 @@
       font-family:var(--mono); text-transform:uppercase; letter-spacing:0.1em; transition:all .2s; backdrop-filter:blur(4px);
     }
     .mtt-remove-btn:hover { background:rgba(220,53,69,0.9); border-color:rgba(220,53,69,1); }
+
+    /* ─────────────────────────────────────────────────────────────────────
+       MODERN ADMIN UI · v2 STYLES
+       Sidebar groups, Dashboard, topbar sync indicator, per-section cards
+       ───────────────────────────────────────────────────────────────────── */
+
+    /* Sidebar group labels */
+    .nav-group-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.32);
+      padding: 14px 14px 6px;
+      margin-top: 4px;
+    }
+    .nav-group-label:first-of-type { margin-top: 0; }
+
+    /* Sync indicator pill in topbar */
+    .sync-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 14px; border-radius: 99px;
+      font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
+      background: rgba(34,197,94,.08); color: #15803d;
+      border: 1px solid rgba(34,197,94,.2);
+      transition: all .25s;
+    }
+    .sync-pill.syncing { background: rgba(234,179,8,.1); color: #a16207; border-color: rgba(234,179,8,.25); }
+    .sync-pill.error { background: rgba(220,38,38,.08); color: #b91c1c; border-color: rgba(220,38,38,.2); }
+    .sync-pill .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: currentColor; flex-shrink: 0;
+      animation: sync-pulse 2s ease-in-out infinite;
+    }
+    @keyframes sync-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(.7); }
+    }
+
+    /* Dashboard tiles */
+    .dash-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px; margin-bottom: 32px;
+    }
+    .dash-tile {
+      background: var(--white); border: 1px solid var(--line);
+      border-radius: 14px; padding: 24px;
+      transition: border-color .2s, transform .2s;
+    }
+    .dash-tile:hover { border-color: var(--gold); transform: translateY(-2px); }
+    .dash-tile .dt-label {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: .16em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .dash-tile .dt-value {
+      font-family: var(--serif); font-size: 40px;
+      font-weight: 600; line-height: 1; color: var(--ink);
+    }
+    .dash-tile .dt-sub {
+      font-size: 12px; color: var(--muted); margin-top: 8px;
+    }
+    .dash-tile.gold { background: linear-gradient(135deg, #fff 0%, #fbf5e3 100%); border-color: rgba(240,192,64,.3); }
+
+    /* Quick action buttons grid */
+    .quick-actions {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px; margin-bottom: 32px;
+    }
+    .quick-action {
+      display: flex; align-items: center; gap: 14px;
+      padding: 18px 20px; background: var(--white);
+      border: 1px solid var(--line); border-radius: 12px;
+      cursor: pointer; transition: all .2s; text-align: left;
+      font: inherit; color: var(--ink);
+    }
+    .quick-action:hover { border-color: var(--ink); background: var(--paper); }
+    .quick-action .qa-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: var(--ink); color: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .quick-action .qa-text { display: flex; flex-direction: column; gap: 2px; }
+    .quick-action .qa-title { font-size: 14px; font-weight: 600; }
+    .quick-action .qa-desc { font-size: 11px; color: var(--muted); font-family: var(--mono); letter-spacing: .04em; }
+
+    /* Activity feed */
+    .activity-feed {
+      background: var(--white); border: 1px solid var(--line);
+      border-radius: 14px; overflow: hidden;
+    }
+    .activity-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 24px; border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-item .ai-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); flex-shrink: 0;
+    }
+    .activity-item .ai-time {
+      margin-left: auto; font-family: var(--mono);
+      font-size: 11px; color: var(--muted); letter-spacing: .04em;
+    }
+    .activity-empty {
+      padding: 40px 24px; text-align: center; color: var(--muted);
+      font-size: 13px; font-family: var(--mono); letter-spacing: .08em;
+    }
+
+    /* Per-section save button (small inline) */
+    .section-save-row {
+      display: flex; justify-content: flex-end;
+      padding-top: 16px; margin-top: 4px;
+      border-top: 1px solid var(--line);
+    }
+    .section-save-row .btn-section-save {
+      padding: 8px 18px; font-size: 12px;
+      background: var(--ink); color: var(--white);
+      border-radius: 6px; border: none; cursor: pointer;
+      font: inherit; font-weight: 600;
+      transition: background .2s;
+    }
+    .section-save-row .btn-section-save:hover { background: var(--green); }
+    .section-save-row .save-indicator {
+      margin-right: auto; font-size: 11px;
+      color: var(--muted); font-family: var(--mono);
+      letter-spacing: .08em; align-self: center;
+      opacity: 0; transition: opacity .3s;
+    }
+    .section-save-row .save-indicator.shown { opacity: 1; color: #15803d; }
+
+    /* Panel enhancements */
+    .panel { transition: border-color .2s, box-shadow .2s; }
+    .panel:hover { border-color: rgba(26,74,26,.25); }
+    .panel.section-card { padding: 24px 28px; }
+    .panel.section-card > h3 {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-bottom: 14px; margin-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .panel.section-card > h3 .section-collapse {
+      cursor: pointer; color: var(--muted); font-size: 14px;
+      padding: 4px 8px; border-radius: 4px; transition: all .2s;
+    }
+    .panel.section-card > h3 .section-collapse:hover { background: var(--paper); color: var(--ink); }
+
   </style>
 </head>
 <body>
@@ -284,22 +432,28 @@
   <aside class="sidebar">
     <div class="sidebar-logo">Nucleus <span>Admin</span></div>
     <nav class="sidebar-nav">
-      <button class="active" onclick="showView('homepage')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Homepage</button>
-      <button onclick="showView('services')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Services</button>
-      <button onclick="showView('casestudies')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Case Studies</button>
-      <button onclick="showView('testimonials')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Testimonials</button>
+      <button class="active" id="nav-dashboard" onclick="showView('dashboard')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Dashboard</button>
 
-      <button onclick="showView('about')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg> About Page</button>
-      <button onclick="showView('careers')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Careers</button>
-      <button onclick="showView('programs')">🎓 Programs</button>
-      <button onclick="showView('media')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Media</button>
-      <button onclick="showView('editor')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> New Blog Post</button>
-      <button onclick="showView('list')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> All Posts</button>
-      <button onclick="showView('settings')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Site Settings</button>
-      <button onclick="showView('leads')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Leads</button>
-      <button onclick="window.open('index.html','_blank')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> View Site</button>
+      <div class="nav-group-label">Pages</div>
+      <button id="nav-homepage" onclick="showView('homepage')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Homepage</button>
+      <button id="nav-about" onclick="showView('about')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg> About Page</button>
+      <button id="nav-services" onclick="showView('services')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Services</button>
+      <button id="nav-programs" onclick="showView('programs')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Programs</button>
+      <button id="nav-careers" onclick="showView('careers')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Careers</button>
+
+      <div class="nav-group-label">Content</div>
+      <button id="nav-casestudies" onclick="showView('casestudies')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Case Studies</button>
+      <button id="nav-testimonials" onclick="showView('testimonials')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Testimonials</button>
+      <button id="nav-list" onclick="showView('list')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Blog Posts</button>
+      <button id="nav-editor" onclick="newPost()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> New Post</button>
+
+      <div class="nav-group-label">System</div>
+      <button id="nav-media" onclick="showView('media')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Media Library</button>
+      <button id="nav-leads" onclick="showView('leads')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Leads</button>
+      <button id="nav-settings" onclick="showView('settings')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</button>
+      <button onclick="window.open('index.html','_blank')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> View Live Site</button>
     </nav>
-    <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:16px;margin-top:8px;">
+    <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:14px;margin-top:auto;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <span style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);">Cloud Sync</span>
         <span id="nucleus-sync-badge" style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.4);" title="Checking...">&#9679; Checking...</span>
@@ -309,16 +463,85 @@
         <button onclick="showGithubSetup()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);font:inherit;font-size:12px;padding:8px 10px;border-radius:6px;cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,.13)'" onmouseout="this.style.background='rgba(255,255,255,.07)'" title="Setup / Re-enter GitHub token">&#9881;</button>
       </div>
     </div>
-    <div>
-      <p style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);margin:0 0 10px;">Published Posts</p>
-      <div class="post-list" id="sidebarList"></div>
-    </div>
   </aside>
 
   <!-- Main -->
   <main class="main">
+
+    <!-- Dashboard View -->
+    <div id="view-dashboard" style="display:none;">
+      <div class="topbar">
+        <h1>Dashboard</h1>
+        <div class="topbar-actions">
+          <span id="topbar-sync-pill" class="sync-pill"><span class="dot"></span><span id="topbar-sync-text">Synced</span></span>
+        </div>
+      </div>
+      <div class="content">
+        <p style="color:var(--muted); margin: 0 0 32px; font-size: 14px; max-width: 60ch;">
+          Welcome back. Manage every page of your site from here — text, images, videos, and YouTube links all sync to live visitors instantly, no redeployment needed.
+        </p>
+
+        <!-- Stats tiles -->
+        <div class="dash-grid">
+          <div class="dash-tile gold">
+            <div class="dt-label">Blog Posts</div>
+            <div class="dt-value" id="dash-stat-posts">0</div>
+            <div class="dt-sub" id="dash-stat-posts-sub">0 published · 0 drafts</div>
+          </div>
+          <div class="dash-tile">
+            <div class="dt-label">Case Studies</div>
+            <div class="dt-value" id="dash-stat-cases">0</div>
+            <div class="dt-sub">Active client stories</div>
+          </div>
+          <div class="dash-tile">
+            <div class="dt-label">Testimonials</div>
+            <div class="dt-value" id="dash-stat-testim">0</div>
+            <div class="dt-sub">Customer quotes</div>
+          </div>
+          <div class="dash-tile">
+            <div class="dt-label">New Leads</div>
+            <div class="dt-value" id="dash-stat-leads">0</div>
+            <div class="dt-sub">Form submissions</div>
+          </div>
+        </div>
+
+        <h2 style="font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0 0 16px;">Quick Actions</h2>
+        <div class="quick-actions">
+          <button class="quick-action" onclick="newPost()">
+            <div class="qa-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+            <div class="qa-text"><div class="qa-title">New Blog Post</div><div class="qa-desc">Write & publish</div></div>
+          </button>
+          <button class="quick-action" onclick="showView('casestudies')">
+            <div class="qa-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <div class="qa-text"><div class="qa-title">Case Studies</div><div class="qa-desc">Add client stories</div></div>
+          </button>
+          <button class="quick-action" onclick="showView('about')">
+            <div class="qa-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/></svg></div>
+            <div class="qa-text"><div class="qa-title">About Page</div><div class="qa-desc">Edit story & media</div></div>
+          </button>
+          <button class="quick-action" onclick="showView('media')">
+            <div class="qa-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+            <div class="qa-text"><div class="qa-title">Media Library</div><div class="qa-desc">Manage all images</div></div>
+          </button>
+          <button class="quick-action" onclick="showView('leads')">
+            <div class="qa-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+            <div class="qa-text"><div class="qa-title">View Leads</div><div class="qa-desc">Form submissions</div></div>
+          </button>
+          <button class="quick-action" onclick="window.open('index.html','_blank')">
+            <div class="qa-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+            <div class="qa-text"><div class="qa-title">View Live Site</div><div class="qa-desc">Preview in new tab</div></div>
+          </button>
+        </div>
+
+        <h2 style="font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:32px 0 16px;">Recent Posts</h2>
+        <div class="activity-feed" id="dash-recent-posts">
+          <div class="activity-empty">No posts yet. Click "New Post" to get started.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Editor View -->
-    <div id="view-editor">
+    <div id="view-editor" style="display:none;">
       <div class="topbar">
         <h1 id="editorTitle">New Post</h1>
         <div class="topbar-actions">
@@ -535,7 +758,7 @@
     <div id="view-homepage" style="display:none;">
       <div class="topbar">
         <h1>Homepage Content</h1>
-        <button class="btn btn-primary" onclick="saveHomepage()">Save Changes</button>
+        <button class="btn btn-primary" onclick="saveHomepage()">Save All</button>
       </div>
       <div class="content">
         <div style="display:flex;flex-direction:column;gap:20px;max-width:800px;">
@@ -553,6 +776,10 @@
               <div class="field"><label>CTA Button 2 Label</label><input type="text" id="hp_cta2_label" value="Start Transformation Journey" /></div>
               <div class="field"><label>CTA Button 2 Link</label><input type="text" id="hp_cta2_link" value="services.html" /></div>
             </div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveHpSection('hero')">Save Hero</button>
+              <span class="save-indicator" id="si-hp-hero"></span>
+            </div>
           </div>
           <div class="panel">
             <h3>Pain Mirror Section</h3>
@@ -562,10 +789,18 @@ Sales is inconsistent
 Growth feels unpredictable
 You are stuck in daily firefighting
 Everything depends on you</textarea></div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveHpSection('pain')">Save Pain Mirror</button>
+              <span class="save-indicator" id="si-hp-pain"></span>
+            </div>
           </div>
           <div class="panel">
             <h3>Philosophy Quote</h3>
             <div class="field"><label>Quote Text</label><textarea id="hp_philosophy" rows="3">We don't believe in controlling people. We believe in building people who don't need control.</textarea></div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveHpSection('philosophy')">Save Quote</button>
+              <span class="save-indicator" id="si-hp-philosophy"></span>
+            </div>
           </div>
           <div class="panel">
             <h3>Final CTA Section</h3>
@@ -573,6 +808,10 @@ Everything depends on you</textarea></div>
             <div class="field-row">
               <div class="field"><label>Button 1 Label</label><input type="text" id="hp_final_btn1" value="Book Business Diagnosis" /></div>
               <div class="field"><label>Button 2 Label</label><input type="text" id="hp_final_btn2" value="Apply for Transformation" /></div>
+            </div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveHpSection('final')">Save CTA</button>
+              <span class="save-indicator" id="si-hp-final"></span>
             </div>
           </div>
         </div>
@@ -626,7 +865,7 @@ Everything depends on you</textarea></div>
     <div id="view-about" style="display:none;">
       <div class="topbar">
         <h1>About Page</h1>
-        <button class="btn btn-primary" onclick="saveAbout()">Save Changes</button>
+        <button class="btn btn-primary" onclick="saveAbout()">Save All</button>
       </div>
       <div class="content">
         <div style="display:flex;flex-direction:column;gap:20px;max-width:800px;">
@@ -635,6 +874,10 @@ Everything depends on you</textarea></div>
             <div class="field"><label>Eyebrow</label><input type="text" id="about_hero_eyebrow" value="The Organization" /></div>
             <div class="field"><label>Title</label><input type="text" id="about_hero_title" value="We rebuild businesses by <em class='gold-word'>rebuilding leaders.</em>" /></div>
             <div class="field"><label>Subtitle</label><textarea id="about_hero_subtitle" rows="3">A premium transformation consultancy for SMEs. We don't just give strategy; we align mindset, culture, and systems to engineer predictable growth.</textarea></div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveAboutSection('hero')">Save Hero</button>
+              <span class="save-indicator" id="si-about-hero"></span>
+            </div>
           </div>
           <div class="panel">
             <h3>Who We Are</h3>
@@ -666,9 +909,13 @@ Everything depends on you</textarea></div>
                 </div>
               </div>
             </div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveAboutSection('who')">Save Who We Are</button>
+              <span class="save-indicator" id="si-about-who"></span>
+            </div>
           </div>
           <div class="panel">
-            <h3>Vision & Mission</h3>
+            <h3>Vision &amp; Mission</h3>
             <div class="field"><label>Vision Title</label><input type="text" id="about_vision_title" value="Our Vision" /></div>
             <div class="field"><label>Vision Text</label><textarea id="about_vision_text" rows="2">"To be the catalyst that transforms Indian SMEs..."</textarea></div>
 
@@ -721,6 +968,10 @@ Everything depends on you</textarea></div>
                 </div>
               </div>
             </div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveAboutSection('vision')">Save Vision &amp; Mission</button>
+              <span class="save-indicator" id="si-about-vision"></span>
+            </div>
           </div>
           <div class="panel">
             <h3>Founder Story</h3>
@@ -752,6 +1003,10 @@ Everything depends on you</textarea></div>
                   <button class="btn btn-gold" onclick="saveUniversalMediaUrl('nucleus_founder_photo')" style="margin-top:4px;">Save & Apply URL</button>
                 </div>
               </div>
+            </div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveAboutSection('founder')">Save Founder Story</button>
+              <span class="save-indicator" id="si-about-founder"></span>
             </div>
           </div>
         </div>
@@ -976,15 +1231,18 @@ function showToast(msg, type='success') {
 }
 
 // ── Views ───────────────────────────────────────────────────────────────────
-const ALL_VIEWS = ['editor','list','settings','leads','homepage','services','casestudies','testimonials','about','careers','programs','media'];
+const ALL_VIEWS = ['dashboard','editor','list','settings','leads','homepage','services','casestudies','testimonials','about','careers','programs','media'];
 function showView(view) {
   ALL_VIEWS.forEach(v => {
     const el = document.getElementById('view-' + v);
     if (el) el.style.display = v === view ? '' : 'none';
   });
+  // Update active nav button using id="nav-{view}" convention
   document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('active'));
-  if (event && event.currentTarget) event.currentTarget.classList.add('active');
+  const navBtn = document.getElementById('nav-' + view);
+  if (navBtn) navBtn.classList.add('active');
 
+  if (view === 'dashboard') loadDashboard();
   if (view === 'leads') loadLeads();
   if (view === 'list') renderAllPosts();
   if (view === 'homepage') loadHomepage();
@@ -996,6 +1254,58 @@ function showView(view) {
   if (view === 'programs') renderPrograms();
   if (view === 'media') initImageManager();
   renderSidebar();
+}
+
+function loadDashboard() {
+  // Stat tiles
+  try {
+    const posts = JSON.parse(localStorage.getItem('nucleus_posts') || '[]');
+    const cases = JSON.parse(localStorage.getItem('nucleus_casestudies') || '[]');
+    const testim = JSON.parse(localStorage.getItem('nucleus_testimonials') || '[]');
+    const leads = JSON.parse(localStorage.getItem('nucleus_leads') || '[]');
+    const el = id => document.getElementById(id);
+    if (el('dash-stat-posts')) el('dash-stat-posts').textContent = posts.length;
+    if (el('dash-stat-posts-sub')) {
+      const pub = posts.filter(p => p.status !== 'draft').length;
+      const drft = posts.filter(p => p.status === 'draft').length;
+      el('dash-stat-posts-sub').textContent = `${pub} published · ${drft} draft${drft !== 1 ? 's' : ''}`;
+    }
+    if (el('dash-stat-cases')) el('dash-stat-cases').textContent = cases.length;
+    if (el('dash-stat-testim')) el('dash-stat-testim').textContent = testim.length;
+    if (el('dash-stat-leads')) el('dash-stat-leads').textContent = leads.length;
+
+    // Recent posts feed
+    const feed = el('dash-recent-posts');
+    if (feed) {
+      const recent = [...posts].sort((a,b) => (b.date||'').localeCompare(a.date||'')).slice(0,5);
+      if (!recent.length) {
+        feed.innerHTML = '<div class="activity-empty">No posts yet — create your first one!</div>';
+      } else {
+        feed.innerHTML = recent.map(p => `
+          <div class="activity-item">
+            <span class="activity-icon">📝</span>
+            <div class="activity-info">
+              <strong>${p.title || 'Untitled'}</strong>
+              <span class="activity-date">${p.date || ''}</span>
+            </div>
+            <button class="btn btn-sm" onclick="editPost('${p.id}')">Edit</button>
+          </div>`).join('');
+      }
+    }
+
+    // Sync pill status
+    const pill = document.getElementById('topbar-sync-pill');
+    const syncText = document.getElementById('topbar-sync-text');
+    if (pill && syncText) {
+      if (window._nucleusSyncActive) {
+        pill.className = 'sync-pill';
+        syncText.textContent = 'Synced';
+      } else {
+        pill.className = 'sync-pill error';
+        syncText.textContent = 'Local only';
+      }
+    }
+  } catch(e) { console.warn('Dashboard load error:', e); }
 }
 
 // ── Image upload ────────────────────────────────────────────────────────────
@@ -1533,6 +1843,7 @@ function clearLeads() {
 function _enterAdmin() {
   document.getElementById('loginGate').style.display = 'none';
   document.getElementById('adminLayout').style.display = '';
+  showView('dashboard');
 }
 
 function checkLogin() {
@@ -2082,6 +2393,43 @@ function saveAbout() {
     if (el) localStorage.setItem(key, el.value);
   });
   showToast('About page content saved!');
+}
+
+const _aboutSectionKeys = {
+  hero:    ['about_hero_eyebrow', 'about_hero_title', 'about_hero_subtitle'],
+  who:     ['about_who_eyebrow', 'about_who_title', 'about_who_body_1', 'about_who_body_2'],
+  vision:  ['about_vision_title', 'about_vision_text', 'about_mission_title', 'about_mission_text'],
+  founder: ['founder_name', 'founder_role', 'founder_bio_1', 'founder_bio_2', 'founder_signoff']
+};
+
+function saveAboutSection(section) {
+  const keys = _aboutSectionKeys[section] || [];
+  keys.forEach(key => {
+    const el = document.getElementById(key);
+    if (el) localStorage.setItem(key, el.value);
+  });
+  const ind = document.getElementById('si-about-' + section);
+  if (ind) { ind.textContent = '✓ Saved'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+  showToast('Section saved!');
+}
+
+function saveHpSection(section) {
+  const d = JSON.parse(localStorage.getItem('nucleus_homepage') || '{}');
+  const map = {
+    hero:       ['hero_line1','hero_line2','hero_line3','hero_sub','cta1_label','cta1_link','cta2_label','cta2_link'],
+    pain:       ['pain_title','pain_bullets'],
+    philosophy: ['philosophy'],
+    final:      ['final_heading','final_btn1','final_btn2']
+  };
+  const fields = map[section] || [];
+  fields.forEach(f => {
+    const el = document.getElementById('hp_' + f);
+    if (el) { d[f] = el.value; localStorage.setItem('nucleus_hp_' + f, el.value); }
+  });
+  localStorage.setItem('nucleus_homepage', JSON.stringify(d));
+  const ind = document.getElementById('si-hp-' + section);
+  if (ind) { ind.textContent = '✓ Saved'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+  showToast('Section saved!');
 }
 
 // ── Universal Media Manager ──────────────────────────────────────────────────
