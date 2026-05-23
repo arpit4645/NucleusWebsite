@@ -298,21 +298,101 @@
     }
   };
 
+  // ── Read file as raw base64 (no data: prefix) ─────────────────────────────
+  function _fileToBase64(file) {
+    return new Promise(function(resolve, reject) {
+      var r = new FileReader();
+      r.onload = function(e) {
+        var result = e.target.result; // "data:image/png;base64,AAAA..."
+        var comma = result.indexOf(',');
+        resolve(comma >= 0 ? result.slice(comma + 1) : result);
+      };
+      r.onerror = function() { reject(new Error('Failed to read file')); };
+      r.readAsDataURL(file);
+    });
+  }
+
+  // ── Upload large file via Git Data API (supports up to ~50 MB) ────────────
+  // Contents API is limited to ~1 MB. The Git Data API (blob→tree→commit→ref)
+  // works for images and other large files served from raw.githubusercontent.com.
+  async function _uploadViaGitDataApi(cfg, branch, path, b64, filename) {
+    var apiBase = 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo;
+
+    // 1. Create blob
+    var blobR = await _xhr('POST', apiBase + '/git/blobs', cfg.token,
+      JSON.stringify({ content: b64, encoding: 'base64' }));
+    if (blobR.status < 200 || blobR.status >= 300) {
+      var e1 = {}; try { e1 = JSON.parse(blobR.text); } catch(e) {}
+      throw new Error('GitHub blob create failed: ' + (e1.message || blobR.status));
+    }
+    var blobSha = JSON.parse(blobR.text).sha;
+
+    // 2. Get latest commit SHA on branch
+    var refR = await _xhr('GET', apiBase + '/git/ref/heads/' + encodeURIComponent(branch), cfg.token);
+    if (refR.status < 200 || refR.status >= 300) {
+      var e2 = {}; try { e2 = JSON.parse(refR.text); } catch(e) {}
+      throw new Error('GitHub ref read failed: ' + (e2.message || refR.status));
+    }
+    var latestCommitSha = JSON.parse(refR.text).object.sha;
+
+    // 3. Get tree SHA from latest commit
+    var commitR = await _xhr('GET', apiBase + '/git/commits/' + latestCommitSha, cfg.token);
+    if (commitR.status < 200 || commitR.status >= 300) {
+      var e3 = {}; try { e3 = JSON.parse(commitR.text); } catch(e) {}
+      throw new Error('GitHub commit read failed: ' + (e3.message || commitR.status));
+    }
+    var baseTreeSha = JSON.parse(commitR.text).tree.sha;
+
+    // 4. Create new tree with the new file
+    var treeR = await _xhr('POST', apiBase + '/git/trees', cfg.token,
+      JSON.stringify({
+        base_tree: baseTreeSha,
+        tree: [{ path: path, mode: '100644', type: 'blob', sha: blobSha }]
+      }));
+    if (treeR.status < 200 || treeR.status >= 300) {
+      var e4 = {}; try { e4 = JSON.parse(treeR.text); } catch(e) {}
+      throw new Error('GitHub tree create failed: ' + (e4.message || treeR.status));
+    }
+    var newTreeSha = JSON.parse(treeR.text).sha;
+
+    // 5. Create commit
+    var newCommitR = await _xhr('POST', apiBase + '/git/commits', cfg.token,
+      JSON.stringify({
+        message: 'Upload media: ' + filename,
+        tree: newTreeSha,
+        parents: [latestCommitSha]
+      }));
+    if (newCommitR.status < 200 || newCommitR.status >= 300) {
+      var e5 = {}; try { e5 = JSON.parse(newCommitR.text); } catch(e) {}
+      throw new Error('GitHub commit create failed: ' + (e5.message || newCommitR.status));
+    }
+    var newCommitSha = JSON.parse(newCommitR.text).sha;
+
+    // 6. Update branch ref
+    var patchR = await _xhr('PATCH', apiBase + '/git/refs/heads/' + encodeURIComponent(branch), cfg.token,
+      JSON.stringify({ sha: newCommitSha, force: false }));
+    if (patchR.status < 200 || patchR.status >= 300) {
+      var e6 = {}; try { e6 = JSON.parse(patchR.text); } catch(e) {}
+      throw new Error('GitHub ref update failed: ' + (e6.message || patchR.status));
+    }
+  }
+
   // ── Upload media file (image/video) to GitHub repo ─────────────────────────
-  // GitHub Contents API limit: ~1MB for reliable uploads. Large files (>800KB)
-  // should be stored as base64 data URLs in localStorage instead.
+  // Images ≤ 900 KB  → Contents API  (simple, fast)
+  // Images > 900 KB  → Git Data API  (blob→tree→commit→ref, up to ~50 MB)
+  // Videos           → caller must use Cloudinary; GitHub cannot host large videos
   window.nucleusUploadMedia = async function (key, file) {
     const cfg = getConfig();
     if (!cfg || !cfg.token || !cfg.owner || !cfg.repo) {
       throw new Error('GitHub not configured. Open admin Setup to add your token.');
     }
 
-    // For files over 800KB, GitHub Contents API becomes unreliable.
-    // Fall back to base64 so the caller can store it in localStorage.
-    if (file.size > 800 * 1024) {
+    // Videos are too large for GitHub; signal caller to use Cloudinary/IndexedDB.
+    // Return base64 sentinel so the caller's existing fallback chain kicks in.
+    if (file.type.startsWith('video/')) {
       return new Promise(function(resolve, reject) {
         var r = new FileReader();
-        r.onload = function(e) { resolve(e.target.result); };
+        r.onload = function(e) { resolve(e.target.result); }; // data: URL → caller will route to Cloudinary/IDB
         r.onerror = function() { reject(new Error('Failed to read file')); };
         r.readAsDataURL(file);
       });
@@ -323,34 +403,27 @@
     const safeName = file.name.replace(/[^a-z0-9._-]/gi, '_');
     const filename = `${safeKey}_${Date.now()}_${safeName}`;
     const path = `${MEDIA_DIR}/${filename}`;
-    const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`;
     const rawUrl = `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${branch}/${path}`;
 
-    // Read file as base64
-    const b64 = await new Promise(function(resolve, reject) {
-      var r = new FileReader();
-      r.onload = function(e) {
-        // e.target.result is "data:image/png;base64,AAAA..." — strip the prefix
-        var result = e.target.result;
-        var comma = result.indexOf(',');
-        resolve(comma >= 0 ? result.slice(comma + 1) : result);
-      };
-      r.onerror = function() { reject(new Error('Failed to read file')); };
-      r.readAsDataURL(file);
-    });
+    const b64 = await _fileToBase64(file);
 
-    // Upload via XHR (same helper used for data pushes — avoids CORS Cache-Control issue)
-    const body = JSON.stringify({
-      message: 'Upload media: ' + filename,
-      content: b64,
-      branch: branch
-    });
-    const res = await _xhr('PUT', apiUrl, cfg.token, body);
-    if (res.status < 200 || res.status >= 300) {
-      var errObj = {};
-      try { errObj = JSON.parse(res.text); } catch(e) {}
-      throw new Error('GitHub upload failed: ' + (errObj.message || res.status));
+    if (file.size <= 900 * 1024) {
+      // Small image — use the simple Contents API
+      const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`;
+      const res = await _xhr('PUT', apiUrl, cfg.token, JSON.stringify({
+        message: 'Upload media: ' + filename,
+        content: b64,
+        branch: branch
+      }));
+      if (res.status < 200 || res.status >= 300) {
+        var errObj = {}; try { errObj = JSON.parse(res.text); } catch(e) {}
+        throw new Error('GitHub upload failed: ' + (errObj.message || res.status));
+      }
+    } else {
+      // Large image — use the Git Data API (supports up to ~50 MB)
+      await _uploadViaGitDataApi(cfg, branch, path, b64, filename);
     }
+
     return rawUrl;
   };
 
