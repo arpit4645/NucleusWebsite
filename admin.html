@@ -1501,7 +1501,9 @@ function checkLogin() {
   const pwd = document.getElementById('adminPassword').value;
   let s; try { s = JSON.parse(localStorage.getItem('nucleus_site_settings')) || {}; } catch(e) { s = {}; }
   const realPwd = s.adminPwd || 'nucleusadmin';
-  if (pwd !== realPwd) {
+  // Case-insensitive match only for the default password; custom passwords are exact
+  const match = s.adminPwd ? pwd === realPwd : pwd.toLowerCase() === 'nucleusadmin';
+  if (!match) {
     document.getElementById('loginError').style.display = 'block';
     return;
   }

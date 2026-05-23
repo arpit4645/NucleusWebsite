@@ -134,6 +134,18 @@
       _paused = true;
       Object.entries(data).forEach(([k, v]) => {
         if (v !== null && v !== undefined) {
+          // For nucleus_site_settings, preserve the local adminPwd — it's stripped
+          // before pushing to GitHub (never committed), so the pulled version won't
+          // have it. Overwriting would reset the admin password on every page load.
+          if (k === 'nucleus_site_settings') {
+            try {
+              const incoming = typeof v === 'string' ? JSON.parse(v) : v;
+              const existing = JSON.parse(localStorage.getItem('nucleus_site_settings') || '{}');
+              if (existing.adminPwd) incoming.adminPwd = existing.adminPwd;
+              localStorage.setItem(k, JSON.stringify(incoming));
+              return;
+            } catch (e) {}
+          }
           localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
         }
       });
