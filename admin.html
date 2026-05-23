@@ -2160,16 +2160,37 @@ async function handleUniversalMediaUpload(storageKey, event) {
     return;
   }
   
-  showToast('Uploading media...', 'success');
+  showToast(isVideo ? 'Saving video locally...' : 'Uploading media...', 'success');
   try {
+    let savedAsUrl = false;
     if (window._nucleusSyncActive) {
-      const downloadURL = await uploadToFirebaseStorage(storageKey, file);
-      localStorage.setItem(storageKey, downloadURL);
-      mdbUnmark(storageKey);
+      let downloadURL = await uploadToFirebaseStorage(storageKey, file);
+      // nucleusUploadMedia returns a base64 data: URL for files >800 KB (too large for GitHub).
+      // Never store base64 blobs in localStorage — they instantly exceed the 5-10 MB quota.
+      // Route them to Cloudinary (if configured) or IndexedDB instead.
+      if (downloadURL && downloadURL.startsWith('data:')) {
+        const cldCfg = JSON.parse(localStorage.getItem('nucleus_cloudinary_cfg') || '{}');
+        if (cldCfg.cloudName && cldCfg.uploadPreset) {
+          showToast('File too large for GitHub — uploading to Cloudinary...', 'success');
+          downloadURL = await uploadToCloudinary(file, storageKey + '_' + Date.now(), null);
+          localStorage.setItem(storageKey, downloadURL);
+          mdbUnmark(storageKey);
+          savedAsUrl = true;
+        } else {
+          // No Cloudinary — save to IndexedDB (no size limit)
+          await mdbSave(storageKey, file);
+          mdbMark(storageKey);
+          localStorage.removeItem(storageKey);
+        }
+      } else {
+        localStorage.setItem(storageKey, downloadURL);
+        mdbUnmark(storageKey);
+        savedAsUrl = true;
+      }
     } else {
       await mdbSave(storageKey, file);
       mdbMark(storageKey);
-      localStorage.removeItem(storageKey); // clear old base64
+      localStorage.removeItem(storageKey);
     }
     localStorage.removeItem(storageKey + '_url');
 
@@ -2178,10 +2199,14 @@ async function handleUniversalMediaUpload(storageKey, event) {
 
     localStorage.setItem(storageKey + '_type', isVideo ? 'video' : 'image');
     refreshUniversalMediaPreview(storageKey);
-    showToast('Media saved successfully!');
+    if (!savedAsUrl && isVideo) {
+      showToast('Video saved locally. Configure Cloudinary in Settings to share across devices.', 'success');
+    } else {
+      showToast('Media saved successfully!');
+    }
   } catch(err) {
     console.error('[Universal Media Upload Error]', err);
-    const msg = err.message || 'Upload failed. Check Firebase Storage rules.';
+    const msg = err.message || 'Upload failed.';
     showToast(msg, 'error');
   }
   event.target.value = ''; // reset input
@@ -2493,13 +2518,29 @@ async function handleImgCardUpload(key, e, card) {
     showToast(`File too large — max ${maxLabel}.`, 'error');
     return;
   }
-  showToast(isVideo ? 'Uploading video to cloud...' : 'Uploading image to cloud...', 'success');
+  showToast(isVideo ? 'Saving video...' : 'Uploading image to cloud...', 'success');
   try {
     let finalUrl;
     if (window._nucleusSyncActive) {
       finalUrl = await uploadToFirebaseStorage(key, file);
-      localStorage.setItem(key, finalUrl);
-      mdbUnmark(key);
+      // nucleusUploadMedia returns base64 data: URL for files >800 KB — never store in localStorage
+      if (finalUrl && finalUrl.startsWith('data:')) {
+        const cldCfg = JSON.parse(localStorage.getItem('nucleus_cloudinary_cfg') || '{}');
+        if (cldCfg.cloudName && cldCfg.uploadPreset) {
+          showToast('File too large for GitHub — uploading to Cloudinary...', 'success');
+          finalUrl = await uploadToCloudinary(file, key + '_' + Date.now(), null);
+          localStorage.setItem(key, finalUrl);
+          mdbUnmark(key);
+        } else {
+          await mdbSave(key, file);
+          mdbMark(key);
+          localStorage.removeItem(key);
+          finalUrl = URL.createObjectURL(file);
+        }
+      } else {
+        localStorage.setItem(key, finalUrl);
+        mdbUnmark(key);
+      }
     } else {
       await mdbSave(key, file);
       mdbMark(key);
