@@ -1498,25 +1498,32 @@ function _enterAdmin() {
 }
 
 function checkLogin() {
-  const pwd = document.getElementById('adminPassword').value;
-  let s; try { s = JSON.parse(localStorage.getItem('nucleus_site_settings')) || {}; } catch(e) { s = {}; }
-  const realPwd = s.adminPwd || 'nucleusadmin';
-  // Case-insensitive match only for the default password; custom passwords are exact
-  const match = s.adminPwd ? pwd === realPwd : pwd.toLowerCase() === 'nucleusadmin';
-  if (!match) {
-    document.getElementById('loginError').style.display = 'block';
-    return;
-  }
-  sessionStorage.setItem('nucleus_auth', 'true');
-  document.getElementById('loginError').style.display = 'none';
-  // Check if GitHub token already saved
-  const cfg = (window.nucleusGithubGetConfig && window.nucleusGithubGetConfig()) || null;
-  if (!cfg || !cfg.token) {
-    // Show step 2 (token setup) inside the login gate
-    document.getElementById('loginStep1').style.display = 'none';
-    document.getElementById('loginStep2').style.display = 'block';
-  } else {
-    _enterAdmin();
+  try {
+    const pwdInput = document.getElementById('adminPassword');
+    if (!pwdInput) throw new Error('Password input element not found');
+    const pwd = pwdInput.value;
+    let s; try { s = JSON.parse(localStorage.getItem('nucleus_site_settings')) || {}; } catch(e) { s = {}; }
+    const realPwd = s.adminPwd || 'nucleusadmin';
+    // Case-insensitive match only for the default password; custom passwords are exact
+    const match = s.adminPwd ? pwd === realPwd : pwd.toLowerCase() === 'nucleusadmin';
+    if (!match) {
+      document.getElementById('loginError').style.display = 'block';
+      return;
+    }
+    sessionStorage.setItem('nucleus_auth', 'true');
+    document.getElementById('loginError').style.display = 'none';
+    // Check if GitHub token already saved
+    const cfg = (window.nucleusGithubGetConfig && window.nucleusGithubGetConfig()) || null;
+    if (!cfg || !cfg.token) {
+      // Show step 2 (token setup) inside the login gate
+      document.getElementById('loginStep1').style.display = 'none';
+      document.getElementById('loginStep2').style.display = 'block';
+    } else {
+      _enterAdmin();
+    }
+  } catch(e) {
+    console.error('Login error:', e);
+    alert('Login failed: ' + e.message + '. Check console (F12) for details.');
   }
 }
 
