@@ -1,5 +1,5 @@
 {
-  "ignoreCommand": "git diff --quiet HEAD~1 -- . ':(exclude)content/'",
+  "ignoreCommand": "[ $(git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -cvE '^content/') -eq 0 ]",
   "headers": [
     {
       "source": "/assets/(.*)\\.js",
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "source": "/content/site-data.json",
+      "source": "/content/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]

@@ -497,6 +497,25 @@
             <div class="field"><label>Formspree Endpoint URL</label><input type="text" id="set_form" value="https://formspree.io/f/hello" /></div>
             <div class="field"><label>WhatsApp Number</label><input type="text" id="set_wa" value="918156076680" /></div>
           </div>
+          <div class="panel">
+            <h3>☁️ Cloud Video Storage (Cloudinary)</h3>
+            <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;">Upload videos directly from this admin panel. Free account: 25 GB storage. <a href="https://cloudinary.com/users/register/free" target="_blank" style="color:var(--green);">Create free account →</a></p>
+            <div class="field">
+              <label>Cloud Name</label>
+              <input type="text" id="cld_cloud_name" placeholder="e.g. my-company" />
+              <p style="font-size:11px;color:var(--muted);margin-top:4px;">Found in your Cloudinary dashboard → Settings → Account</p>
+            </div>
+            <div class="field">
+              <label>Upload Preset (Unsigned)</label>
+              <input type="text" id="cld_upload_preset" placeholder="e.g. nucleus_uploads" />
+              <p style="font-size:11px;color:var(--muted);margin-top:4px;">Create at: Cloudinary → Settings → Upload → Upload presets → Add (set Signing Mode = Unsigned)</p>
+            </div>
+            <div id="cld_status" style="font-size:12px;margin-top:8px;"></div>
+            <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+              <button class="btn btn-gold btn-sm" onclick="saveCloudinaryConfig()">Save Cloudinary Config</button>
+              <button class="btn btn-ghost btn-sm" onclick="testCloudinaryConfig()">Test Connection</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1382,6 +1401,7 @@ function loadSettings() {
   if(s.twitter) document.getElementById('set_twitter').value = s.twitter;
   if(s.form) document.getElementById('set_form').value = s.form;
   if(s.wa) document.getElementById('set_wa').value = s.wa;
+  loadCloudinaryConfig();
 }
 
 function changePassword() {
@@ -1698,7 +1718,98 @@ function saveServices() {
   showToast('Services saved!');
 }
 
-// ── Case Studies CRUD ────────────────────────────────────────────────────────
+// ── Cloudinary Config ─────────────────────────────────────────────────────────
+function loadCloudinaryConfig() {
+  const cfg = JSON.parse(localStorage.getItem('nucleus_cloudinary_cfg') || '{}');
+  const nameEl = document.getElementById('cld_cloud_name');
+  const presetEl = document.getElementById('cld_upload_preset');
+  if (nameEl && cfg.cloudName) nameEl.value = cfg.cloudName;
+  if (presetEl && cfg.uploadPreset) presetEl.value = cfg.uploadPreset;
+}
+
+function saveCloudinaryConfig() {
+  const cloudName = document.getElementById('cld_cloud_name').value.trim();
+  const uploadPreset = document.getElementById('cld_upload_preset').value.trim();
+  if (!cloudName || !uploadPreset) { showToast('Enter both Cloud Name and Upload Preset.', 'error'); return; }
+  localStorage.setItem('nucleus_cloudinary_cfg', JSON.stringify({ cloudName, uploadPreset }));
+  const status = document.getElementById('cld_status');
+  if (status) status.innerHTML = '<span style="color:#4caf50;">✓ Config saved. Click "Test Connection" to verify.</span>';
+  showToast('Cloudinary config saved!');
+}
+
+async function testCloudinaryConfig() {
+  const cfg = JSON.parse(localStorage.getItem('nucleus_cloudinary_cfg') || '{}');
+  const status = document.getElementById('cld_status');
+  if (!cfg.cloudName || !cfg.uploadPreset) {
+    if (status) status.innerHTML = '<span style="color:#f44336;">✕ Save config first.</span>';
+    return;
+  }
+  if (status) status.innerHTML = '<span style="color:var(--muted);">Testing…</span>';
+  try {
+    // Ping Cloudinary with a 1×1 transparent PNG to test upload preset
+    const blob = await fetch('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==').then(r=>r.blob());
+    const url = await uploadToCloudinary(blob, 'test_ping', null);
+    if (status) status.innerHTML = '<span style="color:#4caf50;">✅ Connected! Cloudinary is working.</span>';
+  } catch(e) {
+    if (status) status.innerHTML = '<span style="color:#f44336;">✕ Failed: ' + e.message + '</span>';
+  }
+}
+
+async function uploadToCloudinary(file, publicIdHint, onProgress) {
+  const cfg = JSON.parse(localStorage.getItem('nucleus_cloudinary_cfg') || '{}');
+  if (!cfg.cloudName || !cfg.uploadPreset) throw new Error('Cloudinary not configured. Go to Settings → Cloud Storage.');
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', cfg.uploadPreset);
+  if (publicIdHint) formData.append('public_id', publicIdHint);
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${cfg.cloudName}/auto/upload`);
+    if (onProgress) {
+      xhr.upload.addEventListener('progress', e => {
+        if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+      });
+    }
+    xhr.onload = function() {
+      try {
+        const data = JSON.parse(xhr.responseText);
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(data.secure_url);
+        } else {
+          reject(new Error(data.error?.message || 'Upload failed: ' + xhr.status));
+        }
+      } catch(e) { reject(new Error('Invalid response from Cloudinary')); }
+    };
+    xhr.onerror = () => reject(new Error('Network error — check internet connection'));
+    xhr.send(formData);
+  });
+}
+
+// ── Media preview helper ────────────────────────────────────────────────
+function getMediaPreviewHtml(url, idx) {
+  if (!url) return '<p style="font-size:13px;color:var(--muted);margin:0;">No image uploaded yet.</p>';
+
+  const isYT = url.includes('youtube.com') || url.includes('youtu.be');
+  const isVimeo = url.includes('vimeo.com');
+  const isVideo = !isYT && !isVimeo && (url.startsWith('data:video') || /\.(mp4|webm|mov)(\?|$)/i.test(url));
+
+  let mediaContent = '';
+  if (isYT) {
+    const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^&\s?]+)/);
+    mediaContent = ytMatch ? `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=1&controls=1" style="width:100%;height:100%;border:none;"></iframe>` : '';
+  } else if (isVimeo) {
+    const vmMatch = url.match(/vimeo\.com\/(\d+)/);
+    mediaContent = vmMatch ? `<iframe src="https://player.vimeo.com/video/${vmMatch[1]}?autoplay=1&muted=1" style="width:100%;height:100%;border:none;"></iframe>` : '';
+  } else if (isVideo) {
+    mediaContent = `<video src="${url}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
+  } else {
+    mediaContent = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" />`;
+  }
+
+  return mediaContent ? `<div style="position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111;max-width:480px;">${mediaContent}<button onclick="clearCaseStudyMedia(${idx})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button></div>` : '';
+}────
 function getCaseStudies() { try { return JSON.parse(localStorage.getItem('nucleus_casestudies') || '[]'); } catch(e) { return []; } }
 function renderCaseStudies() {
   const items = getCaseStudies();
@@ -1722,19 +1833,14 @@ function renderCaseStudies() {
       <div class="field">
         <label>Case Study Image / Video</label>
         <div id="cs_media_preview_${i}" style="margin-bottom:10px;">
-          ${s.image ? `<div style="position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111;max-width:480px;">
-            ${(s.image.startsWith('data:video') || /\.(mp4|webm|mov)(\?|$)/i.test(s.image))
-              ? `<video src="${escHtml(s.image)}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`
-              : `<img src="${escHtml(s.image)}" style="width:100%;height:100%;object-fit:cover;" />`}
-            <button onclick="clearCaseStudyMedia(${i})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button>
-          </div>` : '<p style="font-size:13px;color:var(--muted);margin:0;">No image uploaded yet.</p>'}
+          ${getMediaPreviewHtml(s.image || '', i)}
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           <input type="file" id="cs_file_${i}" accept="image/*,video/*" style="display:none" onchange="uploadCaseStudyMedia(${i},event)" />
           <button class="btn btn-sm" onclick="document.getElementById('cs_file_${i}').click()" style="white-space:nowrap;">📷 Upload Image / Video</button>
-          <input type="text" class="cs-image" placeholder="Or paste URL…" value="${escHtml(s.image||'')}" style="flex:1;min-width:180px;" />
+          <input type="text" class="cs-image" placeholder="Or paste URL (YouTube/Vimeo/image/video)…" value="${escHtml(s.image||'')}" style="flex:1;min-width:180px;" onchange="updateCaseStudyMediaPreview(${i})" />
         </div>
-        <p style="font-size:11px;color:var(--muted);margin-top:6px;">Image: max 10 MB (JPG/PNG/WebP) · Video: max 500 MB (MP4/WebM)</p>
+        <p style="font-size:11px;color:var(--muted);margin-top:6px;">Image: max 10 MB · Video: max 500 MB · YouTube/Vimeo URLs supported</p>
       </div>
       <div class="field"><label>Before Points (one per line)</label><textarea class="cs-before" rows="3">${escHtml(s.before)}</textarea></div>
       <div class="field"><label>After Points (one per line)</label><textarea class="cs-after" rows="3">${escHtml(s.after)}</textarea></div>
@@ -1790,43 +1896,86 @@ async function uploadCaseStudyMedia(idx, event) {
   const file = event.target.files[0];
   if (!file) return;
   const isVideo = file.type.startsWith('video/');
-  const maxBytes = isVideo ? 500*1024*1024 : 10*1024*1024;
-  if (file.size > maxBytes) { showToast('File too large.', 'error'); return; }
 
-  showToast(isVideo ? 'Uploading video…' : 'Uploading image…', 'success');
+  if (isVideo && file.size > 2 * 1024 * 1024 * 1024) { showToast('Video too large (max 2 GB).', 'error'); return; }
+  if (!isVideo && file.size > 10 * 1024 * 1024) { showToast('Image too large (max 10 MB).', 'error'); return; }
+
+  const cldCfg = JSON.parse(localStorage.getItem('nucleus_cloudinary_cfg') || '{}');
+  const hasCloudinary = !!(cldCfg.cloudName && cldCfg.uploadPreset);
 
   let finalUrl = '';
-  let uploadedToGitHub = false;
-  if (window._nucleusSyncActive && window.nucleusUploadMedia) {
-    try {
-      finalUrl = await window.nucleusUploadMedia('nucleus_case_' + idx + '_media', file);
-      // nucleusUploadMedia returns a data URL for large files, raw.github URL for small files
-      uploadedToGitHub = finalUrl && finalUrl.startsWith('https://');
-    } catch(err) {
-      showToast('Cloud upload failed: ' + err.message + '. Storing locally instead.', 'error');
+  let storageLabel = '';
+
+  if (isVideo) {
+    if (!hasCloudinary) {
+      showToast('⚠️ Cloudinary not set up — go to Settings → Cloud Storage first. Storing locally for now.', 'error');
+      finalUrl = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file); });
+      storageLabel = 'Saved locally (Cloudinary not configured)';
+    } else {
+      // Show progress panel
+      const preview = document.getElementById('cs_media_preview_' + idx);
+      if (preview) {
+        preview.innerHTML = `<div style="background:#111;border-radius:10px;padding:24px;max-width:480px;">
+          <p style="color:#fff;font-size:13px;margin:0 0 12px;">Uploading video to Cloudinary…</p>
+          <div style="background:#333;border-radius:99px;height:8px;overflow:hidden;">
+            <div id="cld_progress_${idx}" style="background:#4caf50;height:100%;width:0%;transition:width .3s;"></div>
+          </div>
+          <p id="cld_pct_${idx}" style="color:#aaa;font-size:12px;margin:8px 0 0;">0%</p>
+        </div>`;
+      }
+      try {
+        const publicId = 'nucleus_case_' + idx + '_' + Date.now();
+        finalUrl = await uploadToCloudinary(file, publicId, (pct) => {
+          const bar = document.getElementById('cld_progress_' + idx);
+          const label = document.getElementById('cld_pct_' + idx);
+          if (bar) bar.style.width = pct + '%';
+          if (label) label.textContent = pct + '%';
+        });
+        storageLabel = 'Video uploaded to Cloudinary';
+      } catch(err) {
+        showToast('Cloudinary upload failed: ' + err.message, 'error');
+        finalUrl = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file); });
+        storageLabel = 'Saved locally (Cloudinary error)';
+      }
     }
-  }
-  if (!finalUrl) {
-    finalUrl = await new Promise(res => {
-      const r = new FileReader();
-      r.onload = e => res(e.target.result);
-      r.readAsDataURL(file);
-    });
+  } else {
+    // Image: try GitHub (< 800KB), else Cloudinary if available, else base64
+    showToast('Uploading image…', 'success');
+    if (window._nucleusSyncActive && window.nucleusUploadMedia) {
+      try {
+        finalUrl = await window.nucleusUploadMedia('nucleus_case_' + idx + '_media', file);
+        storageLabel = finalUrl.startsWith('https://raw.github') ? 'Uploaded to GitHub' : (hasCloudinary ? 'Large image — trying Cloudinary' : 'Saved locally');
+        if (!finalUrl.startsWith('https://') && hasCloudinary) {
+          // nucleusUploadMedia returned base64 (file > 800KB) — try Cloudinary instead
+          finalUrl = await uploadToCloudinary(file, 'nucleus_case_img_' + idx + '_' + Date.now(), null);
+          storageLabel = 'Uploaded to Cloudinary';
+        }
+      } catch(err) {
+        showToast('Cloud upload failed: ' + err.message, 'error');
+      }
+    }
+    if (!finalUrl) {
+      finalUrl = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file); });
+      storageLabel = 'Saved locally';
+    }
   }
 
   const inputs = document.querySelectorAll('.cs-image');
   if (inputs[idx]) inputs[idx].value = finalUrl;
 
   const preview = document.getElementById('cs_media_preview_' + idx);
-  if (preview) {
-    preview.innerHTML = `<div style="position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111;max-width:480px;">
-      ${isVideo
-        ? `<video src="${finalUrl}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`
-        : `<img src="${finalUrl}" style="width:100%;height:100%;object-fit:cover;" />`}
-      <button onclick="clearCaseStudyMedia(${idx})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button>
-    </div>`;
+  if (preview) preview.innerHTML = getMediaPreviewHtml(finalUrl, idx);
+
+  showToast(storageLabel + ' — click Save Case Studies to apply.', 'success');
+}
+
+function updateCaseStudyMediaPreview(idx) {
+  const inputs = document.querySelectorAll('.cs-image');
+  const preview = document.getElementById('cs_media_preview_' + idx);
+  if (inputs[idx] && preview) {
+    const url = inputs[idx].value.trim();
+    preview.innerHTML = getMediaPreviewHtml(url, idx);
   }
-  showToast(uploadedToGitHub ? 'Image uploaded to GitHub — click Save Case Studies to apply.' : 'Image saved locally — click Save Case Studies to apply.', 'success');
 }
 
 function clearCaseStudyMedia(idx) {
