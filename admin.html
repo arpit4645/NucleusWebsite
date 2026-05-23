@@ -1085,7 +1085,22 @@ async function uploadToFirebaseStorage(key, file) {
   return await window.nucleusUploadMedia(key, file);
 }
 
-function handleImageUpload(e) {
+function _setBlogCoverPreview(url, isVideo) {
+  const preview = document.getElementById('imgPreview');
+  const pos = (document.getElementById('imgPos') || {}).value || '50% 50%';
+  if (isVideo) {
+    preview.innerHTML = `
+      <video src="${url}" controls muted
+        style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+      <input type="file" id="imgUpload" accept="video/*" style="display:none" onchange="handleImageUpload(event)" />`;
+  } else {
+    preview.innerHTML = `<img loading="lazy" src="${url}" alt="Preview" style="object-position:${pos}; cursor:grab;" draggable="false" />
+      <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);">&#10021; Drag to pan</div>
+      <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
+  }
+}
+
+async function handleImageUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
   const isVideo = file.type.startsWith('video/');
@@ -1093,44 +1108,50 @@ function handleImageUpload(e) {
   const maxLabel = isVideo ? '500 MB' : '10 MB';
   if (file.size > maxBytes) { showToast(`File too large — max ${maxLabel}.`, 'error'); return; }
 
-  if (window._nucleusSyncActive) {
-    showToast('Uploading cover media to cloud...', 'success');
-    uploadToFirebaseStorage('blog_cover', file).then(url => {
-      currentImageBase64 = url;
-      const preview = document.getElementById('imgPreview');
-      if (isVideo) {
-        preview.innerHTML = `
-          <video src="${url}" controls muted
-            style="width:100%;height:100%;object-fit:cover;display:block;"></video>
-          <input type="file" id="imgUpload" accept="video/*" style="display:none" onchange="handleImageUpload(event)" />`;
+  showToast(isVideo ? 'Saving cover video...' : 'Uploading cover image...', 'success');
+  try {
+    let url;
+    if (window._nucleusSyncActive) {
+      url = await uploadToFirebaseStorage('blog_cover', file);
+      // nucleusUploadMedia returns base64 data: URL for files >800 KB — never store in localStorage
+      if (url && url.startsWith('data:')) {
+        const cldCfg = JSON.parse(localStorage.getItem('nucleus_cloudinary_cfg') || '{}');
+        if (cldCfg.cloudName && cldCfg.uploadPreset) {
+          showToast('File too large for GitHub — uploading to Cloudinary...', 'success');
+          url = await uploadToCloudinary(file, 'blog_cover_' + Date.now(), null);
+        } else {
+          // No Cloudinary — save to IndexedDB, use blob URL for preview only
+          await mdbSave('blog_cover', file);
+          mdbMark('blog_cover');
+          url = URL.createObjectURL(file);
+          showToast('Cover saved locally. Configure Cloudinary in Settings to share across devices.', 'success');
+        }
       } else {
-        preview.innerHTML = `<img loading="lazy" src="${url}" alt="Preview" style="object-position:${document.getElementById('imgPos').value}; cursor:grab;" draggable="false" />
-          <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);">&#10021; Drag to pan</div>
-          <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
+        showToast('Cover media uploaded successfully!', 'success');
       }
-      showToast('Cover media uploaded successfully!', 'success');
-    }).catch(err => {
-      console.error('[Blog Upload Error]', err);
-      showToast(err.message || 'Upload failed. Check Firebase Storage rules.', 'error');
-    });
-  } else {
-    // Blog cover uses FileReader for immediate preview (small files only)
-    const reader = new FileReader();
-    reader.onload = ev => {
-      currentImageBase64 = ev.target.result;
-      const preview = document.getElementById('imgPreview');
-      if (isVideo) {
-        preview.innerHTML = `
-          <video src="${currentImageBase64}" controls muted
-            style="width:100%;height:100%;object-fit:cover;display:block;"></video>
-          <input type="file" id="imgUpload" accept="video/*" style="display:none" onchange="handleImageUpload(event)" />`;
+    } else {
+      // No sync — save to IndexedDB for anything > 100 KB to avoid localStorage overflow
+      if (file.size > 100 * 1024) {
+        await mdbSave('blog_cover', file);
+        mdbMark('blog_cover');
+        url = URL.createObjectURL(file);
+        if (isVideo) showToast('Video saved locally. Configure Cloudinary in Settings to share across devices.', 'success');
+        else showToast('Image saved locally!');
       } else {
-        preview.innerHTML = `<img loading="lazy" src="${currentImageBase64}" alt="Preview" style="object-position:${document.getElementById('imgPos').value}; cursor:grab;" draggable="false" />
-          <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);">&#10021; Drag to pan</div>
-          <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
+        // Small image — base64 is safe
+        url = await new Promise((res, rej) => {
+          const r = new FileReader();
+          r.onload = ev => res(ev.target.result);
+          r.onerror = () => rej(new Error('Failed to read file'));
+          r.readAsDataURL(file);
+        });
       }
-    };
-    reader.readAsDataURL(file);
+    }
+    currentImageBase64 = url;
+    _setBlogCoverPreview(url, isVideo);
+  } catch(err) {
+    console.error('[Blog Cover Upload Error]', err);
+    showToast(err.message || 'Upload failed.', 'error');
   }
 }
 
@@ -1906,10 +1927,15 @@ async function uploadCaseStudyMedia(idx, event) {
   let finalUrl = '';
   let storageLabel = '';
 
+  const mdbKey = 'nucleus_case_' + idx + '_media';
+
   if (isVideo) {
     if (!hasCloudinary) {
-      showToast('⚠️ Cloudinary not set up — go to Settings → Cloud Storage first. Storing locally for now.', 'error');
-      finalUrl = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file); });
+      // No Cloudinary — save to IndexedDB (local only, visible on this device only)
+      showToast('⚠️ Cloudinary not set up — saving video locally. Configure Cloudinary in Settings to publish.', 'error');
+      await mdbSave(mdbKey, file);
+      mdbMark(mdbKey);
+      finalUrl = URL.createObjectURL(file);
       storageLabel = 'Saved locally (Cloudinary not configured)';
     } else {
       // Show progress panel
@@ -1933,30 +1959,48 @@ async function uploadCaseStudyMedia(idx, event) {
         });
         storageLabel = 'Video uploaded to Cloudinary';
       } catch(err) {
-        showToast('Cloudinary upload failed: ' + err.message, 'error');
-        finalUrl = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file); });
+        // Cloudinary failed — fall back to IndexedDB (never base64 in localStorage)
+        showToast('Cloudinary upload failed: ' + err.message + ' — saving locally.', 'error');
+        await mdbSave(mdbKey, file);
+        mdbMark(mdbKey);
+        finalUrl = URL.createObjectURL(file);
         storageLabel = 'Saved locally (Cloudinary error)';
       }
     }
   } else {
-    // Image: try GitHub (< 800KB), else Cloudinary if available, else base64
+    // Image: try GitHub (< 800KB) → Cloudinary → IndexedDB (never base64 in localStorage)
     showToast('Uploading image…', 'success');
     if (window._nucleusSyncActive && window.nucleusUploadMedia) {
       try {
-        finalUrl = await window.nucleusUploadMedia('nucleus_case_' + idx + '_media', file);
-        storageLabel = finalUrl.startsWith('https://raw.github') ? 'Uploaded to GitHub' : (hasCloudinary ? 'Large image — trying Cloudinary' : 'Saved locally');
-        if (!finalUrl.startsWith('https://') && hasCloudinary) {
+        finalUrl = await window.nucleusUploadMedia(mdbKey, file);
+        if (finalUrl && finalUrl.startsWith('https://')) {
+          storageLabel = finalUrl.includes('raw.github') ? 'Uploaded to GitHub' : 'Uploaded to cloud';
+        } else if (hasCloudinary) {
           // nucleusUploadMedia returned base64 (file > 800KB) — try Cloudinary instead
           finalUrl = await uploadToCloudinary(file, 'nucleus_case_img_' + idx + '_' + Date.now(), null);
           storageLabel = 'Uploaded to Cloudinary';
+        } else {
+          finalUrl = null; // will fall through to IndexedDB below
         }
       } catch(err) {
         showToast('Cloud upload failed: ' + err.message, 'error');
+        finalUrl = null;
+      }
+    } else if (hasCloudinary) {
+      try {
+        finalUrl = await uploadToCloudinary(file, 'nucleus_case_img_' + idx + '_' + Date.now(), null);
+        storageLabel = 'Uploaded to Cloudinary';
+      } catch(err) {
+        showToast('Cloudinary upload failed: ' + err.message, 'error');
+        finalUrl = null;
       }
     }
     if (!finalUrl) {
-      finalUrl = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file); });
-      storageLabel = 'Saved locally';
+      // All cloud methods failed — save to IndexedDB (local only, blob: URL in form field)
+      await mdbSave(mdbKey, file);
+      mdbMark(mdbKey);
+      finalUrl = URL.createObjectURL(file);
+      storageLabel = 'Saved locally (no cloud configured)';
     }
   }
 
