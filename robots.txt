@@ -1,0 +1,7 @@
+# FIX: GAP-14
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+Sitemap: https://nucleusconsultent.netlify.app/sitemap.xml
