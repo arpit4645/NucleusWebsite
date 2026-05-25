@@ -1,5 +1,5 @@
 {
-  "ignoreCommand": "git diff --name-only ${VERCEL_GIT_PREVIOUS_SHA:-HEAD~1} HEAD 2>/dev/null | grep -qvE '^content/'",
+  "ignoreCommand": "[ $(git diff --name-only ${VERCEL_GIT_PREVIOUS_SHA:-HEAD~1} HEAD 2>/dev/null | grep -cvE '^content/') -eq 0 ]",
   "cleanUrls": false,
   "trailingSlash": false,
   "headers": [
