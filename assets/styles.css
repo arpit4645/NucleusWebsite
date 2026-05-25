@@ -399,3 +399,111 @@ body.nav-dark .nav-links a { color: var(--white); }
 .center { text-align: center; }
 .btn-ghost { background: transparent; color: var(--green-deep); border: 1px solid var(--line); }
 .btn-ghost:hover { border-color: var(--gold-primary); background: rgba(226, 182, 57, 0.05); }
+
+/* ============================================================
+   FIX: GAP-08 — Mobile Navigation Toggle
+   FIX: GAP-17 — Footer Social Icons
+   FIX: GAP-30 — WhatsApp Float (verify visible at mobile)
+   ============================================================ */
+
+/* Burger button: hidden on desktop, shown on tablet/mobile */
+.nav-burger {
+  display: none;
+  width: 40px; height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  z-index: 1001;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.nav-burger span {
+  display: block;
+  width: 22px; height: 2px;
+  background: var(--ink, #0F2E0F);
+  border-radius: 2px;
+  transition: transform .25s ease, opacity .2s ease;
+}
+body.nav-dark .nav-burger span,
+.nav.scrolled.nav-dark .nav-burger span { background: var(--white, #fff); }
+
+/* Burger animates to × when open */
+.nav-burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-burger.active span:nth-child(2) { opacity: 0; }
+.nav-burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 900px) {
+  .nav-burger { display: flex; }
+
+  .nav-links {
+    position: fixed;
+    top: 0; right: 0;
+    width: min(82vw, 320px);
+    height: 100vh;
+    background: var(--white, #fff);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: 96px 32px 32px;
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+    box-shadow: -8px 0 32px rgba(0,0,0,.12);
+    overflow-y: auto;
+    z-index: 1000;
+  }
+  .nav.nav-open .nav-links,
+  .nav-links.open { transform: translateX(0); }
+
+  .nav-links a {
+    width: 100%;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 17px;
+  }
+  .nav-links a.nav-cta {
+    margin-top: 16px;
+    padding: 14px 24px;
+    text-align: center;
+    border-bottom: none;
+  }
+
+  /* Backdrop when menu open */
+  .nav.nav-open::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 999;
+  }
+}
+
+/* Footer social icons */
+.footer-social {
+  display: flex;
+  gap: 14px;
+  margin-top: 20px;
+  align-items: center;
+}
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.85);
+  transition: background .2s, color .2s, transform .2s;
+}
+.footer-social a:hover {
+  background: var(--gold-primary, #F0C040);
+  color: var(--green-deep, #0F2E0F);
+  transform: translateY(-2px);
+}
+.footer-bottom .footer-social { margin: 0 0 0 24px; }
+@media (max-width: 900px) {
+  .footer-bottom .footer-social { margin: 16px 0 0; }
+}

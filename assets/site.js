@@ -25,6 +25,20 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('page-loaded');
+  document.documentElement.classList.add('js'); // FIX: GAP-09
+
+  // FIX: GAP-09 — IntersectionObserver fallback so content stays visible on legacy browsers
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-scale, .hero-line > span').forEach(el => {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    // also reveal stat counters with their final values
+    document.querySelectorAll('[data-counter]').forEach(el => {
+      el.textContent = el.getAttribute('data-counter') + (el.getAttribute('data-suffix') || '');
+    });
+    return;
+  }
 
   /* ── 1. Scroll Reveals ─────────────────────────────────────── */
   const observerOptions = {
@@ -80,14 +94,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ── 3. Mobile Menu ─────────────────────────────────────────── */
+  // FIX: GAP-08 — toggle .nav-open on the <nav> element (used by mobile CSS)
   const burger = document.querySelector('.nav-burger');
   const navLinks = document.querySelector('.nav-links');
-  
-  if (burger && navLinks) {
+  const navEl = document.querySelector('.nav');
+
+  if (burger && navLinks && navEl) {
     burger.addEventListener('click', () => {
-      navLinks.classList.toggle('open');
-      burger.classList.toggle('active');
+      const isOpen = navEl.classList.toggle('nav-open');
+      navLinks.classList.toggle('open', isOpen);
+      burger.classList.toggle('active', isOpen);
+      burger.setAttribute('aria-expanded', String(isOpen));
+      document.body.style.overflow = isOpen ? 'hidden' : '';
     });
+    // close on link tap (mobile)
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      navEl.classList.remove('nav-open');
+      navLinks.classList.remove('open');
+      burger.classList.remove('active');
+      document.body.style.overflow = '';
+    }));
   }
 
   /* ── 4. Stats Counter Animation ─────────────────────────────── */
@@ -301,24 +327,28 @@ async function loadGlobalMediaAndSettings() {
   }
 
   // B. Load dynamic text elements (with data-set attribute, ignoring global contact keys)
+  // FIX: GAP-19 — only override the element's HTML if the stored value is non-empty;
+  // empty / null / undefined values preserve the default HTML written into the markup.
   document.querySelectorAll('[data-set]').forEach(el => {
     const key = el.getAttribute('data-set');
     if (key && !['email', 'phone', 'address', 'insta', 'linkedin', 'twitter'].includes(key)) {
       const val = localStorage.getItem(key);
-      if (val !== null) el.innerHTML = val;
+      if (val !== undefined && val !== null && val !== '') el.innerHTML = val;
     }
   });
 
+  // FIX: GAP-31/32 — Render dynamic services grid, case study, and testimonial on homepage.
+  // Earlier version used Unicode curly quotes inside HTML strings which broke the markup.
   // C1. Render nucleus_services grid on homepage
   try {
     const svcs = JSON.parse(localStorage.getItem('nucleus_services') || '[]');
     const svcGrid = document.getElementById('hp-services-grid');
     if (svcGrid && svcs.length) {
       svcGrid.innerHTML = svcs.map(s =>
-        `<a href=”services.html” class=”prog prog-light” style=”min-height:auto;padding:32px;border:1px solid var(--green-pale);”>
-          <div style=”font-size:28px;margin-bottom:12px;”>${s.icon || '🔧'}</div>
-          <h3 style=”margin:0;font-size:20px;color:var(--green-deep);”>${s.title || ''}</h3>
-          ${s.description ? `<p style=”margin:12px 0 0;color:var(--muted);font-size:15px;line-height:1.5;”>${s.description}</p>` : ''}
+        `<a href="services.html" class="prog prog-light" style="min-height:auto;padding:32px;border:1px solid var(--green-pale);">
+          <div style="font-size:28px;margin-bottom:12px;">${s.icon || '🔧'}</div>
+          <h3 style="margin:0;font-size:20px;color:var(--green-deep);">${s.title || ''}</h3>
+          ${s.description ? `<p style="margin:12px 0 0;color:var(--muted);font-size:15px;line-height:1.5;">${s.description}</p>` : ''}
         </a>`
       ).join('');
     }
@@ -330,21 +360,21 @@ async function loadGlobalMediaAndSettings() {
     const csEl = document.getElementById('hp-case-study');
     if (csEl && cases.length) {
       const c = cases[0];
-      const xSvg = `<svg width=”20” height=”20” viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”2” stroke-linecap=”round” stroke-linejoin=”round” style=”margin-top:4px;flex-shrink:0;”><line x1=”18” y1=”6” x2=”6” y2=”18”/><line x1=”6” y1=”6” x2=”18” y2=”18”/></svg>`;
-      const chkSvg = `<svg width=”20” height=”20” viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”2” stroke-linecap=”round” stroke-linejoin=”round” style=”margin-top:4px;flex-shrink:0;”><polyline points=”20 6 9 17 4 12”/></svg>`;
+      const xSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:4px;flex-shrink:0;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+      const chkSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:4px;flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>`;
       const beforeItems = (c.before || '').split('\n').filter(Boolean).map(t =>
-        `<li style=”display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;”>${xSvg} ${t}</li>`).join('');
+        `<li style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">${xSvg} ${t}</li>`).join('');
       const afterItems = (c.after || '').split('\n').filter(Boolean).map(t =>
-        `<li style=”display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;”>${chkSvg} ${t}</li>`).join('');
+        `<li style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">${chkSvg} ${t}</li>`).join('');
       csEl.innerHTML = `
-        <div class=”card-hover wipe-reveal” style=”background:#FFF0F0;padding:40px;border-radius:20px;border:1px solid #FFD6D6;”>
-          <h3 style=”color:#D32F2F;margin-bottom:24px;font-size:24px;”>Before:</h3>
-          <ul style=”font-size:18px;line-height:2;list-style-type:none;padding:0;color:#5C1010;”>${beforeItems}</ul>
+        <div class="card-hover wipe-reveal" style="background:#FFF0F0;padding:40px;border-radius:20px;border:1px solid #FFD6D6;">
+          <h3 style="color:#D32F2F;margin-bottom:24px;font-size:24px;">Before:</h3>
+          <ul style="font-size:18px;line-height:2;list-style-type:none;padding:0;color:#5C1010;">${beforeItems}</ul>
         </div>
-        <div class=”card-hover wipe-reveal” style=”background:#F0FFF4;padding:40px;border-radius:20px;border:1px solid #C6F6D5;”>
-          <h3 style=”color:#2F855A;margin-bottom:24px;font-size:24px;”>After:</h3>
-          <ul style=”font-size:18px;line-height:2;list-style-type:none;padding:0;color:#1C4532;”>${afterItems}</ul>
-          ${c.result ? `<p style=”margin-top:24px;font-weight:600;color:#2F855A;”>Result: ${c.result}</p>` : ''}
+        <div class="card-hover wipe-reveal" style="background:#F0FFF4;padding:40px;border-radius:20px;border:1px solid #C6F6D5;">
+          <h3 style="color:#2F855A;margin-bottom:24px;font-size:24px;">After:</h3>
+          <ul style="font-size:18px;line-height:2;list-style-type:none;padding:0;color:#1C4532;">${afterItems}</ul>
+          ${c.result ? `<p style="margin-top:24px;font-weight:600;color:#2F855A;">Result: ${c.result}</p>` : ''}
         </div>`;
     }
   } catch(e) {}
@@ -357,11 +387,40 @@ async function loadGlobalMediaAndSettings() {
       const qEl = document.getElementById('hp-testimonial-quote');
       const nEl = document.getElementById('hp-testimonial-name');
       const rEl = document.getElementById('hp-testimonial-role');
-      if (qEl && t.quote) qEl.textContent = '”' + t.quote + '”';
+      if (qEl && t.quote) qEl.textContent = '"' + t.quote + '"';
       if (nEl && t.name) nEl.textContent = t.name;
       if (rEl && (t.role || t.company)) rEl.textContent = [t.role, t.company].filter(Boolean).join(', ');
     }
   } catch(e) {}
+
+  // FIX: GAP-17 — auto-inject footer social icons (Instagram / LinkedIn / Twitter)
+  // reading hrefs from nucleus_site_settings (insta/linkedin/twitter). Skips if already added.
+  try {
+    const settings = JSON.parse(localStorage.getItem('nucleus_site_settings') || '{}');
+    document.querySelectorAll('.footer').forEach(footer => {
+      if (footer.querySelector('.footer-social')) return;
+      const social = document.createElement('div');
+      social.className = 'footer-social';
+      const ig = settings.insta    || '';
+      const li = settings.linkedin || '';
+      const tw = settings.twitter  || '';
+      social.innerHTML = `
+        ${ig ? `<a data-set="insta" href="${ig}" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>` : ''}
+        ${li ? `<a data-set="linkedin" href="${li}" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>` : ''}
+        ${tw ? `<a data-set="twitter" href="${tw}" target="_blank" rel="noopener" aria-label="Twitter / X">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>` : ''}
+      `.trim();
+      if (!social.innerHTML) return; // nothing to inject if no socials configured
+      // try to attach inside the existing footer-bottom row, else inside .wrap
+      const target = footer.querySelector('.footer-bottom') || footer.querySelector('.wrap') || footer;
+      target.appendChild(social);
+    });
+  } catch (e) { /* non-fatal */ }
 
 
   // B2. Render services page (hero, list, steps, pricing)
