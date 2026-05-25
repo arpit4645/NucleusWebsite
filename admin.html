@@ -2577,13 +2577,24 @@ const _aboutSectionKeys = {
 
 function saveAboutSection(section) {
   const keys = _aboutSectionKeys[section] || [];
+  const patch = {};
   keys.forEach(key => {
     const el = document.getElementById(key);
-    if (el) localStorage.setItem(key, el.value);
+    if (el) { localStorage.setItem(key, el.value); patch[key] = el.value; }
   });
   const ind = document.getElementById('si-about-' + section);
-  if (ind) { ind.textContent = '✓ Saved'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
-  showToast('Section saved!');
+  if (window.nucleusSync && Object.keys(patch).length) {
+    nucleusSync.patch(patch).then(() => {
+      if (ind) { ind.textContent = '✓ Synced'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+      showToast('Section saved & synced ✓', 'success');
+    }).catch(() => {
+      if (ind) { ind.textContent = '✓ Saved locally'; ind.style.color = '#f59e0b'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+      showToast('Saved locally (sync failed)', 'error');
+    });
+  } else {
+    if (ind) { ind.textContent = '✓ Saved'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+    showToast('Section saved!');
+  }
 }
 
 function saveHpSection(section) {
@@ -2595,14 +2606,25 @@ function saveHpSection(section) {
     final:      ['final_heading','final_btn1','final_btn2']
   };
   const fields = map[section] || [];
+  const patch = {};
   fields.forEach(f => {
     const el = document.getElementById('hp_' + f);
-    if (el) { d[f] = el.value; localStorage.setItem('nucleus_hp_' + f, el.value); }
+    if (el) { d[f] = el.value; localStorage.setItem('nucleus_hp_' + f, el.value); patch['hp_' + f] = el.value; }
   });
   localStorage.setItem('nucleus_homepage', JSON.stringify(d));
   const ind = document.getElementById('si-hp-' + section);
-  if (ind) { ind.textContent = '✓ Saved'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
-  showToast('Section saved!');
+  if (window.nucleusSync && Object.keys(patch).length) {
+    nucleusSync.patch(patch).then(() => {
+      if (ind) { ind.textContent = '✓ Synced'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+      showToast('Section saved & synced ✓', 'success');
+    }).catch(() => {
+      if (ind) { ind.textContent = '✓ Saved locally'; ind.style.color = '#f59e0b'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+      showToast('Saved locally (sync failed)', 'error');
+    });
+  } else {
+    if (ind) { ind.textContent = '✓ Saved'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+    showToast('Section saved!');
+  }
 }
 
 // ── Universal Media Manager ──────────────────────────────────────────────────
@@ -3145,6 +3167,27 @@ document.addEventListener('nucleus-sync-ready', function() {
 
 // Show homepage view by default
 showView('homepage');
+
+/* ── nucleus-sync.js token bridge ──────────────────────────────────────────
+   github-sync.js stores the PAT in nucleus_github_cfg.
+   nucleus-sync.js reads from nucleus_gh_token.
+   Mirror them so both scripts share one token. */
+(function bridgeTokens() {
+  /* Seed nucleus_gh_token from existing cfg on load */
+  try {
+    var cfg = JSON.parse(localStorage.getItem('nucleus_github_cfg') || '{}');
+    if (cfg.token && !localStorage.getItem('nucleus_gh_token')) {
+      localStorage.setItem('nucleus_gh_token', cfg.token);
+    }
+  } catch (e) {}
+
+  /* Wrap nucleusGithubSetToken so future saves also update nucleus_gh_token */
+  var _orig = window.nucleusGithubSetToken;
+  window.nucleusGithubSetToken = function(token) {
+    if (token) localStorage.setItem('nucleus_gh_token', token);
+    if (_orig) _orig(token);
+  };
+})();
 </script>
   <script src="assets/nucleus-sync.js"></script>
 </body>
