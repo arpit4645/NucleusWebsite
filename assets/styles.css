@@ -202,8 +202,8 @@ p { margin: 0; }
   border-bottom: 1px solid var(--border-light);
 }
 .nav.scrolled { padding: 16px var(--pad-x); box-shadow: var(--shadow-sm); }
-.nav-logo img { height: 40px; transition: height var(--dur-base) var(--ease-out); }
-.nav.scrolled .nav-logo img { height: 32px; }
+.nav-logo img { height: 44px; width: auto; transition: height var(--dur-base) var(--ease-out); }
+.nav.scrolled .nav-logo img { height: 34px; width: auto; }
 
 .nav-links { display: flex; gap: 40px; align-items: center; }
 .nav-links a {
