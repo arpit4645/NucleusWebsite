@@ -873,13 +873,13 @@
             We transform the way leaders think, teams behave, and businesses grow — by aligning mindset, culture, and systems.
           </p>
           <div class="hero-btns reveal" style="margin-top: 40px;">
-            <a href="contact.html" class="btn btn-primary">
-              Diagnose My Business
+            <a href="contact.html" class="btn btn-primary" data-live-href="hp_cta1_link">
+              <span data-live="hp_cta1_label">Diagnose My Business</span>
               <svg class="btn-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
               </svg>
             </a>
-            <a href="services.html" class="btn btn-outline-white">Start Transformation Journey</a>
+            <a href="services.html" class="btn btn-outline-white" data-live-href="hp_cta2_link" data-live="hp_cta2_label">Start Transformation Journey</a>
           </div>
         </div>
       </div>
@@ -921,9 +921,9 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
         <div>
           <p class="eyebrow reveal" style="color: var(--gold-dark);">The Reality</p>
-          <h2 class="reveal" style="color: var(--charcoal); margin-top: 16px;">If This Feels Familiar… You’re Not Alone</h2>
+          <h2 class="reveal" data-live="hp_pain_title" style="color: var(--charcoal); margin-top: 16px;">If This Feels Familiar… You’re Not Alone</h2>
           <p class="reveal" style="margin-top: 24px; font-size: 20px;">You are working harder than ever… But still:</p>
-          <ul class="stagger-list" style="margin-top: 24px; font-size: 18px; line-height: 1.8; list-style-type: disc; padding-left: 20px; color: var(--muted);">
+          <ul class="stagger-list" data-live-bullets="hp_pain_bullets" data-pain-list style="margin-top: 24px; font-size: 18px; line-height: 1.8; list-style-type: disc; padding-left: 20px; color: var(--muted);">
             <li>Team is not taking ownership</li>
             <li>Sales is inconsistent</li>
             <li>Growth feels unpredictable</li>
@@ -1075,7 +1075,7 @@
         <div class="reveal-left">
           <p class="eyebrow">Our Philosophy</p>
           <h2 style="margin-top: 16px;">The Nucleus Way</h2>
-          <p data-typewriter="We don't believe in controlling people. We believe in building people who don't need control." style="margin-top: 24px; font-size: 22px; font-style: italic; color: var(--gold-deep);">
+          <p data-live="hp_philosophy" data-typewriter="We don't believe in controlling people. We believe in building people who don't need control." style="margin-top: 24px; font-size: 22px; font-style: italic; color: var(--gold-deep);">
             We don’t believe in controlling people.<br>
             We believe in building people who don’t need control.
           </p>
@@ -1183,12 +1183,12 @@
   <!-- ═══════════ FINAL CTA ═══════════ -->
   <section class="section dark-section final-cta" style="background: var(--green-deep); color: var(--white); text-align: center; position: relative; overflow: hidden;">
     <div class="wrap" style="position: relative; z-index: 2;">
-      </p>
+      <h2 data-live="hp_final_heading" style="color: var(--white); max-width: 24ch; margin: 0 auto;">Ready to Transform Your Business?</h2>
       <div class="hero-btns reveal" style="justify-content: center; margin-top: 48px;">
-        <a href="contact.html" class="btn btn-primary" style="background: var(--gold); color: var(--ink);">
+        <a href="contact.html" class="btn btn-primary" data-live="hp_final_btn1" style="background: var(--gold); color: var(--ink);">
           Book Business Diagnosis
         </a>
-        <a href="services.html" class="btn btn-ghost" style="color: var(--white); border-color: rgba(255,255,255,0.3);">
+        <a href="services.html" class="btn btn-ghost" data-live="hp_final_btn2" style="color: var(--white); border-color: rgba(255,255,255,0.3);">
           Apply for Transformation
         </a>
       </div>
@@ -1257,6 +1257,7 @@
 
 
   <script src="assets/site.js"></script>
+  <script src="assets/nucleus-live.js"></script>
 </body>
 
 </html>
