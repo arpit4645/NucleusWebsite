@@ -247,10 +247,14 @@
     if (!data.services || !data.services.length) return;
     document.querySelectorAll('[data-live-services]').forEach(function (container) {
       container.innerHTML = data.services.map(function (s) {
+        var imgHtml = s.image
+          ? '<img src="' + s.image + '" alt="' + (s.title || '') + '" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;margin-bottom:16px;" />'
+          : '';
         return '<a href="services.html" class="prog prog-light reveal" style="text-decoration:none">' +
-          '<p class="prog-ey">' + (s.icon || '') + ' &nbsp; Services</p>' +
+          imgHtml +
+          '<p class="prog-ey">' + (s.icon || '') + ' &nbsp;' + (s.tag || 'Services') + '</p>' +
           '<h3>' + (s.title || '') + '</h3>' +
-          '<p>' + (s.desc || '') + '</p>' +
+          '<p>' + (s.desc || s.description || '') + '</p>' +
           '<div class="prog-foot"><span class="link">Learn more →</span></div>' +
         '</a>';
       }).join('');
@@ -262,10 +266,14 @@
     if (!data.programs || !data.programs.length) return;
     document.querySelectorAll('[data-live-programs]').forEach(function (container) {
       container.innerHTML = data.programs.map(function (p) {
+        var imgHtml = p.image
+          ? '<img src="' + p.image + '" alt="' + (p.name || p.title || '') + '" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;margin-bottom:16px;" />'
+          : '';
         return '<div class="prog prog-light reveal">' +
-          '<p class="prog-ey">' + (p.type || 'Program') + '</p>' +
-          '<h3>' + (p.name || '') + '</h3>' +
-          '<p>' + (p.desc || '') + '</p>' +
+          imgHtml +
+          '<p class="prog-ey">' + (p.type || p.audience || 'Program') + '</p>' +
+          '<h3>' + (p.name || p.title || '') + '</h3>' +
+          '<p>' + (p.desc || p.description || '') + '</p>' +
           '<div class="prog-foot">' +
             (p.duration ? '<span style="font-family:var(--mono);font-size:11px;color:var(--muted)">' + p.duration + '</span>' : '') +
             (p.price ? '<span style="font-family:var(--mono);font-size:11px;color:var(--green);margin-left:12px">' + p.price + '</span>' : '') +

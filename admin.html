@@ -2145,6 +2145,13 @@ function renderServices() {
           <div class="field"><label>Title</label><input type="text" class="svc-title" value="${escHtml(s.title||'')}" /></div>
           <div class="field" style="max-width:140px;"><label>Badge / Tag <span style="opacity:.5">(optional)</span></label><input type="text" class="svc-tag" value="${escHtml(s.tag||'')}" placeholder="Most Popular" /></div>
         </div>
+        <div class="field">
+          <label>Image URL <span style="opacity:.6;font-weight:400">(paste a URL, or use Image Manager to upload)</span></label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="url" class="svc-image" value="${escHtml(s.image||'')}" placeholder="https://… or leave blank for icon-only card" style="flex:1;" />
+            ${s.image ? `<img src="${escHtml(s.image)}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--line);" />` : ''}
+          </div>
+        </div>
         <div class="field"><label>Short Description</label><textarea class="svc-desc" rows="3">${escHtml(s.description||'')}</textarea></div>
         <div class="field"><label>Key Outcomes <span style="opacity:.6;font-weight:400">(one per line — shown as ✓ checklist on site)</span></label><textarea class="svc-outcomes" rows="4">${escHtml(s.outcomes||'')}</textarea></div>
         <div class="field"><label>Who It's For <span style="opacity:.6;font-weight:400">(shown in a callout box)</span></label><input type="text" class="svc-who" value="${escHtml(s.who||'')}" placeholder="Founders of growing SMEs with 5–50 employees" /></div>
@@ -2182,6 +2189,7 @@ function saveServices() {
   const icons     = document.querySelectorAll('.svc-icon');
   const titles    = document.querySelectorAll('.svc-title');
   const tags      = document.querySelectorAll('.svc-tag');
+  const images    = document.querySelectorAll('.svc-image');
   const descs     = document.querySelectorAll('.svc-desc');
   const outcomes  = document.querySelectorAll('.svc-outcomes');
   const whos      = document.querySelectorAll('.svc-who');
@@ -2192,7 +2200,9 @@ function saveServices() {
       icon:        icons[i]?.value    || '🔧',
       title:       t.value,
       tag:         tags[i]?.value     || '',
+      image:       images[i]?.value   || '',
       description: descs[i]?.value    || '',
+      desc:        descs[i]?.value    || '',
       outcomes:    outcomes[i]?.value || '',
       who:         whos[i]?.value     || '',
       cta:         ctas[i]?.value     || 'Book a Consult'
@@ -2200,19 +2210,36 @@ function saveServices() {
   });
   localStorage.setItem('nucleus_services', JSON.stringify(services));
   const ind = document.getElementById('si-svc-list');
-  if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
-  showToast('Services saved!');
+  if (window.nucleusSync) {
+    nucleusSync.patch({ services }).then(() => {
+      if (ind) { ind.textContent = '✓ Synced'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+      showToast('Services saved & synced ✓', 'success');
+    }).catch(() => {
+      if (ind) { ind.textContent = '✓ Saved locally'; ind.style.color='#f59e0b'; setTimeout(()=>{ ind.textContent=''; },2500); }
+      showToast('Saved locally (sync failed)', 'error');
+    });
+  } else {
+    if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+    showToast('Services saved!');
+  }
 }
 
 function saveServicesHero() {
-  const hero = {
-    title: document.getElementById('svc_hero_title')?.value || '',
-    sub:   document.getElementById('svc_hero_sub')?.value   || ''
-  };
-  localStorage.setItem('nucleus_services_hero', JSON.stringify(hero));
+  const title = document.getElementById('svc_hero_title')?.value || '';
+  const sub   = document.getElementById('svc_hero_sub')?.value   || '';
+  localStorage.setItem('nucleus_services_hero', JSON.stringify({ title, sub }));
   const ind = document.getElementById('si-svc-hero');
-  if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
-  showToast('Services hero saved!');
+  if (window.nucleusSync) {
+    nucleusSync.patch({ svc_hero_title: title, svc_hero_sub: sub }).then(() => {
+      if (ind) { ind.textContent = '✓ Synced'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+      showToast('Services hero saved & synced ✓', 'success');
+    }).catch(() => {
+      if (ind) { ind.textContent = '✓ Saved locally'; ind.style.color='#f59e0b'; setTimeout(()=>{ ind.textContent=''; },2500); }
+    });
+  } else {
+    if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+    showToast('Services hero saved!');
+  }
 }
 
 function saveServicesSteps() {
@@ -2925,6 +2952,13 @@ function renderPrograms() {
         <div class="field"><label>Audience</label><input type="text" class="pg-audience" value="${escHtml(p.audience||'')}" /></div>
         <div class="field"><label>Duration</label><input type="text" class="pg-duration" value="${escHtml(p.duration||'')}" /></div>
       </div>
+      <div class="field">
+        <label>Image URL <span style="opacity:.6;font-weight:400">(paste URL or upload via Image Manager)</span></label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="url" class="pg-image" value="${escHtml(p.image||'')}" placeholder="https://… or leave blank" style="flex:1;" />
+          ${p.image ? `<img src="${escHtml(p.image)}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--line);" />` : ''}
+        </div>
+      </div>
       <div class="field"><label>Description</label><textarea class="pg-desc" rows="3">${escHtml(p.description||'')}</textarea></div>
       <div class="field"><label>Outcomes (one per line)</label><textarea class="pg-outcomes" rows="4">${escHtml(p.outcomes||'')}</textarea></div>
     </div>
@@ -2943,18 +2977,37 @@ function removeProgram(i) {
   renderPrograms();
 }
 function savePrograms() {
-  const icons = document.querySelectorAll('.pg-icon');
-  const titles = document.querySelectorAll('.pg-title');
+  const icons     = document.querySelectorAll('.pg-icon');
+  const titles    = document.querySelectorAll('.pg-title');
   const audiences = document.querySelectorAll('.pg-audience');
   const durations = document.querySelectorAll('.pg-duration');
-  const descs = document.querySelectorAll('.pg-desc');
-  const outcomes = document.querySelectorAll('.pg-outcomes');
-  const items = [];
+  const images    = document.querySelectorAll('.pg-image');
+  const descs     = document.querySelectorAll('.pg-desc');
+  const outcomes  = document.querySelectorAll('.pg-outcomes');
+  const programs  = [];
   icons.forEach((ic,i) => {
-    items.push({icon:ic.value, title:titles[i].value, audience:audiences[i].value, duration:durations[i].value, description:descs[i].value, outcomes:outcomes[i].value});
+    programs.push({
+      icon:        ic.value,
+      title:       titles[i].value,
+      name:        titles[i].value,
+      audience:    audiences[i]?.value || '',
+      duration:    durations[i]?.value || '',
+      image:       images[i]?.value    || '',
+      description: descs[i].value,
+      desc:        descs[i].value,
+      outcomes:    outcomes[i].value
+    });
   });
-  localStorage.setItem('nucleus_programs', JSON.stringify(items));
-  showToast('Programs saved!');
+  localStorage.setItem('nucleus_programs', JSON.stringify(programs));
+  if (window.nucleusSync) {
+    nucleusSync.patch({ programs }).then(() => {
+      showToast('Programs saved & synced ✓', 'success');
+    }).catch(() => {
+      showToast('Saved locally (sync failed)', 'error');
+    });
+  } else {
+    showToast('Programs saved!');
+  }
 }
 function saveProgramsHero() {
   localStorage.setItem('nucleus_programs_hero_eyebrow', document.getElementById('programs_hero_eyebrow').value);
