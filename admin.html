@@ -684,7 +684,7 @@
               <label>Confirm New Password</label>
               <input type="password" id="set_pwd_confirm" placeholder="Re-enter password" />
             </div>
-            <div style="font-size:11px;color:var(--muted);margin-top:6px;">Default password is <strong>nucleusadmin</strong>. Leave blank to keep current.</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;">Leave blank to keep your current password. The primary password is verified server-side via the <code>ADMIN_PASSWORD</code> environment variable.</div> <!-- FIX: GAP-29 -->
             <button class="btn btn-gold btn-sm" style="margin-top:12px;" onclick="changePassword()">Update Password</button>
             <button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="logout()">Log Out</button>
             <button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="showGithubSetup()">Update GitHub Token ☁️</button>
@@ -1495,7 +1495,7 @@ function _setBlogCoverPreview(url, isVideo) {
         style="width:100%;height:100%;object-fit:cover;display:block;"></video>
       <input type="file" id="imgUpload" accept="video/*" style="display:none" onchange="handleImageUpload(event)" />`;
   } else {
-    preview.innerHTML = `<img loading="lazy" src="${url}" alt="Preview" style="object-position:${pos}; cursor:grab;" draggable="false" />
+    preview.innerHTML = `<img loading="lazy" src="${url}" alt="Preview" style="object-position:${pos}; cursor:grab;" draggable="false" width="800" height="600" />
       <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);">&#10021; Drag to pan</div>
       <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
   }
@@ -1701,7 +1701,7 @@ function editPost(id) {
   setSelectedCat(post.category);
   if (post.image) {
     currentImageBase64 = post.image;
-    document.getElementById('imgPreview').innerHTML = `<img loading="lazy" src="${post.image}" alt="Preview" />
+    document.getElementById('imgPreview').innerHTML = `<img loading="lazy" src="${post.image}" alt="Preview" width="800" height="600" />
       <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
   } else { clearImage(); }
   showView('editor');
@@ -1761,7 +1761,7 @@ function renderAllPosts() {
       ${posts.map(p => `
         <div class="panel" style="display:flex;align-items:center;gap:20px;padding:20px 24px;">
           <div style="width:64px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--cream);">
-            ${p.image ? `<img loading="lazy" src="${p.image}" style="width:100%;height:100%;object-fit:cover;" />` : '<div style="width:100%;height:100%;background:var(--cream);"></div>'}
+            ${p.image ? `<img loading="lazy" src="${p.image}" style="width:100%;height:100%;object-fit:cover;" width="800" height="600" />` : '<div style="width:100%;height:100%;background:var(--cream);"></div>'}
           </div>
           <div style="flex:1;min-width:0;">
             <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(p.title)}</div>
@@ -1893,15 +1893,33 @@ function _enterAdmin() {
   showView('dashboard');
 }
 
-function checkLogin() {
+// FIX: GAP-29 — verify the admin password server-side via /api/auth so the password is
+// never embedded in the public JS bundle. Falls back to the locally-set custom password
+// (s.adminPwd) when /api/auth isn't reachable (e.g. local dev), so admin still works.
+async function checkLogin() {
   try {
     const pwdInput = document.getElementById('adminPassword');
     if (!pwdInput) throw new Error('Password input element not found');
     const pwd = pwdInput.value;
     let s; try { s = JSON.parse(localStorage.getItem('nucleus_site_settings')) || {}; } catch(e) { s = {}; }
-    const realPwd = s.adminPwd || 'nucleusadmin';
-    // Case-insensitive match only for the default password; custom passwords are exact
-    const match = s.adminPwd ? pwd === realPwd : pwd.toLowerCase() === 'nucleusadmin';
+
+    let match = false;
+    // 1) Server check
+    try {
+      const r = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwd })
+      });
+      if (r.ok) {
+        const j = await r.json().catch(() => ({}));
+        match = !!j.ok;
+      }
+    } catch (_) { /* server unreachable — fall through */ }
+
+    // 2) Local override (if admin set a custom password in Settings, that still works offline)
+    if (!match && s.adminPwd) match = (pwd === s.adminPwd);
+
     if (!match) {
       document.getElementById('loginError').style.display = 'block';
       return;
@@ -1911,7 +1929,6 @@ function checkLogin() {
     // Check if GitHub token already saved
     const cfg = (window.nucleusGithubGetConfig && window.nucleusGithubGetConfig()) || null;
     if (!cfg || !cfg.token) {
-      // Show step 2 (token setup) inside the login gate
       document.getElementById('loginStep1').style.display = 'none';
       document.getElementById('loginStep2').style.display = 'block';
     } else {
@@ -2308,7 +2325,7 @@ function getMediaPreviewHtml(url, idx) {
   } else if (isVideo) {
     mediaContent = `<video src="${url}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
   } else {
-    mediaContent = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" />`;
+    mediaContent = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" width="800" height="600" />`;
   }
 
   return mediaContent ? `<div style="position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111;max-width:480px;">${mediaContent}<button onclick="clearCaseStudyMedia(${idx})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button></div>` : '';
@@ -2634,7 +2651,7 @@ async function refreshUniversalMediaPreview(storageKey) {
   if (isVideo) {
     preview.innerHTML = `<video src="${src}" controls muted loop autoplay playsinline style="width:100%;max-height:240px;object-fit:contain;display:block;background:#000;"></video>`;
   } else {
-    preview.innerHTML = `<img src="${src}" style="width:100%;max-height:240px;object-fit:contain;display:block;background:#000;" />`;
+    preview.innerHTML = `<img src="${src}" style="width:100%;max-height:240px;object-fit:contain;display:block;background:#000;" width="800" height="600" />`;
   }
 }
 
@@ -2959,7 +2976,7 @@ function initImageManager() {
     if (hasIDB || storedLs) card.classList.add('has-override');
 
     // Build preview element — load from IDB async if needed
-    const defaultPreview = `<img class="img-card-preview" src="${defaultSrc}" alt="${label}" style="aspect-ratio:${aspect};" />`;
+    const defaultPreview = `<img class="img-card-preview" src="${defaultSrc}" alt="${label}" style="aspect-ratio:${aspect};" width="800" height="600" />`;
 
     card.innerHTML = `
       <div class="img-card-preview-wrap" style="position:relative;">${defaultPreview}</div>
@@ -2985,13 +3002,13 @@ function initImageManager() {
         const isVid = card.querySelector('.img-card-preview-wrap video');
         wrap.innerHTML = objUrl.startsWith('blob:') && card.dataset._isVideo
           ? `<video class="img-card-preview" src="${objUrl}" muted loop autoplay playsinline style="aspect-ratio:${aspect};object-fit:cover;"></video>`
-          : `<img class="img-card-preview" src="${objUrl}" alt="${label}" style="aspect-ratio:${aspect};" />`;
+          : `<img class="img-card-preview" src="${objUrl}" alt="${label}" style="aspect-ratio:${aspect};" width="800" height="600" />`;
       }).catch(()=>{});
     } else if (storedLs) {
       const isV = storedLs.startsWith('data:video/') || localStorage.getItem(key + '_type') === 'video' || storedLs.match(/\.(mp4|webm|mov)(\?.*)?$/i);
       wrap.innerHTML = isV
         ? `<video class="img-card-preview" src="${storedLs}" muted loop autoplay playsinline style="aspect-ratio:${aspect};object-fit:cover;"></video>`
-        : `<img class="img-card-preview" src="${storedLs}" alt="${label}" style="aspect-ratio:${aspect};" />`;
+        : `<img class="img-card-preview" src="${storedLs}" alt="${label}" style="aspect-ratio:${aspect};" width="800" height="600" />`;
     }
 
     // Also open file dialog on card click (but not on footer buttons)
@@ -3030,7 +3047,7 @@ async function handleImgCardUpload(key, e, card) {
     } else {
       const el = wrap.querySelector('.img-card-preview');
       if (el && el.tagName === 'IMG') el.src = displayUrl;
-      else if (el) el.outerHTML = `<img class="img-card-preview" src="${displayUrl}" alt="" style="aspect-ratio:${aspect};" />`;
+      else if (el) el.outerHTML = `<img class="img-card-preview" src="${displayUrl}" alt="" style="aspect-ratio:${aspect};" width="800" height="600" />`;
     }
     if (!result.synced) {
       showToast(`"${card.dataset.label}" saved locally. Set up Cloudinary in Settings to sync across devices.`, 'success');

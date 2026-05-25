@@ -160,7 +160,7 @@
   <!-- ═══════════ NAV ═══════════ -->
   <nav class="nav">
     <a href="index.html" class="nav-logo">
-      <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" />
+      <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" width="200" height="60" />
     </a>
     <div class="nav-links">
       <a href="about.html">About</a>
@@ -251,7 +251,7 @@
       <div class="footer-grid">
         <div class="footer-col">
           <a href="index.html" class="footer-logo">
-            <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" style="height:38px; filter:brightness(0) invert(1); opacity:0.9; margin-bottom:24px;" />
+            <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" style="height:38px; filter:brightness(0) invert(1); opacity:0.9; margin-bottom:24px;" width="200" height="60" />
           </a>
           <p class="muted" style="max-width:28ch; font-size:14px; line-height:1.7;">We help young minds and growing businesses clarify purpose and turn dreams into reality.</p>
         </div>
@@ -323,7 +323,7 @@
       if (!post) return;
       var content = document.getElementById('postModalContent');
       content.innerHTML =
-        (post.image ? '<img loading="lazy" class="modal-img" src="' + post.image + '" alt="' + esc(post.title) + '" />' : '') +
+        (post.image ? '<img loading="lazy" class="modal-img" src="' + post.image + '" alt="' + esc(post.title) + '" width="800" height="600" />' : '') +
         '<h2>' + esc(post.title) + '</h2>' +
         '<div class="modal-meta"><span>' + esc(post.category) + '</span><span>' + esc(post.readTime) + '</span><span>' + esc(post.dateLabel) + '</span><span>By ' + esc(post.author) + '</span></div>' +
         '<div class="modal-body">' + esc(post.content) + '</div>';
@@ -367,7 +367,7 @@
       if (featPost) {
         sf.style.display = 'none';
         var fimg = featPost.image
-          ? '<img loading="lazy" src="' + featPost.image + '" alt="' + esc(featPost.title) + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />'
+          ? '<img loading="lazy" src="' + featPost.image + '" alt="' + esc(featPost.title) + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" width="800" height="600" />'
           : '';
         var fEl = document.createElement('article');
         fEl.className = 'feat reveal';
@@ -396,7 +396,7 @@
       var grid = document.getElementById('allPostsGrid');
       var adminCards = nonFeat.map(function(p) {
         var pimg = p.image
-          ? '<img loading="lazy" src="' + p.image + '" alt="' + esc(p.title) + '" style="width:100%;height:100%;object-fit:cover;" />'
+          ? '<img loading="lazy" src="' + p.image + '" alt="' + esc(p.title) + '" style="width:100%;height:100%;object-fit:cover;" width="800" height="600" />'
           : '';
         return '<article class="post" data-category="' + esc(p.category) + '" data-id="' + esc(p.id) + '" style="cursor:pointer;">' +
           '<div class="post-img b">' + pimg + '</div>' +
@@ -407,6 +407,25 @@
           '</article>';
       });
       grid.innerHTML = adminCards.concat(STATIC_POSTS_HTML).join('');
+
+      // FIX: GAP-20 — empty-state skeleton if no posts at all
+      if (!grid.children.length) {
+        grid.innerHTML = (
+          '<div style="grid-column:1/-1;text-align:center;padding:24px 0 8px;color:var(--stone);font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;">' +
+          'Content coming soon — check back shortly.' +
+          '</div>' +
+          ['Leadership','Culture','Operations'].map(function(cat){
+            return '<article class="post" style="opacity:.55;pointer-events:none;">' +
+              '<div class="post-img b" style="background:linear-gradient(135deg,#E8E6DD,#D9D6CB);min-height:200px;"></div>' +
+              '<div class="tag-row"><span class="tag">'+cat+'</span></div>' +
+              '<h3>Coming soon</h3>' +
+              '<p>A new article on '+cat.toLowerCase()+' is on the way. Subscribe to get notified.</p>' +
+              '<div class="meta-line"><span>— min read</span><span class="dot"></span><span>Soon</span></div>' +
+            '</article>';
+          }).join('')
+        );
+      }
+
       // Wire click handlers for admin cards
       grid.querySelectorAll('.post[data-id]').forEach(function(el) {
         var id = el.dataset.id;

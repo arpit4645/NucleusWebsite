@@ -157,7 +157,7 @@
   <!-- ═══════════ NAV ═══════════ -->
   <nav class="nav">
     <a href="index.html" class="nav-logo">
-      <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" />
+      <img loading="eager" src="assets/logo.png" alt="Nucleus Logo" width="200" height="60" />
     </a>
     <div class="nav-links">
       <a href="about.html">About</a>
@@ -199,7 +199,26 @@
         Follow us on LinkedIn →
       </a>
     </div>
+
+    <!-- FIX: GAP-18 — prominent return CTA + WhatsApp shortcut -->
+    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:48px auto 0;">
+      <a href="index.html" class="btn btn-primary">← Back to Home</a>
+      <a href="https://wa.me/918156076680?text=Hi%2C%20I%20just%20submitted%20the%20form%20on%20your%20site"
+         class="btn btn-ghost" target="_blank" rel="noopener" style="color:var(--white);border-color:rgba(255,255,255,.3);">
+        Message us on WhatsApp
+      </a>
+    </div>
   </main>
+
+  <!-- FIX: GAP-18 — site footer on thank-you -->
+  <footer class="footer" style="background:transparent;color:rgba(255,255,255,.55);padding:40px 0 24px;width:100%;">
+    <div class="wrap">
+      <div class="footer-bottom" style="border-color:rgba(255,255,255,.1);">
+        <div>&copy; 2026 NUCLEUS CONSULTANT. ALL RIGHTS RESERVED.</div>
+        <div>SURAT, INDIA · TRANSFORMING INNER LIGHT</div>
+      </div>
+    </div>
+  </footer>
 
   <script src="assets/site.js"></script>
 </body>
