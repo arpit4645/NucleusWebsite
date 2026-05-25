@@ -11,20 +11,49 @@
   <meta property="og:title" content="Nucleus Consultant" />
   <meta property="og:description"
     content="We help young minds and growing businesses clarify purpose and turn dreams into reality." />
-  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:image" content="https://nucleusconsultent.netlify.app/assets/logo.png" /> <!-- FIX: GAP-07 -->
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="assets/logo.png" />
+  <link rel="canonical" href="https://nucleusconsultent.netlify.app/index.html" /> <!-- FIX: GAP-21 -->
+  <meta name="description" content="Nucleus Consultant — premium business transformation consultancy in Surat, India. We rebuild SMEs by rebuilding leaders. Strategy, culture, sales & operations." /> <!-- FIX: GAP-22 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Nucleus Consultant",
+    "url": "https://nucleusconsultent.netlify.app",
+    "logo": "https://nucleusconsultent.netlify.app/assets/logo.png",
+    "description": "Business transformation consultancy in Surat, India.",
+    "telephone": "+918156076680",
+    "email": "hello@nucleusconsultant.in",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "811 IFC, Opp. Fire Station, VIP Road",
+      "addressLocality": "Vesu, Surat",
+      "postalCode": "395007",
+      "addressCountry": "IN"
+    },
+    "sameAs": []
+  }
+  </script>
+
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" as="style" href="assets/styles.css?v=1.0.2" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/styles.css?v=1.0.2" />
+  <!-- FIX: GAP-13 — removed duplicate font preload that appeared after stylesheet load -->
 
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" />
-  
   <style>
+    /* FIX: GAP-12 — relocated from body */
+    @media (max-width: 880px) {
+      .stats-band > div > div { grid-template-columns: 1fr 1fr !important; }
+      .stats-band > div > div > div:nth-child(2) { border-right: none !important; }
+      .stats-band > div > div > div:nth-child(1),
+      .stats-band > div > div > div:nth-child(2) { border-bottom: 1px solid rgba(247,244,237,0.12) !important; }
+    }
     /* ── Tweaks runtime tokens ─────────────────────────────── */
     :root {
       --t-green: var(--green-primary);
@@ -267,13 +296,11 @@
       line-height: 1;
       color: var(--t-ink);
       letter-spacing: -0.03em;
-      font-variation-settings: "SOFT" 30;
     }
 
     .stats-mini .n em {
       font-style: italic;
       color: var(--gold-deep);
-      font-variation-settings: "SOFT" 100;
     }
 
     .stats-mini .l {
@@ -371,13 +398,11 @@
       line-height: 1;
       color: var(--cream);
       letter-spacing: -0.03em;
-      font-variation-settings: "SOFT" 30;
     }
 
     .sb-num em {
       color: var(--gold);
       font-style: italic;
-      font-variation-settings: "SOFT" 100;
     }
 
     .sb-label {
@@ -394,7 +419,6 @@
       font-family: var(--serif);
       font-size: clamp(26px, 3vw, 42px);
       font-style: italic;
-      font-variation-settings: "SOFT" 100;
       color: var(--ink);
       opacity: .55;
       transition: opacity var(--dur-fast);
@@ -672,7 +696,6 @@
       line-height: 1;
       color: rgba(232, 181, 71, .12);
       pointer-events: none;
-      font-variation-settings: "SOFT" 100;
     }
 
     .testi-card blockquote {
@@ -683,14 +706,12 @@
       letter-spacing: -0.015em;
       max-width: 20ch;
       margin: 0 auto 32px;
-      font-variation-settings: "SOFT" 60;
       position: relative;
       z-index: 1;
     }
 
     .testi-card blockquote em {
       color: var(--gold);
-      font-variation-settings: "SOFT" 100;
     }
 
     .testi-card .attr {
@@ -799,6 +820,12 @@
 </head>
 
 <body>
+  <noscript>
+    <style>
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .hero-line > span { transform: none !important; }
+    </style>
+  </noscript>
   <!-- ═══════════ NAV ═══════════ -->
   <nav class="nav">
     <a href="index.html" class="nav-logo">
@@ -882,13 +909,7 @@
       </div>
     </div>
   </section>
-  <style>
-    @media (max-width: 880px) {
-      .stats-band > div > div { grid-template-columns: 1fr 1fr !important; }
-      .stats-band > div > div > div:nth-child(2) { border-right: none !important; }
-      .stats-band > div > div > div:nth-child(1), .stats-band > div > div > div:nth-child(2) { border-bottom: 1px solid rgba(247,244,237,0.12) !important; }
-    }
-  </style>
+  <!-- FIX: GAP-12 — stats-band media query moved to head <style> block -->
 
   <!-- ═══════════ PAIN MIRROR SECTION ═══════════ -->
   <section class="section" style="background: var(--warm-white); color: var(--charcoal); position: relative; overflow: hidden;">
