@@ -507,3 +507,98 @@ body.nav-dark .nav-burger span,
 @media (max-width: 900px) {
   .footer-bottom .footer-social { margin: 16px 0 0; }
 }
+
+/* Responsive Comparison Row & Tables */
+.comp-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 24px 40px;
+  border-bottom: 1px solid var(--line);
+}
+.comp-row:last-child {
+  border-bottom: none;
+}
+@media (max-width: 768px) {
+  .comp-row {
+    padding: 16px 20px;
+  }
+  .comp-row p, .comp-row h3 {
+    font-size: 15px !important;
+  }
+}
+
+/* Responsive Stats Grid for About Page */
+.stats-grid-about {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.stats-grid-about > div {
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+.stats-grid-about > div:last-child {
+  border-right: none;
+}
+@media (max-width: 768px) {
+  .stats-grid-about {
+    grid-template-columns: 1fr 1fr;
+  }
+  .stats-grid-about > div:nth-child(2n) {
+    border-right: none;
+  }
+  .stats-grid-about > div:nth-child(1),
+  .stats-grid-about > div:nth-child(2) {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+}
+@media (max-width: 480px) {
+  .stats-grid-about {
+    grid-template-columns: 1fr;
+  }
+  .stats-grid-about > div {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .stats-grid-about > div:last-child {
+    border-bottom: none;
+  }
+}
+
+/* Mobile overrides for stats band on homepage */
+@media (max-width: 480px) {
+  .stats-band > div > div {
+    grid-template-columns: 1fr !important;
+  }
+  .stats-band > div > div > div {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(247,244,237,0.12) !important;
+  }
+  .stats-band > div > div > div:last-child {
+    border-bottom: none !important;
+  }
+}
+
+/* About Page Hero Stats Responsive */
+.hero-stats-about {
+  margin-top: 64px;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 40px;
+}
+@media (max-width: 600px) {
+  .hero-stats-about {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+  }
+  .hero-stats-about > div {
+    text-align: center !important;
+    border-left: none !important;
+    padding-left: 0 !important;
+  }
+}
+
+
