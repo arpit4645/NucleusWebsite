@@ -856,14 +856,15 @@
     <div class="hero-bg"></div>
     <div class="hero-grid"></div>
 
-    <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:1;">
       <img src="assets/hero_bg_new.png" alt="" data-media-key="img_hero_bg"
-        style="width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0.55;" width="800" height="600" />
+        style="width:100%;height:100%;object-fit:cover;object-position:center center;" width="800" height="600" />
+      <div style="position:absolute;inset:0;background:linear-gradient(to right, rgba(10,30,15,0.82) 0%, rgba(10,30,15,0.55) 50%, rgba(10,30,15,0.25) 100%);"></div>
     </div>
 
-    <div class="wrap">
+    <div class="wrap" style="position:relative;z-index:10;">
       <div class="hero-inner" style="grid-template-columns: 1fr;">
-        <div style="max-width: 800px; z-index: 10;">
+        <div style="max-width: 800px;">
           <h1 class="hero-h1 hero-anim" id="heroTitle">
             <span class="hero-line"><span data-set="nucleus_hp_hero_line1">Your Business Is Not Stuck</span></span>
             <span class="hero-line line2"><span data-set="nucleus_hp_hero_line2">Because of <em class="hl">Strategy.</em></span></span>
