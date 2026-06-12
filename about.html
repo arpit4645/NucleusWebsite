@@ -7,15 +7,38 @@
   
   <meta property="og:title" content="About Nucleus Consultant" />
   <meta property="og:description" content="We transform the way leaders think, teams behave, and businesses grow." />
-  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:image" content="https://nucleusconsultent.netlify.app/assets/logo.png" /> <!-- FIX: GAP-07 -->
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="assets/logo.png" />
+  <link rel="canonical" href="https://nucleusconsultent.netlify.app/about.html" /> <!-- FIX: GAP-21 -->
+  <meta name="description" content="Meet Nucleus Consultant — a premium transformation consultancy for Indian SMEs. We don't just give strategy; we align mindset, culture, and systems to engineer growth." /> <!-- FIX: GAP-22 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Nucleus Consultant",
+    "url": "https://nucleusconsultent.netlify.app",
+    "logo": "https://nucleusconsultent.netlify.app/assets/logo.png",
+    "description": "Business transformation consultancy in Surat, India.",
+    "telephone": "+918156076680",
+    "email": "hello@nucleusconsultant.in",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "811 IFC, Opp. Fire Station, VIP Road",
+      "addressLocality": "Vesu, Surat",
+      "postalCode": "395007",
+      "addressCountry": "IN"
+    },
+    "sameAs": []
+  }
+  </script>
+
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,wght@0,300..600;1,300..600&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="stylesheet" href="assets/styles.css?v=1.0.4" /> <!-- FIX: GAP-28 -->
   
   <style>
     /* 1. CINEMATIC HERO */
@@ -124,6 +147,12 @@
 </head>
 
 <body>
+  <noscript>
+    <style>
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .hero-line > span { transform: none !important; }
+    </style>
+  </noscript>
   <!-- NAV -->
   <nav class="nav">
     <a href="index.html" class="nav-logo">
@@ -158,7 +187,7 @@
         A premium transformation consultancy for SMEs. We don't just give strategy; we align mindset, culture, and systems to engineer predictable growth.
       </p>
       
-      <div class="reveal" style="margin-top: 64px; display: flex; justify-content: center; gap: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 40px;">
+      <div class="reveal hero-stats-about">
         <div style="text-align: left;">
           <div style="font-family: var(--serif); font-size: 32px; color: var(--gold-primary);"><span data-counter="8" data-suffix="+">8+</span></div>
           <div style="font-family: var(--mono); font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 8px;">Years Experience</div>
@@ -184,7 +213,7 @@
           We operate as an elite extension of your leadership team. We dive deep into the chaos, establish structure, align your people, and engineer an ecosystem where growth is natural, predictable, and sustainable.
         </p>
       </div>
-      <div class="reveal-scale img-zoom upload-zone" id="about-who-img" style="aspect-ratio: 4/5; border-radius: var(--radius-lg); background: url('assets/strategy_abstract.png') center/cover; position: relative;">
+      <div class="reveal-scale img-zoom upload-zone" id="about-who-img" style="aspect-ratio: 4/5; border-radius: var(--radius-lg); background: url('assets/strategy_abstract.webp') center/cover; position: relative;">
         <span class="upload-placeholder" style="display: none;">Upload Image</span>
       </div>
     </div>
@@ -221,7 +250,7 @@
             To empower founders with absolute clarity, build robust operational systems, and align organizational culture so that every business we touch scales with predictability and purpose.
           </p>
         </div>
-        <div class="reveal-scale img-zoom upload-zone" id="about-mission-img" style="border-radius: var(--radius-lg); background: url('assets/culture_alignment.png') center/cover; min-height: 400px; position: relative;">
+        <div class="reveal-scale img-zoom upload-zone" id="about-mission-img" style="border-radius: var(--radius-lg); background: url('assets/culture_alignment.webp') center/cover; min-height: 400px; position: relative;">
           <span class="upload-placeholder" style="display: none;">Upload Image</span>
         </div>
       </div>
@@ -235,7 +264,7 @@
         <p class="eyebrow" style="color: var(--gold-primary);">The Impact</p>
         <h2 style="margin-top: 16px; color: var(--white);">Numbers That Matter</h2>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); overflow: hidden; background: rgba(255,255,255,0.02);">
+      <div class="stats-grid-about" style="border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); overflow: hidden; background: rgba(255,255,255,0.02);">
         <div style="padding: 48px 32px; text-align: center; border-right: 1px solid rgba(255,255,255,0.1);">
           <div style="font-family: var(--serif); font-size: clamp(36px, 4vw, 56px); color: var(--gold-primary); line-height: 1;"><span data-counter="50" data-suffix="+">50+</span></div>
           <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 16px;">SMEs Transformed</div>
@@ -264,21 +293,21 @@
         <h2 class="reveal" style="margin-top: 16px;">Consulting, Evolved.</h2>
       </div>
       <div class="reveal card-hover glass" style="border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--line); background: var(--warm-white);">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; background: var(--green-primary); color: var(--white); padding: 24px 40px;">
-          <h3 style="font-size: 20px; color: rgba(255,255,255,0.6);">Traditional Agencies</h3>
-          <h3 style="font-size: 20px; color: var(--gold-primary);">Nucleus Standard</h3>
+        <div class="comp-row" style="background: var(--green-primary); color: var(--white); border-bottom: none;">
+          <h3 style="font-size: 20px; color: rgba(255,255,255,0.6); margin: 0;">Traditional Agencies</h3>
+          <h3 style="font-size: 20px; color: var(--gold-primary); margin: 0;">Nucleus Standard</h3>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
-          <p style="font-size: 18px; color: var(--muted);">Deliver PowerPoint strategies</p>
-          <p style="font-size: 18px; font-weight: 500; color: var(--green-primary);">Engineer cultural shifts</p>
+        <div class="comp-row">
+          <p style="font-size: 18px; color: var(--muted); margin: 0;">Deliver PowerPoint strategies</p>
+          <p style="font-size: 18px; font-weight: 500; color: var(--green-primary); margin: 0;">Engineer cultural shifts</p>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
-          <p style="font-size: 18px; color: var(--muted);">Focus purely on metrics</p>
-          <p style="font-size: 18px; font-weight: 500; color: var(--green-primary);">Focus on the leaders driving the metrics</p>
+        <div class="comp-row">
+          <p style="font-size: 18px; color: var(--muted); margin: 0;">Focus purely on metrics</p>
+          <p style="font-size: 18px; font-weight: 500; color: var(--green-primary); margin: 0;">Focus on the leaders driving the metrics</p>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
-          <p style="font-size: 18px; color: var(--muted);">Create dependencies</p>
-          <p style="font-size: 18px; font-weight: 500; color: var(--green-primary);">Build self-sustaining ecosystems</p>
+        <div class="comp-row">
+          <p style="font-size: 18px; color: var(--muted); margin: 0;">Create dependencies</p>
+          <p style="font-size: 18px; font-weight: 500; color: var(--green-primary); margin: 0;">Build self-sustaining ecosystems</p>
         </div>
       </div>
     </div>
@@ -314,7 +343,7 @@
   <!-- 7. FOUNDER STORY SECTION -->
   <section class="section" style="background: var(--white);">
     <div class="wrap editorial-grid">
-      <div class="reveal-scale img-zoom upload-zone" id="founder-photo-upload" onclick="document.getElementById('founder-modal').classList.add('active')" style="aspect-ratio: 4/5; border-radius: var(--radius-lg); background: url('assets/founder_portrait.png') center/cover; position: relative; cursor: pointer;">
+      <div class="reveal-scale img-zoom upload-zone" id="founder-photo-upload" onclick="document.getElementById('founder-modal').classList.add('active')" style="aspect-ratio: 4/5; border-radius: var(--radius-lg); background: url('assets/founder_portrait.webp') center/cover; position: relative; cursor: pointer;">
         <span class="upload-placeholder" style="display: none;">Upload Founder Photo</span>
         <div style="position: absolute; bottom: 20px; right: 20px; background: var(--gold-primary); color: var(--ink); padding: 8px 16px; border-radius: 20px; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; pointer-events: none;">Read Full Story →</div>
       </div>
@@ -470,7 +499,7 @@
     </div>
   </footer>
     
-  <script src="assets/site.js"></script>
+  <script src="assets/site.js?v=2"></script>
   <script>
     // CMS LITE: Text Loading (Read-only on frontend)
     function loadTextContent() {
@@ -588,15 +617,15 @@
           btn.innerHTML = video.muted ? svgMuted : svgUnmuted;
         });
       } else {
-        container.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;min-height:inherit;display:block;" />`;
+        container.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;min-height:inherit;display:block;" width="800" height="600" />`;
       }
     }
 
     function loadAllMedia() {
-      loadUniversalMedia('about-who-img',        'nucleus_about_who_img',     'assets/strategy_abstract.png');
-      loadUniversalMedia('vision-media-container','nucleus_vision_video',      'assets/inner_light.png');
-      loadUniversalMedia('about-mission-img',    'nucleus_about_mission_img', 'assets/culture_alignment.png');
-      loadUniversalMedia('founder-photo-upload', 'nucleus_founder_photo',     'assets/founder_portrait.png');
+      loadUniversalMedia('about-who-img',        'nucleus_about_who_img',     'assets/strategy_abstract.webp');
+      loadUniversalMedia('vision-media-container','nucleus_vision_video',      'assets/inner_light.webp');
+      loadUniversalMedia('about-mission-img',    'nucleus_about_mission_img', 'assets/culture_alignment.webp');
+      loadUniversalMedia('founder-photo-upload', 'nucleus_founder_photo',     'assets/founder_portrait.webp');
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -610,5 +639,6 @@
       loadAllMedia();
     });
   </script>
+  <script src="assets/nucleus-live.js?v=2"></script>
 </body>
 </html>

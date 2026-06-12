@@ -25,6 +25,20 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('page-loaded');
+  document.documentElement.classList.add('js'); // FIX: GAP-09
+
+  // FIX: GAP-09 — IntersectionObserver fallback so content stays visible on legacy browsers
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-scale, .hero-line > span').forEach(el => {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    // also reveal stat counters with their final values
+    document.querySelectorAll('[data-counter]').forEach(el => {
+      el.textContent = el.getAttribute('data-counter') + (el.getAttribute('data-suffix') || '');
+    });
+    return;
+  }
 
   /* ── 1. Scroll Reveals ─────────────────────────────────────── */
   const observerOptions = {
@@ -80,14 +94,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ── 3. Mobile Menu ─────────────────────────────────────────── */
+  // FIX: GAP-08 — toggle .nav-open on the <nav> element (used by mobile CSS)
   const burger = document.querySelector('.nav-burger');
   const navLinks = document.querySelector('.nav-links');
-  
-  if (burger && navLinks) {
+  const navEl = document.querySelector('.nav');
+
+  if (burger && navLinks && navEl) {
     burger.addEventListener('click', () => {
-      navLinks.classList.toggle('open');
-      burger.classList.toggle('active');
+      const isOpen = navEl.classList.toggle('nav-open');
+      navLinks.classList.toggle('open', isOpen);
+      burger.classList.toggle('active', isOpen);
+      burger.setAttribute('aria-expanded', String(isOpen));
+      document.body.style.overflow = isOpen ? 'hidden' : '';
     });
+    // close on link tap (mobile)
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      navEl.classList.remove('nav-open');
+      navLinks.classList.remove('open');
+      burger.classList.remove('active');
+      document.body.style.overflow = '';
+    }));
   }
 
   /* ── 4. Stats Counter Animation ─────────────────────────────── */
@@ -301,24 +327,28 @@ async function loadGlobalMediaAndSettings() {
   }
 
   // B. Load dynamic text elements (with data-set attribute, ignoring global contact keys)
+  // FIX: GAP-19 — only override the element's HTML if the stored value is non-empty;
+  // empty / null / undefined values preserve the default HTML written into the markup.
   document.querySelectorAll('[data-set]').forEach(el => {
     const key = el.getAttribute('data-set');
     if (key && !['email', 'phone', 'address', 'insta', 'linkedin', 'twitter'].includes(key)) {
       const val = localStorage.getItem(key);
-      if (val !== null) el.innerHTML = val;
+      if (val !== undefined && val !== null && val !== '') el.innerHTML = val;
     }
   });
 
+  // FIX: GAP-31/32 — Render dynamic services grid, case study, and testimonial on homepage.
+  // Earlier version used Unicode curly quotes inside HTML strings which broke the markup.
   // C1. Render nucleus_services grid on homepage
   try {
     const svcs = JSON.parse(localStorage.getItem('nucleus_services') || '[]');
     const svcGrid = document.getElementById('hp-services-grid');
     if (svcGrid && svcs.length) {
       svcGrid.innerHTML = svcs.map(s =>
-        `<a href=”services.html” class=”prog prog-light” style=”min-height:auto;padding:32px;border:1px solid var(--green-pale);”>
-          <div style=”font-size:28px;margin-bottom:12px;”>${s.icon || '🔧'}</div>
-          <h3 style=”margin:0;font-size:20px;color:var(--green-deep);”>${s.title || ''}</h3>
-          ${s.description ? `<p style=”margin:12px 0 0;color:var(--muted);font-size:15px;line-height:1.5;”>${s.description}</p>` : ''}
+        `<a href="services.html" class="prog prog-light" style="min-height:auto;padding:32px;border:1px solid var(--green-pale);">
+          <div style="font-size:28px;margin-bottom:12px;">${s.icon || '🔧'}</div>
+          <h3 style="margin:0;font-size:20px;color:var(--green-deep);">${s.title || ''}</h3>
+          ${s.description ? `<p style="margin:12px 0 0;color:var(--muted);font-size:15px;line-height:1.5;">${s.description}</p>` : ''}
         </a>`
       ).join('');
     }
@@ -330,21 +360,21 @@ async function loadGlobalMediaAndSettings() {
     const csEl = document.getElementById('hp-case-study');
     if (csEl && cases.length) {
       const c = cases[0];
-      const xSvg = `<svg width=”20” height=”20” viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”2” stroke-linecap=”round” stroke-linejoin=”round” style=”margin-top:4px;flex-shrink:0;”><line x1=”18” y1=”6” x2=”6” y2=”18”/><line x1=”6” y1=”6” x2=”18” y2=”18”/></svg>`;
-      const chkSvg = `<svg width=”20” height=”20” viewBox=”0 0 24 24” fill=”none” stroke=”currentColor” stroke-width=”2” stroke-linecap=”round” stroke-linejoin=”round” style=”margin-top:4px;flex-shrink:0;”><polyline points=”20 6 9 17 4 12”/></svg>`;
+      const xSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:4px;flex-shrink:0;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+      const chkSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:4px;flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>`;
       const beforeItems = (c.before || '').split('\n').filter(Boolean).map(t =>
-        `<li style=”display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;”>${xSvg} ${t}</li>`).join('');
+        `<li style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">${xSvg} ${t}</li>`).join('');
       const afterItems = (c.after || '').split('\n').filter(Boolean).map(t =>
-        `<li style=”display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;”>${chkSvg} ${t}</li>`).join('');
+        `<li style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">${chkSvg} ${t}</li>`).join('');
       csEl.innerHTML = `
-        <div class=”card-hover wipe-reveal” style=”background:#FFF0F0;padding:40px;border-radius:20px;border:1px solid #FFD6D6;”>
-          <h3 style=”color:#D32F2F;margin-bottom:24px;font-size:24px;”>Before:</h3>
-          <ul style=”font-size:18px;line-height:2;list-style-type:none;padding:0;color:#5C1010;”>${beforeItems}</ul>
+        <div class="card-hover wipe-reveal" style="background:#FFF0F0;padding:40px;border-radius:20px;border:1px solid #FFD6D6;">
+          <h3 style="color:#D32F2F;margin-bottom:24px;font-size:24px;">Before:</h3>
+          <ul style="font-size:18px;line-height:2;list-style-type:none;padding:0;color:#5C1010;">${beforeItems}</ul>
         </div>
-        <div class=”card-hover wipe-reveal” style=”background:#F0FFF4;padding:40px;border-radius:20px;border:1px solid #C6F6D5;”>
-          <h3 style=”color:#2F855A;margin-bottom:24px;font-size:24px;”>After:</h3>
-          <ul style=”font-size:18px;line-height:2;list-style-type:none;padding:0;color:#1C4532;”>${afterItems}</ul>
-          ${c.result ? `<p style=”margin-top:24px;font-weight:600;color:#2F855A;”>Result: ${c.result}</p>` : ''}
+        <div class="card-hover wipe-reveal" style="background:#F0FFF4;padding:40px;border-radius:20px;border:1px solid #C6F6D5;">
+          <h3 style="color:#2F855A;margin-bottom:24px;font-size:24px;">After:</h3>
+          <ul style="font-size:18px;line-height:2;list-style-type:none;padding:0;color:#1C4532;">${afterItems}</ul>
+          ${c.result ? `<p style="margin-top:24px;font-weight:600;color:#2F855A;">Result: ${c.result}</p>` : ''}
         </div>`;
     }
   } catch(e) {}
@@ -357,24 +387,88 @@ async function loadGlobalMediaAndSettings() {
       const qEl = document.getElementById('hp-testimonial-quote');
       const nEl = document.getElementById('hp-testimonial-name');
       const rEl = document.getElementById('hp-testimonial-role');
-      if (qEl && t.quote) qEl.textContent = '”' + t.quote + '”';
+      if (qEl && t.quote) qEl.textContent = '"' + t.quote + '"';
       if (nEl && t.name) nEl.textContent = t.name;
       if (rEl && (t.role || t.company)) rEl.textContent = [t.role, t.company].filter(Boolean).join(', ');
     }
   } catch(e) {}
 
+  // FIX: GAP-17 — auto-inject footer social icons (Instagram / LinkedIn / Twitter)
+  // reading hrefs from nucleus_site_settings (insta/linkedin/twitter). Skips if already added.
+  try {
+    const settings = JSON.parse(localStorage.getItem('nucleus_site_settings') || '{}');
+    document.querySelectorAll('.footer').forEach(footer => {
+      if (footer.querySelector('.footer-social')) return;
+      const social = document.createElement('div');
+      social.className = 'footer-social';
+      const ig = settings.insta    || '';
+      const li = settings.linkedin || '';
+      const tw = settings.twitter  || '';
+      social.innerHTML = `
+        ${ig ? `<a data-set="insta" href="${ig}" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>` : ''}
+        ${li ? `<a data-set="linkedin" href="${li}" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>` : ''}
+        ${tw ? `<a data-set="twitter" href="${tw}" target="_blank" rel="noopener" aria-label="Twitter / X">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>` : ''}
+      `.trim();
+      if (!social.innerHTML) return; // nothing to inject if no socials configured
+      // try to attach inside the existing footer-bottom row, else inside .wrap
+      const target = footer.querySelector('.footer-bottom') || footer.querySelector('.wrap') || footer;
+      target.appendChild(social);
+    });
+  } catch (e) { /* non-fatal */ }
 
-  // B2. Render services list on services page
+
+  // B2. Render services page (hero, list, steps, pricing)
   const servicesList = document.getElementById('services-dynamic-list');
   if (servicesList) {
+    // Hero text
+    const svcHero = JSON.parse(localStorage.getItem('nucleus_services_hero') || '{}');
+    const heroTitle = document.getElementById('svc-hero-title');
+    const heroSub   = document.getElementById('svc-hero-sub');
+    if (heroTitle && svcHero.title) heroTitle.innerHTML = svcHero.title;
+    if (heroSub   && svcHero.sub)   heroSub.textContent  = svcHero.sub;
+
+    // Pricing note
+    const svcPricing = JSON.parse(localStorage.getItem('nucleus_services_pricing') || '{}');
+    const priceQ = document.getElementById('svc-pricing-quote');
+    const priceCta = document.getElementById('svc-pricing-cta');
+    if (priceQ && svcPricing.quote) priceQ.textContent = svcPricing.quote;
+    if (priceCta && svcPricing.cta) priceCta.textContent = svcPricing.cta + ' →';
+
+    // How We Work steps
+    const DEFAULT_STEPS = [
+      {icon:'🔍', title:'Diagnose', desc:'2-hour deep-dive into your business to identify the real bottlenecks. Completely free.'},
+      {icon:'⭐', title:'Design',   desc:'Custom transformation roadmap built specifically for your context and team size.'},
+      {icon:'⚡', title:'Deploy',   desc:'Hands-on implementation with your team over a 6 to 12-month partnership.'}
+    ];
+    const svcSteps = JSON.parse(localStorage.getItem('nucleus_services_steps') || 'null') || DEFAULT_STEPS;
+    const stepsEl = document.getElementById('svc-steps-render');
+    if (stepsEl) {
+      stepsEl.innerHTML = svcSteps.map((s, i) => `
+        <div class="step-card reveal">
+          <div class="icon"><span style="font-size:28px;">${s.icon || ''}</span></div>
+          <h3>${i+1}. ${s.title || ''}</h3>
+          <p>${s.desc || ''}</p>
+        </div>`).join('');
+      stepsEl.querySelectorAll('.reveal').forEach(el => {
+        if (typeof window._revealObserver !== 'undefined') window._revealObserver.observe(el);
+      });
+    }
+
+    // Services list
     const DEFAULT_SERVICES = [
-      {icon:'🧠', title:'Leadership & Thinking', description:'Transform how your leaders think and make decisions.'},
-      {icon:'🤝', title:'Culture & Accountability', description:'Build a team culture of ownership and accountability.'},
-      {icon:'📈', title:'Sales & Growth System', description:'Build predictable sales systems that scale.'},
-      {icon:'📣', title:'Marketing & Brand Positioning', description:'Position your brand for premium market visibility.'},
-      {icon:'⚙️', title:'Operations & SOP Systems', description:'Build efficient, documented, repeatable processes.'},
-      {icon:'👥', title:'HR & People Development', description:'Attract, develop and retain high-performance people.'},
-      {icon:'💰', title:'Finance & Business Clarity', description:'Get complete financial visibility and control.'}
+      {icon:'🧠', title:'Leadership & Thinking',      description:'Transform how your leaders think and make decisions.',    outcomes:'Clearer decision-making\nReduced founder dependency\nLeadership accountability'},
+      {icon:'🤝', title:'Culture & Accountability',   description:'Build a team culture of ownership and accountability.',  outcomes:'Team ownership mindset\nAccountability systems\nCulture code documented'},
+      {icon:'📈', title:'Sales & Growth System',      description:'Build predictable sales systems that scale.',            outcomes:'Consistent monthly leads\nOutbound sales process\nRevenue forecasting'},
+      {icon:'📣', title:'Marketing & Brand Positioning', description:'Position your brand for premium market visibility.',  outcomes:'Clear brand positioning\nDigital presence\nPremium market entry'},
+      {icon:'⚙️', title:'Operations & SOP Systems',  description:'Build efficient, documented, repeatable processes.',     outcomes:'SOPs for every function\nReduced operational chaos\nScalable workflows'},
+      {icon:'👥', title:'HR & People Development',   description:'Attract, develop and retain high-performance people.',   outcomes:'Hiring framework\nOnboarding process\nPerformance reviews'},
+      {icon:'💰', title:'Finance & Business Clarity', description:'Get complete financial visibility and control.',         outcomes:'Cash flow clarity\nP&L understanding\nInvestment decisions'}
     ];
     let services = [];
     try { services = JSON.parse(localStorage.getItem('nucleus_services') || '[]'); } catch(e) {}
@@ -384,13 +478,22 @@ async function loadGlobalMediaAndSettings() {
       const outcomesHtml = s.outcomes
         ? `<ul class="s-outcomes">${s.outcomes.split('\n').filter(l => l.trim()).map(l => `<li>${l.trim()}</li>`).join('')}</ul>`
         : '';
+      const whoHtml = s.who
+        ? `<div class="s-who"><strong>Who It's For</strong><p>${s.who}</p></div>`
+        : '';
+      const tagHtml = s.tag
+        ? `<span style="display:inline-block;background:var(--gold-primary);color:var(--green-deep);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:3px 10px;border-radius:20px;margin-bottom:16px;">${s.tag}</span><br>`
+        : '';
       const num = String(i + 1).padStart(2, '0');
+      const ctaLabel = s.cta || 'Book a Consult';
       return `<div class="service-block${altClass} reveal">
         <div class="content-side">
+          ${tagHtml}
           <div class="s-icon"><span style="font-size:22px;">${s.icon || '🔧'}</span></div>
           <h2>${s.title || ''}</h2>
           <p style="color:var(--stone);font-size:18px;line-height:1.8;margin-top:16px;">${s.description || ''}</p>
-          <a href="contact.html" class="btn btn-primary" style="display:inline-flex;margin-top:32px;">Book a Consult &nbsp;&rarr;</a>
+          ${whoHtml}
+          <a href="contact.html" class="btn btn-primary" style="display:inline-flex;margin-top:32px;">${ctaLabel} &nbsp;&rarr;</a>
         </div>
         <div class="visual-side" style="background:var(--warm-white);border-radius:var(--radius-xl);padding:40px;position:relative;overflow:hidden;min-height:260px;display:flex;flex-direction:column;justify-content:center;">
           <div style="font-family:var(--serif);font-size:clamp(80px,10vw,130px);color:var(--green-primary);opacity:0.06;position:absolute;top:-10px;right:16px;line-height:1;user-select:none;font-weight:900;pointer-events:none;">${num}</div>
@@ -399,7 +502,6 @@ async function loadGlobalMediaAndSettings() {
         </div>
       </div>`;
     }).join('');
-    // Re-observe newly added reveal elements
     servicesList.querySelectorAll('.reveal').forEach(el => {
       if (typeof window._revealObserver !== 'undefined') window._revealObserver.observe(el);
     });
@@ -690,3 +792,56 @@ function injectVideoOrIframe(container, src, isVideo, isYT, isVimeo) {
   }
 }
 
+
+
+/* ════════════════════════════════════════════════════════════
+   MODERN UI COMPONENTS  ·  scroll progress + back-to-top
+   Injected on every page (site.js loads sitewide).
+   Respects prefers-reduced-motion for smoothness only.
+   ════════════════════════════════════════════════════════════ */
+(function modernUI() {
+  function init() {
+    // Avoid double-injection
+    if (document.querySelector('.scroll-progress')) return;
+
+    /* Scroll progress bar */
+    var bar = document.createElement('div');
+    bar.className = 'scroll-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(bar);
+
+    /* Back-to-top button */
+    var top = document.createElement('button');
+    top.className = 'to-top';
+    top.setAttribute('aria-label', 'Back to top');
+    top.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+    top.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    document.body.appendChild(top);
+
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        var h = document.documentElement;
+        var scrolled = h.scrollTop;
+        var max = h.scrollHeight - h.clientHeight;
+        var pct = max > 0 ? (scrolled / max) * 100 : 0;
+        bar.style.width = pct + '%';
+        if (scrolled > 600) top.classList.add('show');
+        else top.classList.remove('show');
+        ticking = false;
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

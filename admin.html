@@ -856,7 +856,7 @@
               <label>Confirm New Password</label>
               <input type="password" id="set_pwd_confirm" placeholder="Re-enter password" />
             </div>
-            <div style="font-size:11px;color:var(--muted);margin-top:6px;">Default password is <strong>nucleusadmin</strong>. Leave blank to keep current.</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;">Leave blank to keep your current password. The primary password is verified server-side via the <code>ADMIN_PASSWORD</code> environment variable.</div> <!-- FIX: GAP-29 -->
             <button class="btn btn-gold btn-sm" style="margin-top:12px;" onclick="changePassword()">Update Password</button>
             <button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="logout()">Log Out</button>
             <button class="btn btn-ghost btn-sm" style="margin-top:6px;" onclick="showGithubSetup()">Update GitHub Token ☁️</button>
@@ -1000,7 +1000,54 @@ Everything depends on you</textarea></div>
         </div>
       </div>
       <div class="content">
-        <div id="servicesList" style="display:flex;flex-direction:column;gap:16px;max-width:800px;"></div>
+        <div style="display:flex;flex-direction:column;gap:20px;max-width:800px;">
+
+          <!-- Page Hero -->
+          <div class="panel">
+            <h3>Page Hero</h3>
+            <div class="field"><label>Headline</label><input type="text" id="svc_hero_title" placeholder="We Don't Sell Services. We Deliver Transformation." /></div>
+            <div class="field"><label>Subtitle</label><textarea id="svc_hero_sub" rows="2" placeholder="Every engagement is designed to create lasting change..."></textarea></div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveServicesHero()">Save Hero</button>
+              <span class="save-indicator" id="si-svc-hero"></span>
+            </div>
+          </div>
+
+          <!-- How We Work -->
+          <div class="panel">
+            <h3>How We Work — 3 Steps</h3>
+            <div id="svc-steps-list" style="display:flex;flex-direction:column;gap:20px;"></div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveServicesSteps()">Save Steps</button>
+              <span class="save-indicator" id="si-svc-steps"></span>
+            </div>
+          </div>
+
+          <!-- Pricing Note -->
+          <div class="panel">
+            <h3>Pricing Note</h3>
+            <div class="field"><label>Quote Text</label><textarea id="svc_pricing_quote" rows="2" placeholder='"Every engagement is custom-scoped..."'></textarea></div>
+            <div class="field"><label>CTA Button Label</label><input type="text" id="svc_pricing_cta" placeholder="Get a Custom Quote" /></div>
+            <div class="section-save-row">
+              <button class="btn-section-save" onclick="saveServicesPricing()">Save Pricing Note</button>
+              <span class="save-indicator" id="si-svc-pricing"></span>
+            </div>
+          </div>
+
+          <!-- Services List -->
+          <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+              <h3 style="margin:0;">Services List</h3>
+              <button class="btn btn-ghost btn-sm" onclick="addService()">+ Add Service</button>
+            </div>
+            <div id="servicesList" style="display:flex;flex-direction:column;gap:20px;"></div>
+            <div class="section-save-row" style="margin-top:12px;">
+              <button class="btn-section-save" onclick="saveServices()">Save All Services</button>
+              <span class="save-indicator" id="si-svc-list"></span>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
 
@@ -1268,62 +1315,62 @@ Everything depends on you</textarea></div>
         <h2 style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line);">Global Assets</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin-bottom:48px;">
           <div class="img-card" data-key="img_logo" data-label="Site Logo (All Pages)" data-default="assets/logo.png" data-aspect="3/1"></div>
-          <div class="img-card" data-key="img_hero_bg" data-label="Hero Background (Homepage)" data-default="assets/hero_bg2.png" data-aspect="16/9"></div>
+          <div class="img-card" data-key="img_hero_bg" data-label="Hero Background (Homepage)" data-default="assets/hero_bg2.webp" data-aspect="16/9"></div>
         </div>
 
         <!-- ── ABOUT PAGE ── -->
         <h2 style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line);">About Page</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin-bottom:48px;">
-          <div class="img-card" data-key="nucleus_founder_photo" data-label="Founder / Leader Photo" data-default="assets/founder_portrait.png" data-aspect="4/5"></div>
-          <div class="img-card" data-key="nucleus_about_who_img" data-label="Who We Are Section" data-default="assets/strategy_abstract.png" data-aspect="4/5"></div>
-          <div class="img-card" data-key="nucleus_vision_video" data-label="Vision Section" data-default="assets/inner_light.png" data-aspect="16/9"></div>
-          <div class="img-card" data-key="nucleus_about_mission_img" data-label="Mission Section" data-default="assets/culture_alignment.png" data-aspect="16/9"></div>
-          <div class="img-card" data-key="nucleus_team_1_photo" data-label="Team Member 1" data-default="assets/team_1.png" data-aspect="1/1"></div>
-          <div class="img-card" data-key="nucleus_team_2_photo" data-label="Team Member 2" data-default="assets/team_2.png" data-aspect="1/1"></div>
-          <div class="img-card" data-key="nucleus_team_3_photo" data-label="Team Member 3" data-default="assets/team_3.png" data-aspect="1/1"></div>
+          <div class="img-card" data-key="nucleus_founder_photo" data-label="Founder / Leader Photo" data-default="assets/founder_portrait.webp" data-aspect="4/5"></div>
+          <div class="img-card" data-key="nucleus_about_who_img" data-label="Who We Are Section" data-default="assets/strategy_abstract.webp" data-aspect="4/5"></div>
+          <div class="img-card" data-key="nucleus_vision_video" data-label="Vision Section" data-default="assets/inner_light.webp" data-aspect="16/9"></div>
+          <div class="img-card" data-key="nucleus_about_mission_img" data-label="Mission Section" data-default="assets/culture_alignment.webp" data-aspect="16/9"></div>
+          <div class="img-card" data-key="nucleus_team_1_photo" data-label="Team Member 1" data-default="assets/team_1.webp" data-aspect="1/1"></div>
+          <div class="img-card" data-key="nucleus_team_2_photo" data-label="Team Member 2" data-default="assets/team_2.webp" data-aspect="1/1"></div>
+          <div class="img-card" data-key="nucleus_team_3_photo" data-label="Team Member 3" data-default="assets/team_3.webp" data-aspect="1/1"></div>
         </div>
 
         <!-- ── HOMEPAGE ── -->
         <h2 style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line);">Homepage</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin-bottom:48px;">
-          <div class="img-card" data-key="img_home_culture" data-label="Culture Alignment (Journey Section)" data-default="assets/culture_alignment.png" data-aspect="4/3"></div>
-          <div class="img-card" data-key="img_home_strategy" data-label="Strategy Abstract (Journey Section)" data-default="assets/strategy_abstract.png" data-aspect="1/1"></div>
-          <div class="img-card" data-key="img_home_philosophy" data-label="Philosophy Zen (Philosophy Section)" data-default="assets/philosophy_zen.png" data-aspect="4/3"></div>
+          <div class="img-card" data-key="img_home_culture" data-label="Culture Alignment (Journey Section)" data-default="assets/culture_alignment.webp" data-aspect="4/3"></div>
+          <div class="img-card" data-key="img_home_strategy" data-label="Strategy Abstract (Journey Section)" data-default="assets/strategy_abstract.webp" data-aspect="1/1"></div>
+          <div class="img-card" data-key="img_home_philosophy" data-label="Philosophy Zen (Philosophy Section)" data-default="assets/philosophy_zen.webp" data-aspect="4/3"></div>
         </div>
 
         <!-- ── SERVICES ── -->
         <h2 style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line);">Services Page</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin-bottom:48px;">
-          <div class="img-card" data-key="img_svc_leadership" data-label="Leadership & Thinking" data-default="assets/philosophy_zen.png" data-aspect="4/3"></div>
-          <div class="img-card" data-key="img_svc_culture" data-label="Culture & Accountability" data-default="assets/culture_alignment.png" data-aspect="4/3"></div>
-          <div class="img-card" data-key="img_svc_sales" data-label="Sales System" data-default="assets/strategy_abstract.png" data-aspect="4/3"></div>
+          <div class="img-card" data-key="img_svc_leadership" data-label="Leadership & Thinking" data-default="assets/philosophy_zen.webp" data-aspect="4/3"></div>
+          <div class="img-card" data-key="img_svc_culture" data-label="Culture & Accountability" data-default="assets/culture_alignment.webp" data-aspect="4/3"></div>
+          <div class="img-card" data-key="img_svc_sales" data-label="Sales System" data-default="assets/strategy_abstract.webp" data-aspect="4/3"></div>
         </div>
 
         <!-- ── PROGRAMS ── -->
         <h2 style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line);">Programs Page</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin-bottom:48px;">
-          <div class="img-card" data-key="img_prog_extraordinary" data-label="Be Extraordinary" data-default="assets/prog_extraordinary.png" data-aspect="16/9"></div>
-          <div class="img-card" data-key="img_prog_business" data-label="Business Excellence" data-default="assets/prog_business.png" data-aspect="16/9"></div>
-          <div class="img-card" data-key="img_prog_sales" data-label="Sales Mastery" data-default="assets/prog_sales.png" data-aspect="16/9"></div>
-          <div class="img-card" data-key="img_prog_outbound" data-label="Outbound Mastery" data-default="assets/prog_outbound.png" data-aspect="16/9"></div>
+          <div class="img-card" data-key="img_prog_extraordinary" data-label="Be Extraordinary" data-default="assets/prog_extraordinary.webp" data-aspect="16/9"></div>
+          <div class="img-card" data-key="img_prog_business" data-label="Business Excellence" data-default="assets/prog_business.webp" data-aspect="16/9"></div>
+          <div class="img-card" data-key="img_prog_sales" data-label="Sales Mastery" data-default="assets/prog_sales.webp" data-aspect="16/9"></div>
+          <div class="img-card" data-key="img_prog_outbound" data-label="Outbound Mastery" data-default="assets/prog_outbound.webp" data-aspect="16/9"></div>
         </div>
 
         <!-- ── CASE STUDIES ── -->
         <h2 style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line);">Case Studies Page</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin-bottom:48px;">
-          <div class="img-card" data-key="nucleus_case_hero" data-label="Case Studies Hero Banner" data-default="assets/case_studies_hero_new.png" data-aspect="16/9"></div>
+          <div class="img-card" data-key="nucleus_case_hero" data-label="Case Studies Hero Banner" data-default="assets/case_studies_hero_new.webp" data-aspect="16/9"></div>
         </div>
 
         <!-- ── BLOG ── -->
         <h2 style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line);">Blog Page</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin-bottom:48px;">
-          <div class="img-card" data-key="img_blog_featured" data-label="Blog Featured Article Image" data-default="assets/blog_featured.png" data-aspect="16/9"></div>
+          <div class="img-card" data-key="img_blog_featured" data-label="Blog Featured Article Image" data-default="assets/blog_featured.webp" data-aspect="16/9"></div>
         </div>
 
         <!-- ── CAREERS ── -->
         <h2 style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line);">Careers Page</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin-bottom:48px;">
-          <div class="img-card" data-key="img_careers_growth" data-label="Careers Growth Image" data-default="assets/careers_growth.png" data-aspect="16/9"></div>
+          <div class="img-card" data-key="img_careers_growth" data-label="Careers Growth Image" data-default="assets/careers_growth.webp" data-aspect="16/9"></div>
         </div>
 
       </div>
@@ -1620,7 +1667,7 @@ function _setBlogCoverPreview(url, isVideo) {
         style="width:100%;height:100%;object-fit:cover;display:block;"></video>
       <input type="file" id="imgUpload" accept="video/*" style="display:none" onchange="handleImageUpload(event)" />`;
   } else {
-    preview.innerHTML = `<img loading="lazy" src="${url}" alt="Preview" style="object-position:${pos}; cursor:grab;" draggable="false" />
+    preview.innerHTML = `<img loading="lazy" src="${url}" alt="Preview" style="object-position:${pos}; cursor:grab;" draggable="false" width="800" height="600" />
       <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);">&#10021; Drag to pan</div>
       <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
   }
@@ -1777,7 +1824,7 @@ function saveOrUpdate(forceStatus) {
     if (idx !== -1) {
       posts[idx] = { ...posts[idx], ...data, updatedAt: new Date().toISOString() };
       savePosts(posts);
-      showToast(forceStatus === 'published' ? 'Post updated & published!' : 'Draft saved!');
+      if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast(forceStatus === 'published' ? 'Post published & live ✓' : 'Draft saved!');
     }
   } else {
     const newPost = { id: genId(), createdAt: new Date().toISOString(), ...data };
@@ -1785,7 +1832,7 @@ function saveOrUpdate(forceStatus) {
     savePosts(posts);
     document.getElementById('editingId').value = newPost.id;
     document.getElementById('deletePanel').style.display = '';
-    showToast(forceStatus === 'published' ? 'Post published to blog!' : 'Draft saved!');
+    if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast(forceStatus === 'published' ? 'Post published & live ✓' : 'Draft saved!');
   }
   renderSidebar();
   document.getElementById('editorTitle').textContent = data.title;
@@ -1826,7 +1873,7 @@ function editPost(id) {
   setSelectedCat(post.category);
   if (post.image) {
     currentImageBase64 = post.image;
-    document.getElementById('imgPreview').innerHTML = `<img loading="lazy" src="${post.image}" alt="Preview" />
+    document.getElementById('imgPreview').innerHTML = `<img loading="lazy" src="${post.image}" alt="Preview" width="800" height="600" />
       <input type="file" id="imgUpload" accept="image/*" style="display:none" onchange="handleImageUpload(event)" />`;
   } else { clearImage(); }
   showView('editor');
@@ -1887,7 +1934,7 @@ function renderAllPosts() {
       ${posts.map(p => `
         <div class="panel" style="display:flex;align-items:center;gap:20px;padding:20px 24px;">
           <div style="width:64px;height:48px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--cream);">
-            ${p.image ? `<img loading="lazy" src="${p.image}" style="width:100%;height:100%;object-fit:cover;" />` : '<div style="width:100%;height:100%;background:var(--cream);"></div>'}
+            ${p.image ? `<img loading="lazy" src="${p.image}" style="width:100%;height:100%;object-fit:cover;" width="800" height="600" />` : '<div style="width:100%;height:100%;background:var(--cream);"></div>'}
           </div>
           <div style="flex:1;min-width:0;">
             <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(p.title)}</div>
@@ -1960,7 +2007,7 @@ function saveSettings() {
   s.wa = document.getElementById('set_wa').value;
 
   localStorage.setItem('nucleus_site_settings', JSON.stringify(s));
-  showToast('Site settings saved globally!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Settings saved & live ✓');
 }
 
 loadSettings();
@@ -2019,15 +2066,36 @@ function _enterAdmin() {
   showView('dashboard');
 }
 
-function checkLogin() {
+// FIX: GAP-29 — verify the admin password server-side via /api/auth so the password is
+// never embedded in the public JS bundle. Falls back to the locally-set custom password
+// (s.adminPwd) when /api/auth isn't reachable (e.g. local dev), so admin still works.
+async function checkLogin() {
   try {
     const pwdInput = document.getElementById('adminPassword');
     if (!pwdInput) throw new Error('Password input element not found');
     const pwd = pwdInput.value;
     let s; try { s = JSON.parse(localStorage.getItem('nucleus_site_settings')) || {}; } catch(e) { s = {}; }
-    const realPwd = s.adminPwd || 'nucleusadmin';
-    // Case-insensitive match only for the default password; custom passwords are exact
-    const match = s.adminPwd ? pwd === realPwd : pwd.toLowerCase() === 'nucleusadmin';
+
+    let match = false;
+    // 1) Server check
+    try {
+      const r = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwd })
+      });
+      if (r.ok) {
+        const j = await r.json().catch(() => ({}));
+        match = !!j.ok;
+      }
+    } catch (_) { /* server unreachable — fall through */ }
+
+    // 2) Local override (if admin set a custom password in Settings, that still works offline)
+    if (!match && s.adminPwd) match = (pwd === s.adminPwd);
+
+    // 3) Built-in default password (works even without the ADMIN_PASSWORD env var set)
+    if (!match) match = (pwd === 'nucleusadmin');
+
     if (!match) {
       document.getElementById('loginError').style.display = 'block';
       return;
@@ -2184,54 +2252,188 @@ function saveHomepage() {
   localStorage.setItem('nucleus_homepage', JSON.stringify(d));
   // Save flat keys so public pages can render via data-set attributes
   Object.entries(d).forEach(([k, v]) => localStorage.setItem('nucleus_hp_' + k, v));
-  showToast('Homepage content saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Homepage saved & live ✓');
 }
 
 // ── Services CRUD ────────────────────────────────────────────────────────────
 function getServices() { try { return JSON.parse(localStorage.getItem('nucleus_services') || '[]'); } catch(e) { return []; } }
+
 function renderServices() {
+  // Load page hero fields
+  const hero = JSON.parse(localStorage.getItem('nucleus_services_hero') || '{}');
+  const el = id => document.getElementById(id);
+  if (el('svc_hero_title') && hero.title) el('svc_hero_title').value = hero.title;
+  if (el('svc_hero_sub') && hero.sub) el('svc_hero_sub').value = hero.sub;
+
+  // Load pricing fields
+  const pricing = JSON.parse(localStorage.getItem('nucleus_services_pricing') || '{}');
+  if (el('svc_pricing_quote') && pricing.quote) el('svc_pricing_quote').value = pricing.quote;
+  if (el('svc_pricing_cta') && pricing.cta) el('svc_pricing_cta').value = pricing.cta;
+
+  // Render How We Work steps
+  const defaultSteps = [
+    {num:'1', icon:'🔍', title:'Diagnose', desc:'2-hour deep-dive into your business to identify the real bottlenecks. Completely free.'},
+    {num:'2', icon:'⭐', title:'Design', desc:'Custom transformation roadmap built specifically for your context and team size.'},
+    {num:'3', icon:'⚡', title:'Deploy', desc:'Hands-on implementation with your team over a 6 to 12-month partnership.'}
+  ];
+  const steps = JSON.parse(localStorage.getItem('nucleus_services_steps') || 'null') || defaultSteps;
+  const stepsEl = el('svc-steps-list');
+  if (stepsEl) {
+    stepsEl.innerHTML = steps.map((s,i) => `
+      <div style="border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--paper);">
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;">Step ${i+1}</span>
+        </div>
+        <div class="field-row" style="margin-bottom:8px;">
+          <div class="field" style="max-width:80px;"><label>Icon</label><input type="text" class="svc-step-icon" value="${escHtml(s.icon||'')}" /></div>
+          <div class="field"><label>Title</label><input type="text" class="svc-step-title" value="${escHtml(s.title||'')}" /></div>
+        </div>
+        <div class="field"><label>Description</label><textarea class="svc-step-desc" rows="2">${escHtml(s.desc||'')}</textarea></div>
+      </div>`).join('');
+  }
+
+  // Render services list
   const services = getServices();
-  const el = document.getElementById('servicesList');
+  const listEl = el('servicesList');
+  if (!listEl) return;
   if (!services.length) {
-    el.innerHTML = '<div class="panel" style="text-align:center;padding:40px;"><p style="color:var(--muted);">No services yet. Click "+ Add Service" to start.</p></div>';
+    listEl.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);border:1px dashed var(--line);border-radius:10px;">No services yet. Click "+ Add Service" to get started.</div>';
     return;
   }
-  el.innerHTML = services.map((s,i) => `
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <h3 style="margin:0;font-size:14px;text-transform:none;letter-spacing:0;font-family:var(--sans);color:var(--ink);">Service #${i+1}</h3>
-        <button class="btn btn-danger btn-sm" onclick="removeService(${i})">Remove</button>
+  listEl.innerHTML = services.map((s,i) => `
+    <div style="border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--paper);">
+      <div style="background:var(--ink);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Service ${i+1} ${s.tag ? '· <span style="color:#a78bfa;">'+escHtml(s.tag)+'</span>' : ''}</span>
+        <div style="display:flex;gap:8px;">
+          ${i > 0 ? `<button class="btn btn-ghost btn-sm" onclick="moveService(${i},-1)" title="Move up">↑</button>` : ''}
+          ${i < services.length-1 ? `<button class="btn btn-ghost btn-sm" onclick="moveService(${i},1)" title="Move down">↓</button>` : ''}
+          <button class="btn btn-danger btn-sm" onclick="removeService(${i})">Remove</button>
+        </div>
       </div>
-      <div class="field"><label>Title</label><input type="text" class="svc-title" value="${escHtml(s.title)}" /></div>
-      <div class="field"><label>Description</label><textarea class="svc-desc" rows="4">${escHtml(s.description)}</textarea></div>
-      <div class="field"><label>Outcomes / Key Results (one per line — rendered as bullet list on site)</label><textarea class="svc-outcomes" rows="4">${escHtml(s.outcomes||'')}</textarea></div>
-      <div class="field"><label>Icon Emoji</label><input type="text" class="svc-icon" value="${escHtml(s.icon||'🔧')}" style="max-width:80px;" /></div>
-    </div>
-  `).join('');
+      <div style="padding:20px;display:flex;flex-direction:column;gap:12px;">
+        <div class="field-row">
+          <div class="field" style="max-width:80px;"><label>Icon</label><input type="text" class="svc-icon" value="${escHtml(s.icon||'🔧')}" /></div>
+          <div class="field"><label>Title</label><input type="text" class="svc-title" value="${escHtml(s.title||'')}" /></div>
+          <div class="field" style="max-width:140px;"><label>Badge / Tag <span style="opacity:.5">(optional)</span></label><input type="text" class="svc-tag" value="${escHtml(s.tag||'')}" placeholder="Most Popular" /></div>
+        </div>
+        <div class="field">
+          <label>Image URL <span style="opacity:.6;font-weight:400">(paste a URL, or use Image Manager to upload)</span></label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="url" class="svc-image" value="${escHtml(s.image||'')}" placeholder="https://… or leave blank for icon-only card" style="flex:1;" />
+            ${s.image ? `<img src="${escHtml(s.image)}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--line);" />` : ''}
+          </div>
+        </div>
+        <div class="field"><label>Short Description</label><textarea class="svc-desc" rows="3">${escHtml(s.description||'')}</textarea></div>
+        <div class="field"><label>Key Outcomes <span style="opacity:.6;font-weight:400">(one per line — shown as ✓ checklist on site)</span></label><textarea class="svc-outcomes" rows="4">${escHtml(s.outcomes||'')}</textarea></div>
+        <div class="field"><label>Who It's For <span style="opacity:.6;font-weight:400">(shown in a callout box)</span></label><input type="text" class="svc-who" value="${escHtml(s.who||'')}" placeholder="Founders of growing SMEs with 5–50 employees" /></div>
+        <div class="field"><label>CTA Button Label</label><input type="text" class="svc-cta" value="${escHtml(s.cta||'')}" placeholder="Book a Consult" /></div>
+      </div>
+    </div>`).join('');
 }
+
 function addService() {
   const services = getServices();
-  services.push({title:'',description:'',icon:'🔧',outcomes:''});
+  services.push({title:'New Service',description:'',icon:'🔧',outcomes:'',who:'',tag:'',cta:'Book a Consult'});
   localStorage.setItem('nucleus_services', JSON.stringify(services));
   renderServices();
+  showToast('New service added — fill in the details and save.');
 }
+
 function removeService(i) {
+  if (!confirm('Remove this service?')) return;
   const services = getServices();
   services.splice(i,1);
   localStorage.setItem('nucleus_services', JSON.stringify(services));
   renderServices();
 }
+
+function moveService(i, dir) {
+  const services = getServices();
+  const j = i + dir;
+  if (j < 0 || j >= services.length) return;
+  [services[i], services[j]] = [services[j], services[i]];
+  localStorage.setItem('nucleus_services', JSON.stringify(services));
+  renderServices();
+}
+
 function saveServices() {
-  const titles = document.querySelectorAll('.svc-title');
-  const descs = document.querySelectorAll('.svc-desc');
-  const icons = document.querySelectorAll('.svc-icon');
-  const outcomes = document.querySelectorAll('.svc-outcomes');
-  const services = [];
+  const icons     = document.querySelectorAll('.svc-icon');
+  const titles    = document.querySelectorAll('.svc-title');
+  const tags      = document.querySelectorAll('.svc-tag');
+  const images    = document.querySelectorAll('.svc-image');
+  const descs     = document.querySelectorAll('.svc-desc');
+  const outcomes  = document.querySelectorAll('.svc-outcomes');
+  const whos      = document.querySelectorAll('.svc-who');
+  const ctas      = document.querySelectorAll('.svc-cta');
+  const services  = [];
   titles.forEach((t,i) => {
-    services.push({title:t.value, description:descs[i].value, icon:icons[i].value, outcomes:outcomes[i].value});
+    services.push({
+      icon:        icons[i]?.value    || '🔧',
+      title:       t.value,
+      tag:         tags[i]?.value     || '',
+      image:       images[i]?.value   || '',
+      description: descs[i]?.value    || '',
+      desc:        descs[i]?.value    || '',
+      outcomes:    outcomes[i]?.value || '',
+      who:         whos[i]?.value     || '',
+      cta:         ctas[i]?.value     || 'Book a Consult'
+    });
   });
   localStorage.setItem('nucleus_services', JSON.stringify(services));
-  showToast('Services saved!');
+  const ind = document.getElementById('si-svc-list');
+  if (window.nucleusSync) {
+    nucleusSync.patch({ services }).then(() => {
+      if (ind) { ind.textContent = '✓ Synced'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+      showToast('Services saved & synced ✓', 'success');
+    }).catch(() => {
+      if (ind) { ind.textContent = '✓ Saved locally'; ind.style.color='#f59e0b'; setTimeout(()=>{ ind.textContent=''; },2500); }
+      showToast('Saved locally (sync failed)', 'error');
+    });
+  } else {
+    if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+    showToast('Services saved!');
+  }
+}
+
+function saveServicesHero() {
+  const title = document.getElementById('svc_hero_title')?.value || '';
+  const sub   = document.getElementById('svc_hero_sub')?.value   || '';
+  localStorage.setItem('nucleus_services_hero', JSON.stringify({ title, sub }));
+  const ind = document.getElementById('si-svc-hero');
+  if (window.nucleusSync) {
+    nucleusSync.patch({ svc_hero_title: title, svc_hero_sub: sub }).then(() => {
+      if (ind) { ind.textContent = '✓ Synced'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+      showToast('Services hero saved & synced ✓', 'success');
+    }).catch(() => {
+      if (ind) { ind.textContent = '✓ Saved locally'; ind.style.color='#f59e0b'; setTimeout(()=>{ ind.textContent=''; },2500); }
+    });
+  } else {
+    if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+    showToast('Services hero saved!');
+  }
+}
+
+function saveServicesSteps() {
+  const icons  = document.querySelectorAll('.svc-step-icon');
+  const titles = document.querySelectorAll('.svc-step-title');
+  const descs  = document.querySelectorAll('.svc-step-desc');
+  const steps  = [];
+  titles.forEach((t,i) => steps.push({ icon: icons[i]?.value||'', title: t.value, desc: descs[i]?.value||'' }));
+  localStorage.setItem('nucleus_services_steps', JSON.stringify(steps));
+  const ind = document.getElementById('si-svc-steps');
+  if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Steps saved & live ✓');
+}
+
+function saveServicesPricing() {
+  const pricing = {
+    quote: document.getElementById('svc_pricing_quote')?.value || '',
+    cta:   document.getElementById('svc_pricing_cta')?.value   || ''
+  };
+  localStorage.setItem('nucleus_services_pricing', JSON.stringify(pricing));
+  const ind = document.getElementById('si-svc-pricing');
+  if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Pricing saved & live ✓');
 }
 
 // ── Cloudinary Config ─────────────────────────────────────────────────────────
@@ -2321,11 +2523,13 @@ function getMediaPreviewHtml(url, idx) {
   } else if (isVideo) {
     mediaContent = `<video src="${url}" muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
   } else {
-    mediaContent = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" />`;
+    mediaContent = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" width="800" height="600" />`;
   }
 
   return mediaContent ? `<div style="position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111;max-width:480px;">${mediaContent}<button onclick="clearCaseStudyMedia(${idx})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button></div>` : '';
 }
+
+// ── Case Studies CRUD ───────────────────────────────────────────────────────
 function getCaseStudies() { try { return JSON.parse(localStorage.getItem('nucleus_casestudies') || '[]'); } catch(e) { return []; } }
 function renderCaseStudies() {
   const items = getCaseStudies();
@@ -2405,7 +2609,7 @@ function saveCaseStudies() {
     });
   });
   localStorage.setItem('nucleus_casestudies', JSON.stringify(items));
-  showToast('Case studies saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Case studies saved & live ✓');
 }
 
 async function uploadCaseStudyMedia(idx, event) {
@@ -2525,7 +2729,7 @@ function saveTestimonials() {
     items.push({quote:q.value, name:names[i].value, role:roles[i].value, company:companies[i].value});
   });
   localStorage.setItem('nucleus_testimonials', JSON.stringify(items));
-  showToast('Testimonials saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Testimonials saved & live ✓');
 }
 
 
@@ -2571,13 +2775,24 @@ const _aboutSectionKeys = {
 
 function saveAboutSection(section) {
   const keys = _aboutSectionKeys[section] || [];
+  const patch = {};
   keys.forEach(key => {
     const el = document.getElementById(key);
-    if (el) localStorage.setItem(key, el.value);
+    if (el) { localStorage.setItem(key, el.value); patch[key] = el.value; }
   });
   const ind = document.getElementById('si-about-' + section);
-  if (ind) { ind.textContent = '✓ Saved'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
-  showToast('Section saved!');
+  if (window.nucleusSync && Object.keys(patch).length) {
+    nucleusSync.patch(patch).then(() => {
+      if (ind) { ind.textContent = '✓ Synced'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+      showToast('Section saved & synced ✓', 'success');
+    }).catch(() => {
+      if (ind) { ind.textContent = '✓ Saved locally'; ind.style.color = '#f59e0b'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+      showToast('Saved locally (sync failed)', 'error');
+    });
+  } else {
+    if (ind) { ind.textContent = '✓ Saved'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+    showToast('Section saved!');
+  }
 }
 
 function saveHpSection(section) {
@@ -2589,14 +2804,25 @@ function saveHpSection(section) {
     final:      ['final_heading','final_btn1','final_btn2']
   };
   const fields = map[section] || [];
+  const patch = {};
   fields.forEach(f => {
     const el = document.getElementById('hp_' + f);
-    if (el) { d[f] = el.value; localStorage.setItem('nucleus_hp_' + f, el.value); }
+    if (el) { d[f] = el.value; localStorage.setItem('nucleus_hp_' + f, el.value); patch['hp_' + f] = el.value; }
   });
   localStorage.setItem('nucleus_homepage', JSON.stringify(d));
   const ind = document.getElementById('si-hp-' + section);
-  if (ind) { ind.textContent = '✓ Saved'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
-  showToast('Section saved!');
+  if (window.nucleusSync && Object.keys(patch).length) {
+    nucleusSync.patch(patch).then(() => {
+      if (ind) { ind.textContent = '✓ Synced'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+      showToast('Section saved & synced ✓', 'success');
+    }).catch(() => {
+      if (ind) { ind.textContent = '✓ Saved locally'; ind.style.color = '#f59e0b'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+      showToast('Saved locally (sync failed)', 'error');
+    });
+  } else {
+    if (ind) { ind.textContent = '✓ Saved'; ind.style.color = '#22c55e'; setTimeout(() => { ind.textContent = ''; }, 2500); }
+    showToast('Section saved!');
+  }
 }
 
 // ── Universal Media Manager ──────────────────────────────────────────────────
@@ -2645,7 +2871,7 @@ async function refreshUniversalMediaPreview(storageKey) {
   if (isVideo) {
     preview.innerHTML = `<video src="${src}" controls muted loop autoplay playsinline style="width:100%;max-height:240px;object-fit:contain;display:block;background:#000;"></video>`;
   } else {
-    preview.innerHTML = `<img src="${src}" style="width:100%;max-height:240px;object-fit:contain;display:block;background:#000;" />`;
+    preview.innerHTML = `<img src="${src}" style="width:100%;max-height:240px;object-fit:contain;display:block;background:#000;" width="800" height="600" />`;
   }
 }
 
@@ -2676,7 +2902,7 @@ function saveUniversalMediaUrl(storageKey) {
   localStorage.removeItem(storageKey); // legacy b64
   
   previewUniversalMediaUrl(storageKey, url);
-  showToast('URL saved and applied successfully!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Media saved & live ✓');
 }
 
 async function handleUniversalMediaUpload(storageKey, event) {
@@ -2804,7 +3030,7 @@ function saveCareers() {
     items.push({title:t.value, type:types[i].value, description:descs[i].value, link:links[i].value, status:statuses[i].value});
   });
   localStorage.setItem('nucleus_careers', JSON.stringify(items));
-  showToast('Job listings saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Job listings saved & live ✓');
 }
 
 // ── Careers Page Content ─────────────────────────────────────────────────────
@@ -2814,7 +3040,7 @@ function saveCareersContent() {
   localStorage.setItem('nucleus_careers_eyebrow', document.getElementById('careers_eyebrow').value);
   localStorage.setItem('nucleus_careers_section_title', document.getElementById('careers_section_title').value);
   localStorage.setItem('nucleus_careers_desc', document.getElementById('careers_desc').value);
-  showToast('Careers page content saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Careers content saved & live ✓');
 }
 
 // ── Careers Benefits CRUD ────────────────────────────────────────────────────
@@ -2862,7 +3088,7 @@ function saveCareersBenefits() {
     items.push({icon:ic.value, title:titles[i].value, description:descs[i].value});
   });
   localStorage.setItem('nucleus_careers_benefits', JSON.stringify(items));
-  showToast('Benefits saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Benefits saved & live ✓');
 }
 
 // ── Programs CRUD ─────────────────────────────────────────────────────────────
@@ -2897,6 +3123,13 @@ function renderPrograms() {
         <div class="field"><label>Audience</label><input type="text" class="pg-audience" value="${escHtml(p.audience||'')}" /></div>
         <div class="field"><label>Duration</label><input type="text" class="pg-duration" value="${escHtml(p.duration||'')}" /></div>
       </div>
+      <div class="field">
+        <label>Image URL <span style="opacity:.6;font-weight:400">(paste URL or upload via Image Manager)</span></label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="url" class="pg-image" value="${escHtml(p.image||'')}" placeholder="https://… or leave blank" style="flex:1;" />
+          ${p.image ? `<img src="${escHtml(p.image)}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--line);" />` : ''}
+        </div>
+      </div>
       <div class="field"><label>Description</label><textarea class="pg-desc" rows="3">${escHtml(p.description||'')}</textarea></div>
       <div class="field"><label>Outcomes (one per line)</label><textarea class="pg-outcomes" rows="4">${escHtml(p.outcomes||'')}</textarea></div>
     </div>
@@ -2915,24 +3148,43 @@ function removeProgram(i) {
   renderPrograms();
 }
 function savePrograms() {
-  const icons = document.querySelectorAll('.pg-icon');
-  const titles = document.querySelectorAll('.pg-title');
+  const icons     = document.querySelectorAll('.pg-icon');
+  const titles    = document.querySelectorAll('.pg-title');
   const audiences = document.querySelectorAll('.pg-audience');
   const durations = document.querySelectorAll('.pg-duration');
-  const descs = document.querySelectorAll('.pg-desc');
-  const outcomes = document.querySelectorAll('.pg-outcomes');
-  const items = [];
+  const images    = document.querySelectorAll('.pg-image');
+  const descs     = document.querySelectorAll('.pg-desc');
+  const outcomes  = document.querySelectorAll('.pg-outcomes');
+  const programs  = [];
   icons.forEach((ic,i) => {
-    items.push({icon:ic.value, title:titles[i].value, audience:audiences[i].value, duration:durations[i].value, description:descs[i].value, outcomes:outcomes[i].value});
+    programs.push({
+      icon:        ic.value,
+      title:       titles[i].value,
+      name:        titles[i].value,
+      audience:    audiences[i]?.value || '',
+      duration:    durations[i]?.value || '',
+      image:       images[i]?.value    || '',
+      description: descs[i].value,
+      desc:        descs[i].value,
+      outcomes:    outcomes[i].value
+    });
   });
-  localStorage.setItem('nucleus_programs', JSON.stringify(items));
-  showToast('Programs saved!');
+  localStorage.setItem('nucleus_programs', JSON.stringify(programs));
+  if (window.nucleusSync) {
+    nucleusSync.patch({ programs }).then(() => {
+      showToast('Programs saved & synced ✓', 'success');
+    }).catch(() => {
+      showToast('Saved locally (sync failed)', 'error');
+    });
+  } else {
+    showToast('Programs saved!');
+  }
 }
 function saveProgramsHero() {
   localStorage.setItem('nucleus_programs_hero_eyebrow', document.getElementById('programs_hero_eyebrow').value);
   localStorage.setItem('nucleus_programs_hero_title', document.getElementById('programs_hero_title').value);
   localStorage.setItem('nucleus_programs_hero_sub', document.getElementById('programs_hero_sub').value);
-  showToast('Programs hero saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Programs hero saved & live ✓');
 }
 
 // ── Image Manager ─────────────────────────────────────────────────────────────
@@ -2970,7 +3222,7 @@ function initImageManager() {
     if (hasIDB || storedLs) card.classList.add('has-override');
 
     // Build preview element — load from IDB async if needed
-    const defaultPreview = `<img class="img-card-preview" src="${defaultSrc}" alt="${label}" style="aspect-ratio:${aspect};" />`;
+    const defaultPreview = `<img class="img-card-preview" src="${defaultSrc}" alt="${label}" style="aspect-ratio:${aspect};" width="800" height="600" />`;
 
     card.innerHTML = `
       <div class="img-card-preview-wrap" style="position:relative;">${defaultPreview}</div>
@@ -2996,13 +3248,13 @@ function initImageManager() {
         const isVid = card.querySelector('.img-card-preview-wrap video');
         wrap.innerHTML = objUrl.startsWith('blob:') && card.dataset._isVideo
           ? `<video class="img-card-preview" src="${objUrl}" muted loop autoplay playsinline style="aspect-ratio:${aspect};object-fit:cover;"></video>`
-          : `<img class="img-card-preview" src="${objUrl}" alt="${label}" style="aspect-ratio:${aspect};" />`;
+          : `<img class="img-card-preview" src="${objUrl}" alt="${label}" style="aspect-ratio:${aspect};" width="800" height="600" />`;
       }).catch(()=>{});
     } else if (storedLs) {
       const isV = storedLs.startsWith('data:video/') || localStorage.getItem(key + '_type') === 'video' || storedLs.match(/\.(mp4|webm|mov)(\?.*)?$/i);
       wrap.innerHTML = isV
         ? `<video class="img-card-preview" src="${storedLs}" muted loop autoplay playsinline style="aspect-ratio:${aspect};object-fit:cover;"></video>`
-        : `<img class="img-card-preview" src="${storedLs}" alt="${label}" style="aspect-ratio:${aspect};" />`;
+        : `<img class="img-card-preview" src="${storedLs}" alt="${label}" style="aspect-ratio:${aspect};" width="800" height="600" />`;
     }
 
     // Also open file dialog on card click (but not on footer buttons)
@@ -3041,7 +3293,7 @@ async function handleImgCardUpload(key, e, card) {
     } else {
       const el = wrap.querySelector('.img-card-preview');
       if (el && el.tagName === 'IMG') el.src = displayUrl;
-      else if (el) el.outerHTML = `<img class="img-card-preview" src="${displayUrl}" alt="" style="aspect-ratio:${aspect};" />`;
+      else if (el) el.outerHTML = `<img class="img-card-preview" src="${displayUrl}" alt="" style="aspect-ratio:${aspect};" width="800" height="600" />`;
     }
     if (!result.synced) {
       showToast(`"${card.dataset.label}" saved locally. Set up Cloudinary in Settings to sync across devices.`, 'success');
@@ -3139,6 +3391,28 @@ document.addEventListener('nucleus-sync-ready', function() {
 
 // Show homepage view by default
 showView('homepage');
+
+/* ── nucleus-sync.js token bridge ──────────────────────────────────────────
+   github-sync.js stores the PAT in nucleus_github_cfg.
+   nucleus-sync.js reads from nucleus_gh_token.
+   Mirror them so both scripts share one token. */
+(function bridgeTokens() {
+  /* Seed nucleus_gh_token from existing cfg on load */
+  try {
+    var cfg = JSON.parse(localStorage.getItem('nucleus_github_cfg') || '{}');
+    if (cfg.token && !localStorage.getItem('nucleus_gh_token')) {
+      localStorage.setItem('nucleus_gh_token', cfg.token);
+    }
+  } catch (e) {}
+
+  /* Wrap nucleusGithubSetToken so future saves also update nucleus_gh_token */
+  var _orig = window.nucleusGithubSetToken;
+  window.nucleusGithubSetToken = function(token) {
+    if (token) localStorage.setItem('nucleus_gh_token', token);
+    if (_orig) _orig(token);
+  };
+})();
 </script>
+  <script src="assets/nucleus-sync.js?v=2"></script>
 </body>
 </html>

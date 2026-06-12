@@ -11,20 +11,49 @@
   <meta property="og:title" content="Nucleus Consultant" />
   <meta property="og:description"
     content="We help young minds and growing businesses clarify purpose and turn dreams into reality." />
-  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:image" content="https://nucleusconsultent.netlify.app/assets/logo.png" /> <!-- FIX: GAP-07 -->
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="assets/logo.png" />
+  <link rel="canonical" href="https://nucleusconsultent.netlify.app/index.html" /> <!-- FIX: GAP-21 -->
+  <meta name="description" content="Nucleus Consultant — premium business transformation consultancy in Surat, India. We rebuild SMEs by rebuilding leaders. Strategy, culture, sales & operations." /> <!-- FIX: GAP-22 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Nucleus Consultant",
+    "url": "https://nucleusconsultent.netlify.app",
+    "logo": "https://nucleusconsultent.netlify.app/assets/logo.png",
+    "description": "Business transformation consultancy in Surat, India.",
+    "telephone": "+918156076680",
+    "email": "hello@nucleusconsultant.in",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "811 IFC, Opp. Fire Station, VIP Road",
+      "addressLocality": "Vesu, Surat",
+      "postalCode": "395007",
+      "addressCountry": "IN"
+    },
+    "sameAs": []
+  }
+  </script>
+
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="style" href="assets/styles.css?v=1.0.2" />
+  <link rel="preload" as="style" href="assets/styles.css?v=1.0.4" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=1.0.2" />
+  <link rel="stylesheet" href="assets/styles.css?v=1.0.4" />
+  <!-- FIX: GAP-13 — removed duplicate font preload that appeared after stylesheet load -->
 
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" />
-  
   <style>
+    /* FIX: GAP-12 — relocated from body */
+    @media (max-width: 880px) {
+      .stats-band > div > div { grid-template-columns: 1fr 1fr !important; }
+      .stats-band > div > div > div:nth-child(2) { border-right: none !important; }
+      .stats-band > div > div > div:nth-child(1),
+      .stats-band > div > div > div:nth-child(2) { border-bottom: 1px solid rgba(247,244,237,0.12) !important; }
+    }
     /* ── Tweaks runtime tokens ─────────────────────────────── */
     :root {
       --t-green: var(--green-primary);
@@ -267,13 +296,11 @@
       line-height: 1;
       color: var(--t-ink);
       letter-spacing: -0.03em;
-      font-variation-settings: "SOFT" 30;
     }
 
     .stats-mini .n em {
       font-style: italic;
       color: var(--gold-deep);
-      font-variation-settings: "SOFT" 100;
     }
 
     .stats-mini .l {
@@ -371,13 +398,11 @@
       line-height: 1;
       color: var(--cream);
       letter-spacing: -0.03em;
-      font-variation-settings: "SOFT" 30;
     }
 
     .sb-num em {
       color: var(--gold);
       font-style: italic;
-      font-variation-settings: "SOFT" 100;
     }
 
     .sb-label {
@@ -394,7 +419,6 @@
       font-family: var(--serif);
       font-size: clamp(26px, 3vw, 42px);
       font-style: italic;
-      font-variation-settings: "SOFT" 100;
       color: var(--ink);
       opacity: .55;
       transition: opacity var(--dur-fast);
@@ -672,7 +696,6 @@
       line-height: 1;
       color: rgba(232, 181, 71, .12);
       pointer-events: none;
-      font-variation-settings: "SOFT" 100;
     }
 
     .testi-card blockquote {
@@ -683,14 +706,12 @@
       letter-spacing: -0.015em;
       max-width: 20ch;
       margin: 0 auto 32px;
-      font-variation-settings: "SOFT" 60;
       position: relative;
       z-index: 1;
     }
 
     .testi-card blockquote em {
       color: var(--gold);
-      font-variation-settings: "SOFT" 100;
     }
 
     .testi-card .attr {
@@ -799,6 +820,12 @@
 </head>
 
 <body>
+  <noscript>
+    <style>
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .hero-line > span { transform: none !important; }
+    </style>
+  </noscript>
   <!-- ═══════════ NAV ═══════════ -->
   <nav class="nav">
     <a href="index.html" class="nav-logo">
@@ -828,10 +855,10 @@
     </div>
     <div class="hero-bg"></div>
     <div class="hero-grid"></div>
-    
-    <div style="position:absolute;top:0;right:0;width:50%;height:100%;pointer-events:none;overflow:hidden;">
-      <img src="assets/hero_bg2.png" alt="" data-media-key="img_hero_bg"
-        style="width:100%;height:100%;object-fit:cover;opacity:0.6;mask-image:linear-gradient(to left, rgba(0,0,0,1), transparent 100%);" />
+
+    <div style="position:absolute;top:0;right:0;width:55%;height:100%;pointer-events:none;overflow:hidden;">
+      <img src="assets/hero_bg_new.webp" alt="" data-media-key="img_hero_bg"
+        style="width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0.85;mask-image:linear-gradient(to left, rgba(0,0,0,1) 60%, transparent 100%);" width="800" height="600" />
     </div>
 
     <div class="wrap">
@@ -846,13 +873,13 @@
             We transform the way leaders think, teams behave, and businesses grow — by aligning mindset, culture, and systems.
           </p>
           <div class="hero-btns reveal" style="margin-top: 40px;">
-            <a href="contact.html" class="btn btn-primary">
-              Diagnose My Business
+            <a href="contact.html" class="btn btn-primary" data-live-href="hp_cta1_link">
+              <span data-live="hp_cta1_label">Diagnose My Business</span>
               <svg class="btn-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
               </svg>
             </a>
-            <a href="services.html" class="btn btn-outline-white">Start Transformation Journey</a>
+            <a href="services.html" class="btn btn-outline-white" data-live-href="hp_cta2_link" data-live="hp_cta2_label">Start Transformation Journey</a>
           </div>
         </div>
       </div>
@@ -882,13 +909,26 @@
       </div>
     </div>
   </section>
-  <style>
-    @media (max-width: 880px) {
-      .stats-band > div > div { grid-template-columns: 1fr 1fr !important; }
-      .stats-band > div > div > div:nth-child(2) { border-right: none !important; }
-      .stats-band > div > div > div:nth-child(1), .stats-band > div > div > div:nth-child(2) { border-bottom: 1px solid rgba(247,244,237,0.12) !important; }
-    }
-  </style>
+  <!-- FIX: GAP-12 — stats-band media query moved to head <style> block -->
+
+  <!-- ═══════════ TRUST / VALUE MARQUEE ═══════════ -->
+  <div class="trust-strip" aria-label="What we transform">
+    <div class="trust-track">
+      <span>Leadership&nbsp;&amp;&nbsp;Thinking</span><span>·</span>
+      <span>Culture&nbsp;&amp;&nbsp;Accountability</span><span>·</span>
+      <span>Sales&nbsp;&amp;&nbsp;Growth Systems</span><span>·</span>
+      <span>Operations&nbsp;&amp;&nbsp;SOPs</span><span>·</span>
+      <span>Brand&nbsp;Positioning</span><span>·</span>
+      <span>People&nbsp;Development</span><span>·</span>
+      <!-- duplicate for seamless loop -->
+      <span>Leadership&nbsp;&amp;&nbsp;Thinking</span><span>·</span>
+      <span>Culture&nbsp;&amp;&nbsp;Accountability</span><span>·</span>
+      <span>Sales&nbsp;&amp;&nbsp;Growth Systems</span><span>·</span>
+      <span>Operations&nbsp;&amp;&nbsp;SOPs</span><span>·</span>
+      <span>Brand&nbsp;Positioning</span><span>·</span>
+      <span>People&nbsp;Development</span><span>·</span>
+    </div>
+  </div>
 
   <!-- ═══════════ PAIN MIRROR SECTION ═══════════ -->
   <section class="section" style="background: var(--warm-white); color: var(--charcoal); position: relative; overflow: hidden;">
@@ -897,12 +937,12 @@
       <div class="blob blob-2" style="background: var(--gold); opacity: 0.15;"></div>
     </div>
     <div class="wrap" style="position: relative; z-index: 2;">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
+      <div class="grid grid-2" style="align-items: center;">
         <div>
           <p class="eyebrow reveal" style="color: var(--gold-dark);">The Reality</p>
-          <h2 class="reveal" style="color: var(--charcoal); margin-top: 16px;">If This Feels Familiar… You’re Not Alone</h2>
+          <h2 class="reveal" data-live="hp_pain_title" style="color: var(--charcoal); margin-top: 16px;">If This Feels Familiar… You’re Not Alone</h2>
           <p class="reveal" style="margin-top: 24px; font-size: 20px;">You are working harder than ever… But still:</p>
-          <ul class="stagger-list" style="margin-top: 24px; font-size: 18px; line-height: 1.8; list-style-type: disc; padding-left: 20px; color: var(--muted);">
+          <ul class="stagger-list" data-live-bullets="hp_pain_bullets" data-pain-list style="margin-top: 24px; font-size: 18px; line-height: 1.8; list-style-type: disc; padding-left: 20px; color: var(--muted);">
             <li>Team is not taking ownership</li>
             <li>Sales is inconsistent</li>
             <li>Growth feels unpredictable</li>
@@ -915,7 +955,7 @@
           </div>
         </div>
         <div class="reveal-scale img-zoom" data-parallax="0.05" style="border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-          <img loading="lazy" src="assets/culture_alignment.png" alt="Culture Alignment" data-media-key="img_home_culture" style="width: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);" class="float-anim" />
+          <img loading="lazy" src="assets/culture_alignment.webp" alt="Culture Alignment" data-media-key="img_home_culture" style="width: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);" class="float-anim" width="800" height="600" />
         </div>
       </div>
     </div>
@@ -929,12 +969,12 @@
         <p class="reveal" style="margin-top: 24px; font-size: 20px; color: rgba(255,255,255,0.7);">They fail because:</p>
       </div>
       
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 56px; align-items: center;">
+      <div class="grid grid-2" style="margin-top: 56px; align-items: center;">
         <div class="reveal-scale img-zoom" style="border-radius: 20px; overflow: hidden; border: 1px solid var(--line);">
-          <img loading="lazy" src="assets/strategy_abstract.png" alt="Strategy Abstract" data-media-key="img_home_strategy" style="width: 100%; object-fit: cover; aspect-ratio: 1;" class="float-anim" />
+          <img loading="lazy" src="assets/strategy_abstract.webp" alt="Strategy Abstract" data-media-key="img_home_strategy" style="width: 100%; object-fit: cover; aspect-ratio: 1;" class="float-anim" width="800" height="600" />
         </div>
         
-        <div class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div class="grid grid-2 reveal" style="gap: 24px;">
           <div class="card-hover glass" style="padding: 32px; border-radius: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
             <h3 style="font-size: 24px; color: var(--white);">Strategy</h3>
             <p style="margin-top: 12px; color: rgba(255,255,255,0.7);">is not clear</p>
@@ -970,25 +1010,25 @@
       </div>
       
       <div class="reveal card-hover glass" style="border-radius: 20px; overflow: hidden; border: 1px solid var(--border); background: var(--white);">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; background: var(--green-primary); color: var(--white); padding: 24px 40px;">
-          <h3 style="font-size: 20px; color: rgba(255,255,255,0.6);">Typical Consultant</h3>
-          <h3 style="font-size: 20px; color: var(--gold-primary);">Nucleus</h3>
+        <div class="comp-row" style="background: var(--green-primary); color: var(--white); border-bottom: none;">
+          <h3 style="font-size: 20px; color: rgba(255,255,255,0.6); margin: 0;">Typical Consultant</h3>
+          <h3 style="font-size: 20px; color: var(--gold-primary); margin: 0;">Nucleus</h3>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
-          <p style="font-size: 18px; color: var(--muted);">Gives strategy</p>
-          <p style="font-size: 18px; font-weight: 500;">Changes thinking</p>
+        <div class="comp-row">
+          <p style="font-size: 18px; color: var(--muted); margin: 0;">Gives strategy</p>
+          <p style="font-size: 18px; font-weight: 500; margin: 0;">Changes thinking</p>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
-          <p style="font-size: 18px; color: var(--muted);">Focus on process</p>
-          <p style="font-size: 18px; font-weight: 500;">Aligns people + process</p>
+        <div class="comp-row">
+          <p style="font-size: 18px; color: var(--muted); margin: 0;">Focus on process</p>
+          <p style="font-size: 18px; font-weight: 500; margin: 0;">Aligns people + process</p>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px; border-bottom: 1px solid var(--line);">
-          <p style="font-size: 18px; color: var(--muted);">Short-term fixes</p>
-          <p style="font-size: 18px; font-weight: 500;">Long-term transformation</p>
+        <div class="comp-row">
+          <p style="font-size: 18px; color: var(--muted); margin: 0;">Short-term fixes</p>
+          <p style="font-size: 18px; font-weight: 500; margin: 0;">Long-term transformation</p>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 24px 40px;">
-          <p style="font-size: 18px; color: var(--muted);">External push</p>
-          <p style="font-size: 18px; font-weight: 500;">Internal ownership</p>
+        <div class="comp-row">
+          <p style="font-size: 18px; color: var(--muted); margin: 0;">External push</p>
+          <p style="font-size: 18px; font-weight: 500; margin: 0;">Internal ownership</p>
         </div>
       </div>
     </div>
@@ -1006,7 +1046,7 @@
         <h2 class="reveal" style="color: var(--white); margin-top: 16px;">The Nucleus Transformation Journey</h2>
       </div>
 
-      <div class="journey-timeline" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+      <div class="journey-timeline grid grid-4" style="gap: 24px;">
         <div class="journey-stage reveal-scale card-hover glass-dark" style="padding: 32px; border-radius: 16px;">
           <div style="font-size: 48px; color: var(--gold); font-family: var(--serif); margin-bottom: 16px;">1</div>
           <h3 style="font-size: 22px; color: var(--white); margin-bottom: 16px;">CHAOS</h3>
@@ -1050,11 +1090,11 @@
   <!-- ═══════════ PHILOSOPHY SECTION ═══════════ -->
   <section class="section" style="background: var(--warm-white);">
     <div class="wrap">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
+      <div class="grid grid-2" style="align-items: center;">
         <div class="reveal-left">
           <p class="eyebrow">Our Philosophy</p>
           <h2 style="margin-top: 16px;">The Nucleus Way</h2>
-          <p data-typewriter="We don't believe in controlling people. We believe in building people who don't need control." style="margin-top: 24px; font-size: 22px; font-style: italic; color: var(--gold-deep);">
+          <p data-live="hp_philosophy" data-typewriter="We don't believe in controlling people. We believe in building people who don't need control." style="margin-top: 24px; font-size: 22px; font-style: italic; color: var(--gold-deep);">
             We don’t believe in controlling people.<br>
             We believe in building people who don’t need control.
           </p>
@@ -1066,7 +1106,7 @@
         </div>
         <div style="position: relative;">
           <div class="reveal-scale img-zoom" style="border-radius: 20px; overflow: hidden; border: 1px solid var(--line); margin-bottom: -40px; margin-right: -40px; position: relative; z-index: 1;">
-            <img loading="lazy" src="assets/philosophy_zen.png" alt="Philosophy" data-media-key="img_home_philosophy" style="width: 100%; object-fit: cover; aspect-ratio: 4/3;" class="float-anim" />
+            <img loading="lazy" src="assets/philosophy_zen.webp" alt="Philosophy" data-media-key="img_home_philosophy" style="width: 100%; object-fit: cover; aspect-ratio: 4/3;" class="float-anim" width="800" height="600" />
           </div>
           <div class="reveal-scale card-hover" style="background: var(--white); padding: 48px; border-radius: 20px; border: 1px solid var(--line); box-shadow: 0 30px 60px rgba(0,0,0,0.08); position: relative; z-index: 2; max-width: 80%; transform: translateY(-40px);">
             <h3 style="font-size: 24px; margin-bottom: 24px;">We create organizations where:</h3>
@@ -1121,7 +1161,7 @@
         <h2 class="reveal" style="margin-top: 16px; color: var(--green-deep);">Real Transformation, Not Just Advice</h2>
       </div>
 
-      <div id="hp-case-study" class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+      <div id="hp-case-study" class="grid grid-2 reveal" style="gap: 40px;">
         <div class="card-hover wipe-reveal" style="background: #FFF0F0; padding: 40px; border-radius: 20px; border: 1px solid #FFD6D6;">
           <h3 style="color: #D32F2F; margin-bottom: 24px; font-size: 24px;">Before:</h3>
           <ul style="font-size: 18px; line-height: 2; list-style-type: none; padding: 0; color: #5C1010;">
@@ -1145,14 +1185,14 @@
   <!-- ═══════════ TESTIMONIAL SECTION ═══════════ -->
   <section class="section dark-section" style="background: var(--green-primary); position: relative; overflow: hidden; padding: 120px 0;">
     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: var(--serif); font-size: 300px; color: var(--gold-primary); opacity: 0.05; pointer-events: none; line-height: 1;">"</div>
-    <div class="wrap reveal" style="text-align: center; max-width: 800px; position: relative; z-index: 2;">
+    <div class="wrap reveal" data-live-testimonial-single style="text-align: center; max-width: 800px; position: relative; z-index: 2;">
       <div style="width: 80px; height: 80px; margin: 0 auto 32px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden; font-family: var(--serif); color: var(--gold-primary); font-size: 24px;">
         RM
       </div>
       <blockquote id="hp-testimonial-quote" style="font-family: var(--serif); font-style: italic; font-size: clamp(24px, 4vw, 40px); line-height: 1.4; color: var(--white); margin: 0 0 40px;">
         "Nucleus didn't give us a strategy. They changed how we think about business entirely. In 6 months, our team doubled their ownership."
       </blockquote>
-      <div style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.6);">
+      <div class="attr" style="font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.6);">
         <span id="hp-testimonial-name" style="color: var(--gold-primary);">Rahul Mehta</span><br>
         <span id="hp-testimonial-role" style="display: block; margin-top: 8px;">Founder, Mehta Manufacturing, Surat</span>
       </div>
@@ -1162,12 +1202,12 @@
   <!-- ═══════════ FINAL CTA ═══════════ -->
   <section class="section dark-section final-cta" style="background: var(--green-deep); color: var(--white); text-align: center; position: relative; overflow: hidden;">
     <div class="wrap" style="position: relative; z-index: 2;">
-      </p>
+      <h2 data-live="hp_final_heading" style="color: var(--white); max-width: 24ch; margin: 0 auto;">Ready to Transform Your Business?</h2>
       <div class="hero-btns reveal" style="justify-content: center; margin-top: 48px;">
-        <a href="contact.html" class="btn btn-primary" style="background: var(--gold); color: var(--ink);">
+        <a href="contact.html" class="btn btn-primary" data-live="hp_final_btn1" style="background: var(--gold); color: var(--ink);">
           Book Business Diagnosis
         </a>
-        <a href="services.html" class="btn btn-ghost" style="color: var(--white); border-color: rgba(255,255,255,0.3);">
+        <a href="services.html" class="btn btn-ghost" data-live="hp_final_btn2" style="color: var(--white); border-color: rgba(255,255,255,0.3);">
           Apply for Transformation
         </a>
       </div>
@@ -1235,7 +1275,8 @@
   </footer>
 
 
-  <script src="assets/site.js"></script>
+  <script src="assets/site.js?v=2"></script>
+  <script src="assets/nucleus-live.js?v=2"></script>
 </body>
 
 </html>

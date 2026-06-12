@@ -19,3 +19,7 @@ screenshots/
 .env
 .env.local
 .claude/
+
+# FIX: GAP-26
+.firebase/
+firebase-debug.log

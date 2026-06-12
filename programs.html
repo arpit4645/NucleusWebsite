@@ -7,14 +7,37 @@
   
   <meta property="og:title" content="Nucleus Consultant" />
   <meta property="og:description" content="Programs That Change How People Think" />
-  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:image" content="https://nucleusconsultent.netlify.app/assets/logo.png" /> <!-- FIX: GAP-07 -->
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="assets/logo.png" />
+  <link rel="canonical" href="https://nucleusconsultent.netlify.app/programs.html" /> <!-- FIX: GAP-21 -->
+  <meta name="description" content="Training programs by Nucleus Consultant — Be Extraordinary, Business Excellence, Sales Mastery, Outbound Training. Designed to change how people think and act." /> <!-- FIX: GAP-22 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Nucleus Consultant",
+    "url": "https://nucleusconsultent.netlify.app",
+    "logo": "https://nucleusconsultent.netlify.app/assets/logo.png",
+    "description": "Business transformation consultancy in Surat, India.",
+    "telephone": "+918156076680",
+    "email": "hello@nucleusconsultant.in",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "811 IFC, Opp. Fire Station, VIP Road",
+      "addressLocality": "Vesu, Surat",
+      "postalCode": "395007",
+      "addressCountry": "IN"
+    },
+    "sameAs": []
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="stylesheet" href="assets/styles.css?v=1.0.4" /> <!-- FIX: GAP-28 -->
   <style>
     .prog-card {
       border-radius: 20px;
@@ -134,6 +157,12 @@
   </style>
 </head>
 <body>
+  <noscript>
+    <style>
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .hero-line > span { transform: none !important; }
+    </style>
+  </noscript>
   <!-- ═══════════ NAV ═══════════ -->
   <nav class="nav">
     <a href="index.html" class="nav-logo">
@@ -167,7 +196,7 @@
 
   <!-- ═══════════ PROGRAMS GRID ═══════════ -->
   <section class="wrap section">
-    <div id="programs-dynamic-list" class="grid grid-2" data-stagger="150"></div>
+    <div id="programs-dynamic-list" class="grid grid-2" data-stagger="150" data-live-programs></div>
   </section>
 
   <!-- ═══════════ UPCOMING SCHEDULE ═══════════ -->
@@ -283,6 +312,7 @@
     </div>
   </footer>
     
-  <script src="assets/site.js"></script>
+  <script src="assets/site.js?v=2"></script>
+  <script src="assets/nucleus-live.js?v=2"></script>
 </body>
 </html>

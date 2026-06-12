@@ -7,14 +7,37 @@
   
   <meta property="og:title" content="Nucleus Consultant" />
   <meta property="og:description" content="We help young minds and growing businesses clarify purpose and turn dreams into reality." />
-  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:image" content="https://nucleusconsultent.netlify.app/assets/logo.png" /> <!-- FIX: GAP-07 -->
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="assets/logo.png" />
+  <link rel="canonical" href="https://nucleusconsultent.netlify.app/contact.html" /> <!-- FIX: GAP-21 -->
+  <meta name="description" content="Book a free 60-minute business clarity call with Nucleus Consultant, Surat. Diagnose what's holding your business back — no sales scripts, just real insight." /> <!-- FIX: GAP-22 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Nucleus Consultant",
+    "url": "https://nucleusconsultent.netlify.app",
+    "logo": "https://nucleusconsultent.netlify.app/assets/logo.png",
+    "description": "Business transformation consultancy in Surat, India.",
+    "telephone": "+918156076680",
+    "email": "hello@nucleusconsultant.in",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "811 IFC, Opp. Fire Station, VIP Road",
+      "addressLocality": "Vesu, Surat",
+      "postalCode": "395007",
+      "addressCountry": "IN"
+    },
+    "sameAs": []
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="stylesheet" href="assets/styles.css?v=1.0.4" /> <!-- FIX: GAP-28 -->
   <style>
     .contact-grid {
       display: grid; grid-template-columns: 1.1fr 1fr;
@@ -115,7 +138,6 @@
     }
     .info-block .value {
       font-family: var(--serif); font-size: 24px;
-      font-variation-settings: "SOFT" 30;
     }
     .info-block .value a { border-bottom: 1px solid transparent; transition: border-color .3s; }
     .info-block .value a:hover { border-color: var(--charcoal); }
@@ -165,6 +187,12 @@
   </style>
 </head>
 <body>
+  <noscript>
+    <style>
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .hero-line > span { transform: none !important; }
+    </style>
+  </noscript>
   <!-- ═══════════ NAV ═══════════ -->
   <nav class="nav">
     <a href="index.html" class="nav-logo">
@@ -400,7 +428,7 @@
     </div>
   </footer>
     
-  <script src="assets/site.js"></script>
+  <script src="assets/site.js?v=2"></script>
   <script>
     // Multi-step form logic
     let currentStep = 1;
@@ -440,6 +468,22 @@
     }
 
     // Submit form logic
+    // FIX: GAP-03 — show visible error inside form on Formspree failure (no false redirect)
+    // FIX: GAP-04 — POST to /api/save-lead so leads sync across devices (via GitHub-stored leads.json)
+    function showFormError(msg) {
+      var box = document.getElementById('formErrorBox');
+      if (!box) {
+        box = document.createElement('div');
+        box.id = 'formErrorBox';
+        box.setAttribute('role', 'alert');
+        box.style.cssText = 'background:#FEF2F2;border:1px solid #FCA5A5;color:#7F1D1D;padding:14px 16px;border-radius:10px;margin:16px 0;font-size:14px;line-height:1.5;';
+        var form = document.getElementById('contactForm');
+        form.insertBefore(box, form.firstChild);
+      }
+      box.innerHTML = msg;
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     function submitForm(e) {
       e.preventDefault();
       var btn = document.getElementById('submitBtn');
@@ -451,35 +495,64 @@
       try { settings = JSON.parse(localStorage.getItem('nucleus_site_settings')) || {}; } catch(err) {}
       var endpoint = settings.form || form.action;
 
-      // Save to local storage for Admin panel immediately
       var formData = new FormData(form);
+      var leadPayload = {
+        id: 'lead_' + Date.now(),
+        date: new Date().toISOString(),
+        name: formData.get('name'),
+        email: formData.get('email'),
+        company: formData.get('business_type') || 'N/A',
+        role: formData.get('industry') || 'N/A',
+        phone: formData.get('phone') || 'N/A',
+        interest: formData.get('challenge') || 'N/A',
+        message: formData.get('attempted_solutions') || ''
+      };
+
+      // FIX: GAP-04 — POST to serverless endpoint so leads are visible to admin from any device.
+      // Falls back silently if endpoint not yet configured (e.g. local dev).
+      try {
+        fetch('/api/save-lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(leadPayload)
+        }).catch(function(){}); // non-blocking
+      } catch(_) {}
+
+      // Local cache (also keeps admin working when offline / API not yet deployed)
       try {
         var leads = JSON.parse(localStorage.getItem('nucleus_leads') || '[]');
-        leads.unshift({
-          id: Date.now(),
-          date: new Date().toISOString(),
-          name: formData.get('name'),
-          email: formData.get('email'),
-          company: formData.get('business_type') || 'N/A',
-          role: formData.get('industry') || 'N/A',
-          phone: formData.get('phone') || 'N/A',
-          interest: formData.get('challenge') || 'N/A',
-          message: formData.get('attempted_solutions') || ''
-        });
+        leads.unshift(leadPayload);
         localStorage.setItem('nucleus_leads', JSON.stringify(leads));
-      } catch(e) {}
+      } catch(_) {}
 
-      // Formspree fetch
+      // Formspree submission — only redirect to thank-you on actual success
       fetch(endpoint, {
         method: 'POST',
         body: formData,
         headers: { 'Accept': 'application/json' }
       }).then(function(r) {
-        window.location.href = "thank-you.html";
-      }).catch(function(e) { 
-        window.location.href = "thank-you.html";
+        if (r && r.ok) {
+          window.location.href = "thank-you.html";
+        } else {
+          btn.textContent = 'Submit';
+          btn.disabled = false;
+          showFormError(
+            "Submission failed. Please try again, or reach us directly:<br>" +
+            "<a href=\"https://wa.me/918156076680\" style=\"color:#1A4A1A;font-weight:600;\">WhatsApp +91 8156 076 680</a> " +
+            "&middot; <a href=\"mailto:hello@nucleusconsultant.in\" style=\"color:#1A4A1A;font-weight:600;\">hello@nucleusconsultant.in</a>"
+          );
+        }
+      }).catch(function(err) {
+        btn.textContent = 'Submit';
+        btn.disabled = false;
+        showFormError(
+          "Submission failed — your network or the form service may be unreachable. Please try " +
+          "<a href=\"https://wa.me/918156076680\" style=\"color:#1A4A1A;font-weight:600;\">WhatsApp</a> or " +
+          "<a href=\"mailto:hello@nucleusconsultant.in\" style=\"color:#1A4A1A;font-weight:600;\">email</a> directly."
+        );
       });
     }
   </script>
+  <script src="assets/nucleus-live.js?v=2"></script>
 </body>
 </html>

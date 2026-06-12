@@ -202,8 +202,8 @@ p { margin: 0; }
   border-bottom: 1px solid var(--border-light);
 }
 .nav.scrolled { padding: 16px var(--pad-x); box-shadow: var(--shadow-sm); }
-.nav-logo img { height: 40px; transition: height var(--dur-base) var(--ease-out); }
-.nav.scrolled .nav-logo img { height: 32px; }
+.nav-logo img { height: 44px; width: auto; transition: height var(--dur-base) var(--ease-out); }
+.nav.scrolled .nav-logo img { height: 34px; width: auto; }
 
 .nav-links { display: flex; gap: 40px; align-items: center; }
 .nav-links a {
@@ -399,3 +399,368 @@ body.nav-dark .nav-links a { color: var(--white); }
 .center { text-align: center; }
 .btn-ghost { background: transparent; color: var(--green-deep); border: 1px solid var(--line); }
 .btn-ghost:hover { border-color: var(--gold-primary); background: rgba(226, 182, 57, 0.05); }
+
+/* ============================================================
+   FIX: GAP-08 — Mobile Navigation Toggle
+   FIX: GAP-17 — Footer Social Icons
+   FIX: GAP-30 — WhatsApp Float (verify visible at mobile)
+   ============================================================ */
+
+/* Burger button: hidden on desktop, shown on tablet/mobile */
+.nav-burger {
+  display: none;
+  width: 40px; height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  z-index: 1001;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.nav-burger span {
+  display: block;
+  width: 22px; height: 2px;
+  background: var(--ink, #0F2E0F);
+  border-radius: 2px;
+  transition: transform .25s ease, opacity .2s ease;
+}
+body.nav-dark .nav-burger span,
+.nav.scrolled.nav-dark .nav-burger span { background: var(--white, #fff); }
+
+/* Burger animates to × when open */
+.nav-burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-burger.active span:nth-child(2) { opacity: 0; }
+.nav-burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 900px) {
+  .nav-burger { display: flex; }
+
+  .nav-links {
+    position: fixed;
+    top: 0; right: 0;
+    width: min(82vw, 320px);
+    height: 100vh;
+    background: var(--white, #fff);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: 96px 32px 32px;
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+    box-shadow: -8px 0 32px rgba(0,0,0,.12);
+    overflow-y: auto;
+    z-index: 1000;
+  }
+  .nav.nav-open .nav-links,
+  .nav-links.open { transform: translateX(0); }
+
+  .nav-links a {
+    width: 100%;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 17px;
+  }
+  .nav-links a.nav-cta {
+    margin-top: 16px;
+    padding: 14px 24px;
+    text-align: center;
+    border-bottom: none;
+  }
+
+  /* Backdrop when menu open */
+  .nav.nav-open::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 999;
+  }
+}
+
+/* Footer social icons */
+.footer-social {
+  display: flex;
+  gap: 14px;
+  margin-top: 20px;
+  align-items: center;
+}
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.85);
+  transition: background .2s, color .2s, transform .2s;
+}
+.footer-social a:hover {
+  background: var(--gold-primary, #F0C040);
+  color: var(--green-deep, #0F2E0F);
+  transform: translateY(-2px);
+}
+.footer-bottom .footer-social { margin: 0 0 0 24px; }
+@media (max-width: 900px) {
+  .footer-bottom .footer-social { margin: 16px 0 0; }
+}
+
+/* Responsive Comparison Row & Tables */
+.comp-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 24px 40px;
+  border-bottom: 1px solid var(--line);
+}
+.comp-row:last-child {
+  border-bottom: none;
+}
+@media (max-width: 768px) {
+  .comp-row {
+    padding: 16px 20px;
+  }
+  .comp-row p, .comp-row h3 {
+    font-size: 15px !important;
+  }
+}
+
+/* Responsive Stats Grid for About Page */
+.stats-grid-about {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.stats-grid-about > div {
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+.stats-grid-about > div:last-child {
+  border-right: none;
+}
+@media (max-width: 768px) {
+  .stats-grid-about {
+    grid-template-columns: 1fr 1fr;
+  }
+  .stats-grid-about > div:nth-child(2n) {
+    border-right: none;
+  }
+  .stats-grid-about > div:nth-child(1),
+  .stats-grid-about > div:nth-child(2) {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+}
+@media (max-width: 480px) {
+  .stats-grid-about {
+    grid-template-columns: 1fr;
+  }
+  .stats-grid-about > div {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .stats-grid-about > div:last-child {
+    border-bottom: none;
+  }
+}
+
+/* Mobile overrides for stats band on homepage */
+@media (max-width: 480px) {
+  .stats-band > div > div {
+    grid-template-columns: 1fr !important;
+  }
+  .stats-band > div > div > div {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(247,244,237,0.12) !important;
+  }
+  .stats-band > div > div > div:last-child {
+    border-bottom: none !important;
+  }
+}
+
+/* About Page Hero Stats Responsive */
+.hero-stats-about {
+  margin-top: 64px;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 40px;
+}
+@media (max-width: 600px) {
+  .hero-stats-about {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+  }
+  .hero-stats-about > div {
+    text-align: center !important;
+    border-left: none !important;
+    padding-left: 0 !important;
+  }
+}
+
+
+
+
+/* ════════════════════════════════════════════════════════════
+   MODERN UI LAYER  ·  v1.0.4
+   Accessibility · glass · scroll-progress · polish · components
+   ════════════════════════════════════════════════════════════ */
+
+/* ── 1. Accessibility: respect reduced motion ──────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal, .reveal-left, .reveal-scale, .hero-line > span,
+  [data-stagger] > *, .stagger-list > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ── 2. Keyboard focus rings (only for keyboard users) ─────── */
+:focus-visible {
+  outline: 2px solid var(--gold-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+a:focus-visible, button:focus-visible, .btn:focus-visible,
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--gold-primary);
+  outline-offset: 2px;
+}
+
+/* ── 3. Scroll progress bar (top of viewport) ──────────────── */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  z-index: 2000;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold-primary), var(--green-mid));
+  box-shadow: 0 0 10px rgba(226,182,57,.5);
+  transition: width .1s linear;
+  pointer-events: none;
+}
+
+/* ── 4. Back-to-top floating button ────────────────────────── */
+.to-top {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--green-deep);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-md);
+  opacity: 0; visibility: hidden;
+  transform: translateY(12px) scale(.9);
+  transition: opacity .3s var(--ease-out), transform .3s var(--ease-out), background .25s;
+  z-index: 1500;
+  border: 1px solid rgba(255,255,255,.12);
+}
+.to-top.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+.to-top:hover { background: var(--gold-primary); color: var(--green-deep); transform: translateY(-3px) scale(1.05); }
+@media (max-width: 600px) { .to-top { bottom: 18px; right: 18px; width: 44px; height: 44px; } }
+
+/* ── 5. Enhanced nav glassmorphism + scrolled state ────────── */
+.nav {
+  transition: padding var(--dur-base) var(--ease-out),
+              background var(--dur-base), box-shadow var(--dur-base),
+              border-color var(--dur-base);
+}
+.nav.scrolled {
+  background: rgba(249, 248, 245, 0.72);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  box-shadow: 0 8px 32px rgba(11,34,11,0.06);
+}
+body.nav-dark .nav.scrolled {
+  background: rgba(11, 34, 11, 0.72);
+}
+
+/* ── 6. Card depth + hover micro-interactions ──────────────── */
+.card-hover, .prog {
+  transition: transform .4s var(--ease-out), box-shadow .4s var(--ease-out), border-color .3s;
+  will-change: transform;
+}
+.card-hover:hover, .prog:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 60px rgba(11,34,11,0.12);
+}
+.prog.prog-light:hover { border-color: var(--gold-primary); }
+
+/* Image zoom containers */
+.img-zoom { overflow: hidden; }
+.img-zoom img { transition: transform .9s var(--ease-out); will-change: transform; }
+.img-zoom:hover img { transform: scale(1.06); }
+
+/* ── 7. Gradient text utility ──────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(110deg, var(--gold-dark), var(--gold-primary) 60%, var(--green-mid));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ── 8. Soft section-to-section gradient blend ─────────────── */
+.section-blend-top::before,
+.section-blend-bottom::after {
+  content: "";
+  position: absolute; left: 0; right: 0;
+  height: 80px; pointer-events: none; z-index: 1;
+}
+.section-blend-top::before    { top: 0;    background: linear-gradient(to bottom, rgba(11,34,11,.15), transparent); }
+.section-blend-bottom::after  { bottom: 0; background: linear-gradient(to top,    rgba(11,34,11,.15), transparent); }
+
+/* ── 9. Bento grid utility (asymmetric modern tiles) ───────── */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(180px, auto);
+  gap: 20px;
+}
+.bento > .bento-lg { grid-column: span 2; grid-row: span 2; }
+.bento > .bento-wide { grid-column: span 2; }
+.bento-tile {
+  position: relative;
+  border-radius: 18px;
+  padding: 28px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  transition: transform .4s var(--ease-out), box-shadow .4s var(--ease-out);
+}
+.bento-tile:hover { transform: translateY(-4px); box-shadow: 0 24px 50px rgba(11,34,11,.1); }
+@media (max-width: 900px) {
+  .bento { grid-template-columns: 1fr 1fr; }
+  .bento > .bento-lg, .bento > .bento-wide { grid-column: span 2; grid-row: auto; }
+}
+@media (max-width: 560px) {
+  .bento { grid-template-columns: 1fr; }
+  .bento > .bento-lg, .bento > .bento-wide { grid-column: auto; }
+}
+
+/* ── 10. Trust / logo marquee strip ────────────────────────── */
+.trust-strip { overflow: hidden; padding: 28px 0; border-block: 1px solid var(--line); background: var(--warm-white); }
+.trust-track { display: flex; gap: 64px; width: max-content; animation: trustScroll 32s linear infinite; }
+.trust-strip:hover .trust-track { animation-play-state: paused; }
+.trust-track span {
+  font-family: var(--serif); font-size: 22px; color: var(--stone);
+  white-space: nowrap; opacity: .65; font-style: italic;
+}
+@keyframes trustScroll { to { transform: translateX(-50%); } }
+
+/* ── 11. Button shine refinement ───────────────────────────── */
+.btn-primary { box-shadow: 0 6px 20px rgba(226,182,57,.22); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(226,182,57,.35); }
+
+/* ── 12. Selection + smooth scroll niceties ────────────────── */
+::selection { background: var(--gold-primary); color: var(--green-deep); }

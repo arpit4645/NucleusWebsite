@@ -6,14 +6,37 @@
   <title>Insights — Nucleus Consultant</title>
   <meta property="og:title" content="Nucleus Consultant" />
   <meta property="og:description" content="We help young minds and growing businesses clarify purpose and turn dreams into reality." />
-  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:image" content="https://nucleusconsultent.netlify.app/assets/logo.png" /> <!-- FIX: GAP-07 -->
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="assets/logo.png" />
+  <link rel="canonical" href="https://nucleusconsultent.netlify.app/blog.html" /> <!-- FIX: GAP-21 -->
+  <meta name="description" content="Insights on leadership, culture, sales and business transformation from Nucleus Consultant — practical lessons from Indian SME founders we've worked with." /> <!-- FIX: GAP-22 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Nucleus Consultant",
+    "url": "https://nucleusconsultent.netlify.app",
+    "logo": "https://nucleusconsultent.netlify.app/assets/logo.png",
+    "description": "Business transformation consultancy in Surat, India.",
+    "telephone": "+918156076680",
+    "email": "hello@nucleusconsultant.in",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "811 IFC, Opp. Fire Station, VIP Road",
+      "addressLocality": "Vesu, Surat",
+      "postalCode": "395007",
+      "addressCountry": "IN"
+    },
+    "sameAs": []
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="stylesheet" href="assets/styles.css?v=1.0.4" /> <!-- FIX: GAP-28 -->
   <style>
     .feat {
       display: grid; grid-template-columns: 1fr 1fr;
@@ -127,6 +150,12 @@
   </style>
 </head>
 <body>
+  <noscript>
+    <style>
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .hero-line > span { transform: none !important; }
+    </style>
+  </noscript>
 
   <!-- ═══════════ NAV ═══════════ -->
   <nav class="nav">
@@ -195,7 +224,7 @@
       </div>
 
       <!-- Unified posts grid: JS renders admin posts first, then static posts -->
-      <div class="post-grid" id="allPostsGrid" data-stagger="80"></div>
+      <div class="post-grid" id="blog-posts-grid" data-stagger="80"></div>
 
       <div class="center" style="margin: 72px 0 24px;">
         <button class="btn btn-ghost reveal">Load more articles</button>
@@ -263,7 +292,7 @@
     </div>
   </footer>
 
-  <script src="assets/site.js"></script>
+  <script src="assets/site.js?v=2"></script>
   <script>
     // Category filter
     document.querySelectorAll('.filter').forEach(function(btn) {
@@ -271,7 +300,7 @@
         document.querySelectorAll('.filter').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
         var cat = btn.dataset.cat || btn.textContent.trim();
-        document.getElementById('allPostsGrid').querySelectorAll('.post').forEach(function(el) {
+        document.getElementById('blog-posts-grid').querySelectorAll('.post').forEach(function(el) {
           el.style.display = (cat === 'All' || (el.dataset.category || '') === cat) ? '' : 'none';
         });
       });
@@ -294,7 +323,7 @@
       if (!post) return;
       var content = document.getElementById('postModalContent');
       content.innerHTML =
-        (post.image ? '<img loading="lazy" class="modal-img" src="' + post.image + '" alt="' + esc(post.title) + '" />' : '') +
+        (post.image ? '<img loading="lazy" class="modal-img" src="' + post.image + '" alt="' + esc(post.title) + '" width="800" height="600" />' : '') +
         '<h2>' + esc(post.title) + '</h2>' +
         '<div class="modal-meta"><span>' + esc(post.category) + '</span><span>' + esc(post.readTime) + '</span><span>' + esc(post.dateLabel) + '</span><span>By ' + esc(post.author) + '</span></div>' +
         '<div class="modal-body">' + esc(post.content) + '</div>';
@@ -338,7 +367,7 @@
       if (featPost) {
         sf.style.display = 'none';
         var fimg = featPost.image
-          ? '<img loading="lazy" src="' + featPost.image + '" alt="' + esc(featPost.title) + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />'
+          ? '<img loading="lazy" src="' + featPost.image + '" alt="' + esc(featPost.title) + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" width="800" height="600" />'
           : '';
         var fEl = document.createElement('article');
         fEl.className = 'feat reveal';
@@ -364,10 +393,10 @@
       }
 
       // Unified grid: admin non-featured posts first, then static posts
-      var grid = document.getElementById('allPostsGrid');
+      var grid = document.getElementById('blog-posts-grid');
       var adminCards = nonFeat.map(function(p) {
         var pimg = p.image
-          ? '<img loading="lazy" src="' + p.image + '" alt="' + esc(p.title) + '" style="width:100%;height:100%;object-fit:cover;" />'
+          ? '<img loading="lazy" src="' + p.image + '" alt="' + esc(p.title) + '" style="width:100%;height:100%;object-fit:cover;" width="800" height="600" />'
           : '';
         return '<article class="post" data-category="' + esc(p.category) + '" data-id="' + esc(p.id) + '" style="cursor:pointer;">' +
           '<div class="post-img b">' + pimg + '</div>' +
@@ -378,6 +407,25 @@
           '</article>';
       });
       grid.innerHTML = adminCards.concat(STATIC_POSTS_HTML).join('');
+
+      // FIX: GAP-20 — empty-state skeleton if no posts at all
+      if (!grid.children.length) {
+        grid.innerHTML = (
+          '<div style="grid-column:1/-1;text-align:center;padding:24px 0 8px;color:var(--stone);font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;">' +
+          'Content coming soon — check back shortly.' +
+          '</div>' +
+          ['Leadership','Culture','Operations'].map(function(cat){
+            return '<article class="post" style="opacity:.55;pointer-events:none;">' +
+              '<div class="post-img b" style="background:linear-gradient(135deg,#E8E6DD,#D9D6CB);min-height:200px;"></div>' +
+              '<div class="tag-row"><span class="tag">'+cat+'</span></div>' +
+              '<h3>Coming soon</h3>' +
+              '<p>A new article on '+cat.toLowerCase()+' is on the way. Subscribe to get notified.</p>' +
+              '<div class="meta-line"><span>— min read</span><span class="dot"></span><span>Soon</span></div>' +
+            '</article>';
+          }).join('')
+        );
+      }
+
       // Wire click handlers for admin cards
       grid.querySelectorAll('.post[data-id]').forEach(function(el) {
         var id = el.dataset.id;
@@ -397,5 +445,6 @@
     document.addEventListener('nucleus-sync-ready', renderBlogPosts);
     window.addEventListener('storage', function(e) { if (e.key === SKEY) renderBlogPosts(); });
   </script>
+  <script src="assets/nucleus-live.js?v=2"></script>
 </body>
 </html>
