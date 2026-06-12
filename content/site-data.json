@@ -104,5 +104,6 @@
   "careers": [],
   "nav_cta_label": "Book consult",
   "footer_tagline": "Transforming inner light into outer impact.",
-  "img_hero_bg_type": "image"
+  "img_hero_bg_type": "image",
+  "nucleus_testimonials": "[{\"quote\":\"\",\"name\":\"\",\"role\":\"\",\"company\":\"\"}]"
 }
