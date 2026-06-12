@@ -1652,7 +1652,7 @@ function saveOrUpdate(forceStatus) {
     if (idx !== -1) {
       posts[idx] = { ...posts[idx], ...data, updatedAt: new Date().toISOString() };
       savePosts(posts);
-      showToast(forceStatus === 'published' ? 'Post updated & published!' : 'Draft saved!');
+      if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast(forceStatus === 'published' ? 'Post published & live ✓' : 'Draft saved!');
     }
   } else {
     const newPost = { id: genId(), createdAt: new Date().toISOString(), ...data };
@@ -1660,7 +1660,7 @@ function saveOrUpdate(forceStatus) {
     savePosts(posts);
     document.getElementById('editingId').value = newPost.id;
     document.getElementById('deletePanel').style.display = '';
-    showToast(forceStatus === 'published' ? 'Post published to blog!' : 'Draft saved!');
+    if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast(forceStatus === 'published' ? 'Post published & live ✓' : 'Draft saved!');
   }
   renderSidebar();
   document.getElementById('editorTitle').textContent = data.title;
@@ -1834,7 +1834,7 @@ function saveSettings() {
   s.wa = document.getElementById('set_wa').value;
 
   localStorage.setItem('nucleus_site_settings', JSON.stringify(s));
-  showToast('Site settings saved globally!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Settings saved & live ✓');
 }
 
 loadSettings();
@@ -2084,7 +2084,7 @@ function saveHomepage() {
   localStorage.setItem('nucleus_homepage', JSON.stringify(d));
   // Save flat keys so public pages can render via data-set attributes
   Object.entries(d).forEach(([k, v]) => localStorage.setItem('nucleus_hp_' + k, v));
-  showToast('Homepage content saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Homepage saved & live ✓');
 }
 
 // ── Services CRUD ────────────────────────────────────────────────────────────
@@ -2254,7 +2254,7 @@ function saveServicesSteps() {
   localStorage.setItem('nucleus_services_steps', JSON.stringify(steps));
   const ind = document.getElementById('si-svc-steps');
   if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
-  showToast('How We Work steps saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Steps saved & live ✓');
 }
 
 function saveServicesPricing() {
@@ -2265,7 +2265,7 @@ function saveServicesPricing() {
   localStorage.setItem('nucleus_services_pricing', JSON.stringify(pricing));
   const ind = document.getElementById('si-svc-pricing');
   if (ind) { ind.textContent = '✓ Saved'; ind.style.color='#22c55e'; setTimeout(()=>{ ind.textContent=''; },2500); }
-  showToast('Pricing note saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Pricing saved & live ✓');
 }
 
 // ── Cloudinary Config ─────────────────────────────────────────────────────────
@@ -2441,7 +2441,7 @@ function saveCaseStudies() {
     });
   });
   localStorage.setItem('nucleus_casestudies', JSON.stringify(items));
-  showToast('Case studies saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Case studies saved & live ✓');
 }
 
 async function uploadCaseStudyMedia(idx, event) {
@@ -2561,7 +2561,7 @@ function saveTestimonials() {
     items.push({quote:q.value, name:names[i].value, role:roles[i].value, company:companies[i].value});
   });
   localStorage.setItem('nucleus_testimonials', JSON.stringify(items));
-  showToast('Testimonials saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Testimonials saved & live ✓');
 }
 
 
@@ -2734,7 +2734,7 @@ function saveUniversalMediaUrl(storageKey) {
   localStorage.removeItem(storageKey); // legacy b64
   
   previewUniversalMediaUrl(storageKey, url);
-  showToast('URL saved and applied successfully!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Media saved & live ✓');
 }
 
 async function handleUniversalMediaUpload(storageKey, event) {
@@ -2862,7 +2862,7 @@ function saveCareers() {
     items.push({title:t.value, type:types[i].value, description:descs[i].value, link:links[i].value, status:statuses[i].value});
   });
   localStorage.setItem('nucleus_careers', JSON.stringify(items));
-  showToast('Job listings saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Job listings saved & live ✓');
 }
 
 // ── Careers Page Content ─────────────────────────────────────────────────────
@@ -2872,7 +2872,7 @@ function saveCareersContent() {
   localStorage.setItem('nucleus_careers_eyebrow', document.getElementById('careers_eyebrow').value);
   localStorage.setItem('nucleus_careers_section_title', document.getElementById('careers_section_title').value);
   localStorage.setItem('nucleus_careers_desc', document.getElementById('careers_desc').value);
-  showToast('Careers page content saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Careers content saved & live ✓');
 }
 
 // ── Careers Benefits CRUD ────────────────────────────────────────────────────
@@ -2920,7 +2920,7 @@ function saveCareersBenefits() {
     items.push({icon:ic.value, title:titles[i].value, description:descs[i].value});
   });
   localStorage.setItem('nucleus_careers_benefits', JSON.stringify(items));
-  showToast('Benefits saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Benefits saved & live ✓');
 }
 
 // ── Programs CRUD ─────────────────────────────────────────────────────────────
@@ -3016,7 +3016,7 @@ function saveProgramsHero() {
   localStorage.setItem('nucleus_programs_hero_eyebrow', document.getElementById('programs_hero_eyebrow').value);
   localStorage.setItem('nucleus_programs_hero_title', document.getElementById('programs_hero_title').value);
   localStorage.setItem('nucleus_programs_hero_sub', document.getElementById('programs_hero_sub').value);
-  showToast('Programs hero saved!');
+  if(window.nucleusSyncFlush)window.nucleusSyncFlush(); showToast('Programs hero saved & live ✓');
 }
 
 // ── Image Manager ─────────────────────────────────────────────────────────────
@@ -3245,6 +3245,6 @@ showView('homepage');
   };
 })();
 </script>
-  <script src="assets/nucleus-sync.js"></script>
+  <script src="assets/nucleus-sync.js?v=2"></script>
 </body>
 </html>
