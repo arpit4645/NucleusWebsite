@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,wght@0,300..600;1,300..600&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=1.0.3" /> <!-- FIX: GAP-28 -->
+  <link rel="stylesheet" href="assets/styles.css?v=1.0.4" /> <!-- FIX: GAP-28 -->
   
   <style>
     /* 1. CINEMATIC HERO */
@@ -213,7 +213,7 @@
           We operate as an elite extension of your leadership team. We dive deep into the chaos, establish structure, align your people, and engineer an ecosystem where growth is natural, predictable, and sustainable.
         </p>
       </div>
-      <div class="reveal-scale img-zoom upload-zone" id="about-who-img" style="aspect-ratio: 4/5; border-radius: var(--radius-lg); background: url('assets/strategy_abstract.png') center/cover; position: relative;">
+      <div class="reveal-scale img-zoom upload-zone" id="about-who-img" style="aspect-ratio: 4/5; border-radius: var(--radius-lg); background: url('assets/strategy_abstract.webp') center/cover; position: relative;">
         <span class="upload-placeholder" style="display: none;">Upload Image</span>
       </div>
     </div>
@@ -250,7 +250,7 @@
             To empower founders with absolute clarity, build robust operational systems, and align organizational culture so that every business we touch scales with predictability and purpose.
           </p>
         </div>
-        <div class="reveal-scale img-zoom upload-zone" id="about-mission-img" style="border-radius: var(--radius-lg); background: url('assets/culture_alignment.png') center/cover; min-height: 400px; position: relative;">
+        <div class="reveal-scale img-zoom upload-zone" id="about-mission-img" style="border-radius: var(--radius-lg); background: url('assets/culture_alignment.webp') center/cover; min-height: 400px; position: relative;">
           <span class="upload-placeholder" style="display: none;">Upload Image</span>
         </div>
       </div>
@@ -343,7 +343,7 @@
   <!-- 7. FOUNDER STORY SECTION -->
   <section class="section" style="background: var(--white);">
     <div class="wrap editorial-grid">
-      <div class="reveal-scale img-zoom upload-zone" id="founder-photo-upload" onclick="document.getElementById('founder-modal').classList.add('active')" style="aspect-ratio: 4/5; border-radius: var(--radius-lg); background: url('assets/founder_portrait.png') center/cover; position: relative; cursor: pointer;">
+      <div class="reveal-scale img-zoom upload-zone" id="founder-photo-upload" onclick="document.getElementById('founder-modal').classList.add('active')" style="aspect-ratio: 4/5; border-radius: var(--radius-lg); background: url('assets/founder_portrait.webp') center/cover; position: relative; cursor: pointer;">
         <span class="upload-placeholder" style="display: none;">Upload Founder Photo</span>
         <div style="position: absolute; bottom: 20px; right: 20px; background: var(--gold-primary); color: var(--ink); padding: 8px 16px; border-radius: 20px; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; pointer-events: none;">Read Full Story →</div>
       </div>
@@ -622,10 +622,10 @@
     }
 
     function loadAllMedia() {
-      loadUniversalMedia('about-who-img',        'nucleus_about_who_img',     'assets/strategy_abstract.png');
-      loadUniversalMedia('vision-media-container','nucleus_vision_video',      'assets/inner_light.png');
-      loadUniversalMedia('about-mission-img',    'nucleus_about_mission_img', 'assets/culture_alignment.png');
-      loadUniversalMedia('founder-photo-upload', 'nucleus_founder_photo',     'assets/founder_portrait.png');
+      loadUniversalMedia('about-who-img',        'nucleus_about_who_img',     'assets/strategy_abstract.webp');
+      loadUniversalMedia('vision-media-container','nucleus_vision_video',      'assets/inner_light.webp');
+      loadUniversalMedia('about-mission-img',    'nucleus_about_mission_img', 'assets/culture_alignment.webp');
+      loadUniversalMedia('founder-photo-upload', 'nucleus_founder_photo',     'assets/founder_portrait.webp');
     }
 
     document.addEventListener('DOMContentLoaded', async () => {

@@ -792,3 +792,56 @@ function injectVideoOrIframe(container, src, isVideo, isYT, isVimeo) {
   }
 }
 
+
+
+/* ════════════════════════════════════════════════════════════
+   MODERN UI COMPONENTS  ·  scroll progress + back-to-top
+   Injected on every page (site.js loads sitewide).
+   Respects prefers-reduced-motion for smoothness only.
+   ════════════════════════════════════════════════════════════ */
+(function modernUI() {
+  function init() {
+    // Avoid double-injection
+    if (document.querySelector('.scroll-progress')) return;
+
+    /* Scroll progress bar */
+    var bar = document.createElement('div');
+    bar.className = 'scroll-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(bar);
+
+    /* Back-to-top button */
+    var top = document.createElement('button');
+    top.className = 'to-top';
+    top.setAttribute('aria-label', 'Back to top');
+    top.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+    top.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    document.body.appendChild(top);
+
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        var h = document.documentElement;
+        var scrolled = h.scrollTop;
+        var max = h.scrollHeight - h.clientHeight;
+        var pct = max > 0 ? (scrolled / max) * 100 : 0;
+        bar.style.width = pct + '%';
+        if (scrolled > 600) top.classList.add('show');
+        else top.classList.remove('show');
+        ticking = false;
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

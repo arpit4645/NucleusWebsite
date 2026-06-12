@@ -41,9 +41,9 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="style" href="assets/styles.css?v=1.0.3" />
+  <link rel="preload" as="style" href="assets/styles.css?v=1.0.4" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=1.0.3" />
+  <link rel="stylesheet" href="assets/styles.css?v=1.0.4" />
   <!-- FIX: GAP-13 — removed duplicate font preload that appeared after stylesheet load -->
 
   <style>
@@ -911,6 +911,25 @@
   </section>
   <!-- FIX: GAP-12 — stats-band media query moved to head <style> block -->
 
+  <!-- ═══════════ TRUST / VALUE MARQUEE ═══════════ -->
+  <div class="trust-strip" aria-label="What we transform">
+    <div class="trust-track">
+      <span>Leadership&nbsp;&amp;&nbsp;Thinking</span><span>·</span>
+      <span>Culture&nbsp;&amp;&nbsp;Accountability</span><span>·</span>
+      <span>Sales&nbsp;&amp;&nbsp;Growth Systems</span><span>·</span>
+      <span>Operations&nbsp;&amp;&nbsp;SOPs</span><span>·</span>
+      <span>Brand&nbsp;Positioning</span><span>·</span>
+      <span>People&nbsp;Development</span><span>·</span>
+      <!-- duplicate for seamless loop -->
+      <span>Leadership&nbsp;&amp;&nbsp;Thinking</span><span>·</span>
+      <span>Culture&nbsp;&amp;&nbsp;Accountability</span><span>·</span>
+      <span>Sales&nbsp;&amp;&nbsp;Growth Systems</span><span>·</span>
+      <span>Operations&nbsp;&amp;&nbsp;SOPs</span><span>·</span>
+      <span>Brand&nbsp;Positioning</span><span>·</span>
+      <span>People&nbsp;Development</span><span>·</span>
+    </div>
+  </div>
+
   <!-- ═══════════ PAIN MIRROR SECTION ═══════════ -->
   <section class="section" style="background: var(--warm-white); color: var(--charcoal); position: relative; overflow: hidden;">
     <div class="mesh-bg">
@@ -936,7 +955,7 @@
           </div>
         </div>
         <div class="reveal-scale img-zoom" data-parallax="0.05" style="border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-          <img loading="lazy" src="assets/culture_alignment.png" alt="Culture Alignment" data-media-key="img_home_culture" style="width: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);" class="float-anim" width="800" height="600" />
+          <img loading="lazy" src="assets/culture_alignment.webp" alt="Culture Alignment" data-media-key="img_home_culture" style="width: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);" class="float-anim" width="800" height="600" />
         </div>
       </div>
     </div>
@@ -952,7 +971,7 @@
       
       <div class="grid grid-2" style="margin-top: 56px; align-items: center;">
         <div class="reveal-scale img-zoom" style="border-radius: 20px; overflow: hidden; border: 1px solid var(--line);">
-          <img loading="lazy" src="assets/strategy_abstract.png" alt="Strategy Abstract" data-media-key="img_home_strategy" style="width: 100%; object-fit: cover; aspect-ratio: 1;" class="float-anim" width="800" height="600" />
+          <img loading="lazy" src="assets/strategy_abstract.webp" alt="Strategy Abstract" data-media-key="img_home_strategy" style="width: 100%; object-fit: cover; aspect-ratio: 1;" class="float-anim" width="800" height="600" />
         </div>
         
         <div class="grid grid-2 reveal" style="gap: 24px;">
@@ -1087,7 +1106,7 @@
         </div>
         <div style="position: relative;">
           <div class="reveal-scale img-zoom" style="border-radius: 20px; overflow: hidden; border: 1px solid var(--line); margin-bottom: -40px; margin-right: -40px; position: relative; z-index: 1;">
-            <img loading="lazy" src="assets/philosophy_zen.png" alt="Philosophy" data-media-key="img_home_philosophy" style="width: 100%; object-fit: cover; aspect-ratio: 4/3;" class="float-anim" width="800" height="600" />
+            <img loading="lazy" src="assets/philosophy_zen.webp" alt="Philosophy" data-media-key="img_home_philosophy" style="width: 100%; object-fit: cover; aspect-ratio: 4/3;" class="float-anim" width="800" height="600" />
           </div>
           <div class="reveal-scale card-hover" style="background: var(--white); padding: 48px; border-radius: 20px; border: 1px solid var(--line); box-shadow: 0 30px 60px rgba(0,0,0,0.08); position: relative; z-index: 2; max-width: 80%; transform: translateY(-40px);">
             <h3 style="font-size: 24px; margin-bottom: 24px;">We create organizations where:</h3>
