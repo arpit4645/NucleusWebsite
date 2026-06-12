@@ -265,6 +265,7 @@
 
       const trulyOffline = !navigator.onLine;
       const fetchBlocked = e.message === 'Failed to fetch' || e.message === 'NetworkError when attempting to fetch resource';
+      const readOnlyToken = e.message.toLowerCase().includes('resource not accessible') || e.message.toLowerCase().includes('not accessible by integration');
 
       if (trulyOffline) {
         _updateSyncBadge(false, 'You are offline — changes saved locally, will sync when reconnected');
@@ -272,6 +273,10 @@
         // Browser reached the internet (navigator.onLine=true) but couldn't reach api.github.com.
         // Most common causes: browser extension (uBlock, AdBlock, Privacy Badger) or firewall.
         const msg = 'Cannot reach GitHub API — likely blocked by a browser extension or firewall. Disable extensions and retry.';
+        _updateSyncBadge(false, msg);
+        if (window._nucleusIsAdmin) _showAdminSyncError(msg);
+      } else if (readOnlyToken) {
+        const msg = 'Token is read-only — go to GitHub → Settings → Fine-grained tokens → Edit your token → set Contents to "Read and write"';
         _updateSyncBadge(false, msg);
         if (window._nucleusIsAdmin) _showAdminSyncError(msg);
       } else {
@@ -496,6 +501,11 @@
           <li>If on a VPN, disconnect and retry</li>
           <li>Open <a href="https://api.github.com" target="_blank" style="color:#90caf9;">api.github.com</a> in a new tab — if it loads, GitHub is reachable</li>
           <li>Try a different browser (Chrome / Edge / Firefox)</li>
+          ` : _lastSyncError.includes('read-only') || _lastSyncError.includes('not accessible') ? `
+          <li>Your token has <strong style="color:#fff;">read-only</strong> access — it can't write changes</li>
+          <li>Go to <a href="https://github.com/settings/personal-access-tokens" target="_blank" style="color:#90caf9;">GitHub → Settings → Tokens</a></li>
+          <li>Edit your token → find <strong style="color:#fff;">Contents</strong> → change from "Read-only" to <strong style="color:#fff;">"Read and write"</strong></li>
+          <li>Or create a new fine-grained token with Contents: Read and write</li>
           ` : `
           <li>Token missing <strong>Contents → Write</strong> permission</li>
           <li>Token has expired — set it to "No expiration"</li>
