@@ -2323,7 +2323,7 @@ function getMediaPreviewHtml(url, idx) {
   }
 
   return mediaContent ? `<div style="position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#111;max-width:480px;">${mediaContent}<button onclick="clearCaseStudyMedia(${idx})" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--mono);">✕ Remove</button></div>` : '';
-}────
+}
 function getCaseStudies() { try { return JSON.parse(localStorage.getItem('nucleus_casestudies') || '[]'); } catch(e) { return []; } }
 function renderCaseStudies() {
   const items = getCaseStudies();
