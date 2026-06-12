@@ -1,8 +1,6 @@
 {
   "_comment": "This file is the live database for Nucleus Consultant website. Admin panel writes here via GitHub API. All pages fetch this on load. Do not edit manually.",
   "_version": 1,
-  "_updated": "",
-
   "hp_hero_line1": "Your Business Is Not Stuck",
   "hp_hero_line2": "Because of Strategy.",
   "hp_hero_line3": "It Is Stuck Because of Thinking.",
@@ -17,12 +15,10 @@
   "hp_final_heading": "Ready to Transform Your Business?",
   "hp_final_btn1": "Book Business Diagnosis",
   "hp_final_btn2": "Apply for Transformation",
-
   "stats_lives": "200+",
   "stats_biz": "50+",
   "stats_years": "8+",
   "stats_retention": "95%",
-
   "about_hero_eyebrow": "The Organization",
   "about_hero_title": "We rebuild businesses by rebuilding leaders.",
   "about_hero_subtitle": "A premium transformation consultancy for SMEs. We don't just give strategy; we align mindset, culture, and systems to engineer predictable growth.",
@@ -31,19 +27,15 @@
   "about_who_body_2": "We operate as an elite extension of your leadership team, bringing structured thinking, proven frameworks, and deep human understanding to everything we do.",
   "about_vision_text": "To be the catalyst that transforms Indian SMEs into self-sustaining, high-performance organizations.",
   "about_mission_text": "To empower founders with absolute clarity on strategy, systems, and people — so their businesses grow without them.",
-
   "svc_hero_title": "We Don't Sell Services. We Deliver Transformation.",
   "svc_hero_sub": "Every engagement is custom-scoped to your exact business reality. No templates. No copy-paste solutions.",
-
   "contact_phone": "+91 8156 076 680",
   "contact_email": "hello@nucleusconsultant.in",
   "contact_address": "811, International Finance Center (IFC), Opp. Fire Station, VIP Road, Vesu, Surat – 395007",
   "contact_wa": "918156076680",
-
   "social_instagram": "#",
   "social_linkedin": "#",
   "social_twitter": "#",
-
   "posts": [],
   "case_studies": [],
   "testimonials": [],
@@ -78,14 +70,40 @@
     }
   ],
   "services": [
-    { "title": "Leadership & Thinking", "desc": "Transform how founders and leaders think, decide, and show up.", "icon": "🧠" },
-    { "title": "Culture & Accountability", "desc": "Build a culture where people own their work without being chased.", "icon": "🤝" },
-    { "title": "Sales & Growth System", "desc": "Install a repeatable, scalable sales process from prospecting to closing.", "icon": "📈" },
-    { "title": "Operations & SOP Systems", "desc": "Document, delegate, and systematize your business operations.", "icon": "⚙️" },
-    { "title": "Marketing & Brand Positioning", "desc": "Build a brand that attracts the right clients automatically.", "icon": "🎯" },
-    { "title": "HR & People Development", "desc": "Hire right, develop faster, retain longer.", "icon": "👥" }
+    {
+      "title": "Leadership & Thinking",
+      "desc": "Transform how founders and leaders think, decide, and show up.",
+      "icon": "🧠"
+    },
+    {
+      "title": "Culture & Accountability",
+      "desc": "Build a culture where people own their work without being chased.",
+      "icon": "🤝"
+    },
+    {
+      "title": "Sales & Growth System",
+      "desc": "Install a repeatable, scalable sales process from prospecting to closing.",
+      "icon": "📈"
+    },
+    {
+      "title": "Operations & SOP Systems",
+      "desc": "Document, delegate, and systematize your business operations.",
+      "icon": "⚙️"
+    },
+    {
+      "title": "Marketing & Brand Positioning",
+      "desc": "Build a brand that attracts the right clients automatically.",
+      "icon": "🎯"
+    },
+    {
+      "title": "HR & People Development",
+      "desc": "Hire right, develop faster, retain longer.",
+      "icon": "👥"
+    }
   ],
   "careers": [],
   "nav_cta_label": "Book consult",
-  "footer_tagline": "Transforming inner light into outer impact."
+  "footer_tagline": "Transforming inner light into outer impact.",
+  "img_hero_bg": "https://raw.githubusercontent.com/arpit4645/NucleusWebsite/main/content/media/img_hero_bg_1781256062508_Sanjay_Patel.png",
+  "img_hero_bg_type": "image"
 }
