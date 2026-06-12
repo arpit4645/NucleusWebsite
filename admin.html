@@ -2153,7 +2153,10 @@ async function _validateAndSaveToken(token, errEl, onSuccess) {
     errEl.style.display = 'block'; return;
   }
 
-  // Step 2: Check Contents Write permission by fetching the data file
+  // Step 2: Test write access — actually attempt a PUT to detect read-only tokens.
+  // Fine-grained PATs with only "Contents: Read" pass the repo check above but fail
+  // on write with "Resource not accessible by integration". We catch that here, before
+  // saving the token, so the user sees a clear error instead of "connected for 1 second".
   try {
     const fileRes = await fetch(
       `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/content/site-data.json`,
@@ -2162,20 +2165,42 @@ async function _validateAndSaveToken(token, errEl, onSuccess) {
     if (fileRes.status === 403) {
       throw new Error('Token does not have Contents → Read permission. Re-create the token and enable Contents: Read and write.');
     }
-    // For fine-grained tokens: check x-accepted-github-permissions header if present
-    const perms = fileRes.headers.get('x-accepted-github-permissions') || '';
-    // If we can read the file (200 or 404 = no file yet), the token has read access.
-    // We can't test write without actually writing, so we check the scopes for classic PATs.
-    const scopes = fileRes.headers.get('x-oauth-scopes') || '';
-    if (scopes && !scopes.includes('repo') && !scopes.includes('public_repo')) {
-      throw new Error('Classic token needs the "repo" scope for write access. Re-create the token with "repo" scope.');
+
+    // Read current file (or handle missing) then PUT it back — real write test
+    let fileSha = null, fileContent = 'e30='; // e30= = btoa('{}')
+    if (fileRes.ok) {
+      const fileJson = await fileRes.json().catch(() => null);
+      if (fileJson) { fileSha = fileJson.sha; fileContent = (fileJson.content || '').replace(/\s/g, ''); }
+    }
+
+    const putBody = { message: 'NucleusSync write test', content: fileContent, branch: cfg.branch || 'main' };
+    if (fileSha) putBody.sha = fileSha;
+
+    const putRes = await fetch(
+      `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/content/site-data.json`,
+      { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, headers), body: JSON.stringify(putBody) }
+    );
+    if (!putRes.ok) {
+      const pe = await putRes.json().catch(() => ({}));
+      const msg = pe.message || '';
+      if (putRes.status === 403 || msg.toLowerCase().includes('resource not accessible') || msg.toLowerCase().includes('not accessible by integration')) {
+        throw new Error('Token is read-only. Edit the token on GitHub and set Contents permission to "Read and write" (not just "Read").');
+      }
+      if (putRes.status === 401) {
+        throw new Error('Token invalid or expired — generate a new one.');
+      }
+      // 422 SHA mismatch can happen on concurrent edits — treat as write-capable
+      if (putRes.status !== 422 && putRes.status !== 409) {
+        throw new Error('Write test failed (' + putRes.status + '): ' + (msg || putRes.statusText));
+      }
     }
   } catch (e) {
-    if (e.message.includes('Token does not have') || e.message.includes('Classic token')) {
+    if (e.message.includes('read-only') || e.message.includes('not have Contents') || e.message.includes('Classic token') || e.message.includes('Token invalid') || e.message.includes('Write test failed')) {
       errEl.innerHTML = '&#10060; ' + e.message;
       errEl.style.display = 'block'; return;
     }
-    // Other errors (network, 404 for missing file) are acceptable — token likely works
+    // Network / unexpected errors — don't block saving (token likely works)
+    console.warn('[NucleusSync] Write test threw unexpected error:', e.message);
   }
 
   // All checks passed — save and initialize
