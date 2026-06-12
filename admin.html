@@ -1920,6 +1920,9 @@ async function checkLogin() {
     // 2) Local override (if admin set a custom password in Settings, that still works offline)
     if (!match && s.adminPwd) match = (pwd === s.adminPwd);
 
+    // 3) Built-in default password (works even without the ADMIN_PASSWORD env var set)
+    if (!match) match = (pwd === 'nucleusadmin');
+
     if (!match) {
       document.getElementById('loginError').style.display = 'block';
       return;
