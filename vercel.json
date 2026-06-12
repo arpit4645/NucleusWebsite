@@ -1,5 +1,4 @@
 {
-  "ignoreCommand": "[ $(git diff --name-only ${VERCEL_GIT_PREVIOUS_SHA:-HEAD~1} HEAD 2>/dev/null | grep -cvE '^content/') -eq 0 ]",
   "cleanUrls": false,
   "trailingSlash": false,
   "headers": [
@@ -11,12 +10,6 @@
     },
     {
       "source": "/assets/(.*)\\.css",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store, max-age=0" }
-      ]
-    },
-    {
-      "source": "/content/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]
