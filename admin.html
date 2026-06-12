@@ -2032,14 +2032,13 @@ function checkLogin() {
     }
     sessionStorage.setItem('nucleus_auth', 'true');
     document.getElementById('loginError').style.display = 'none';
-    // Check if GitHub token already saved
+    // Always enter the admin dashboard immediately. GitHub connection is optional
+    // and can be set up later from the sidebar gear icon or Settings — it must
+    // never block access to the panel.
+    _enterAdmin();
     const cfg = (window.nucleusGithubGetConfig && window.nucleusGithubGetConfig()) || null;
     if (!cfg || !cfg.token) {
-      // Show step 2 (token setup) inside the login gate
-      document.getElementById('loginStep1').style.display = 'none';
-      document.getElementById('loginStep2').style.display = 'block';
-    } else {
-      _enterAdmin();
+      showToast('Tip: connect GitHub (sidebar ⚙) so changes reach all visitors.', 'error');
     }
   } catch(e) {
     console.error('Login error:', e);
@@ -2053,14 +2052,9 @@ function skipGithubSetup() {
 }
 
 if (sessionStorage.getItem('nucleus_auth') === 'true') {
-  const _existingCfg = (window.nucleusGithubGetConfig && window.nucleusGithubGetConfig()) || null;
-  if (_existingCfg && _existingCfg.token) {
-    _enterAdmin();
-  } else {
-    // Already authenticated but no token — show step 2
-    document.getElementById('loginStep1').style.display = 'none';
-    document.getElementById('loginStep2').style.display = 'block';
-  }
+  // Already authenticated this session — go straight into the panel.
+  // GitHub token is optional and never gates access.
+  _enterAdmin();
 }
 
 // ── GitHub Token Setup ────────────────────────────────────────────────────────
@@ -3125,7 +3119,7 @@ document.addEventListener('nucleus-sync-ready', function() {
   const btn = document.getElementById('loginButton');
   if (btn) {
     btn.disabled = false;
-    btn.textContent = 'Login →';
+    btn.textContent = 'Sign In →';
   }
   const badge = document.getElementById('nucleus-sync-badge');
   if (badge) {
