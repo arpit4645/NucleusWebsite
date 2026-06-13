@@ -8,11 +8,8 @@ const MAX_BASE64 = 1.4 * 1024 * 1024; // ~1 MB binary — GitHub Contents API ce
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
-  if (!requireAuth(req, res)) return;
-
-  if (!process.env.GITHUB_TOKEN) {
-    return res.status(500).json({ error: 'GITHUB_TOKEN is not configured in Vercel environment variables.' });
-  }
+  const session = requireAuth(req, res);
+  if (!session) return;
 
   const body = parseBody(req);
   if (!body || !body.filename || !body.data) {
@@ -29,12 +26,12 @@ export default async function handler(req, res) {
   const path = `content/media/${Date.now()}_${safe}`;
 
   try {
-    await ghPutFile(path, body.data.replace(/\s/g, ''), 'Upload media via admin panel');
+    await ghPutFile(session.token, path, body.data.replace(/\s/g, ''), 'Upload media via admin panel');
     return res.status(200).json({ ok: true, url: '/' + path });
   } catch (e) {
     const msg = e.message || 'Unknown error';
     const friendly = /resource not accessible|403/i.test(msg)
-      ? 'GitHub token lacks write permission. Edit the token: Contents must be "Read and write" for this repo.'
+      ? 'Your GitHub account lacks write permission on this repository.'
       : msg;
     return res.status(502).json({ error: friendly });
   }

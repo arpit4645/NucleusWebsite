@@ -2,6 +2,7 @@
   "name": "nucleus-website",
   "version": "1.0.2",
   "description": "Nucleus Consultant — Premium static website with dynamic blog system",
+  "type": "module",
   "scripts": {
     "start": "npx serve . -l 3000",
     "dev": "live-server --port=3000 --open=index.html --ignore=node_modules",

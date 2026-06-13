@@ -35,6 +35,11 @@
     margin-bottom: 14px; outline: none; background: var(--paper); }
   .login-card input:focus { border-color: var(--green); }
   .login-err { display: none; color: var(--red); font-size: 13px; margin: -4px 0 12px; }
+  .gh-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+    padding: 13px; border-radius: 10px; background: #1B1F24; color: #fff; font-size: 15px; font-weight: 600;
+    text-decoration: none; border: 1px solid #1B1F24; transition: background .15s; }
+  .gh-btn:hover { background: #2b3138; }
+  .gh-btn svg { flex-shrink: 0; }
 
   /* ── Shell ── */
   #app { display: none; }
@@ -170,11 +175,16 @@
   <div class="login-card">
     <div class="login-badge">N</div>
     <h1>Nucleus Admin</h1>
-    <p>Enter your admin password to continue.</p>
-    <input type="password" id="pw" placeholder="Password" autocomplete="current-password"
-           onkeydown="if(event.key==='Enter')doLogin()" />
+    <p>Sign in with the GitHub account that owns this website to manage its content.</p>
     <div class="login-err" id="loginErr"></div>
-    <button class="btn btn-save" style="width:100%;padding:13px;" id="loginBtn" onclick="doLogin()">Sign In</button>
+    <a class="gh-btn" id="loginBtn" href="/api/admin/oauth/start">
+      <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      Sign in with GitHub
+    </a>
+    <p style="margin:18px 0 0;font-size:11.5px;color:var(--muted);line-height:1.6;">
+      Only GitHub accounts with write access to this repository can sign in.
+      Your edits are saved using your own GitHub permissions.
+    </p>
   </div>
 </div>
 
@@ -1028,19 +1038,20 @@ function renderLeads() {
 function renderAdminSec() {
   document.getElementById('viewTitle').textContent = 'Admin & Security';
   var c = document.getElementById('content');
+  var who = ME ? (esc(ME.name || ME.login) + ' (@' + esc(ME.login) + ')') : 'your GitHub account';
   c.innerHTML =
     '<div class="card"><div class="card-h"><h3>Session</h3></div><div class="card-b" style="line-height:1.8;font-size:13.5px;">' +
-      'You are signed in. Sessions last <b>24 hours</b>, then you log in again.<br>' +
-      'The session lives in a secure, signed, httpOnly cookie — it cannot be read by page scripts.' +
+      'Signed in as <b>' + who + '</b>. Sessions last <b>12 hours</b>, then you sign in again.<br>' +
+      'Your edits are saved using <b>your own GitHub permissions</b> — there is no shared password or stored access token on the server.' +
     '</div></div>' +
-    '<div class="card"><div class="card-h"><h3>Changing the admin password</h3></div><div class="card-b" style="line-height:1.8;font-size:13.5px;color:var(--charcoal);">' +
-      'The password is the <code>ADMIN_PASSWORD</code> environment variable, verified on the server — it does not exist anywhere in this page’s code. To change it:' +
+    '<div class="card"><div class="card-h"><h3>Who can sign in</h3></div><div class="card-b" style="line-height:1.8;font-size:13.5px;color:var(--charcoal);">' +
+      'Anyone with <b>write (push) access</b> to this website’s GitHub repository can sign in here — typically just you. To let someone else edit the site:' +
       '<ol style="margin:10px 0 0 18px;line-height:2;">' +
-        '<li>Open <a href="https://vercel.com/dashboard" target="_blank" style="color:var(--green-soft);">Vercel Dashboard</a> → your project → <b>Settings → Environment Variables</b></li>' +
-        '<li>Edit <code>ADMIN_PASSWORD</code> and save</li>' +
-        '<li>Redeploy the site (Deployments → ⋯ → Redeploy)</li>' +
+        '<li>Open the repository on <a href="https://github.com/arpit4645/NucleusWebsite/settings/access" target="_blank" style="color:var(--green-soft);">GitHub → Settings → Collaborators</a></li>' +
+        '<li>Invite their GitHub username with <b>Write</b> access</li>' +
+        '<li>They can then “Sign in with GitHub” here</li>' +
       '</ol>' +
-      '<div style="margin-top:10px;color:var(--muted);">An app cannot change its own environment variables at runtime, so there is no in-page password change — this is the honest, secure way.</div>' +
+      '<div style="margin-top:10px;color:var(--muted);">To revoke access, remove them as a collaborator on GitHub — no passwords to rotate.</div>' +
     '</div></div>' +
     '<div class="card"><div class="card-h"><h3>Publishing pipeline health</h3></div><div class="card-b">' +
       '<div style="margin-bottom:14px;font-size:13.5px;color:var(--muted);">Runs a real write to the content file on GitHub — the same path every Save uses.</div>' +
@@ -1065,23 +1076,7 @@ function runWriteTest() {
 }
 
 /* ── Auth & boot ────────────────────────────────────────────────────── */
-function doLogin() {
-  var pw = document.getElementById('pw').value;
-  var err = document.getElementById('loginErr');
-  var btn = document.getElementById('loginBtn');
-  err.style.display = 'none';
-  btn.disabled = true; btn.textContent = 'Signing in…';
-  api('/api/admin/login', { method: 'POST', body: JSON.stringify({ password: pw }) })
-    .then(function (r) {
-      if (!r.github) banner('GITHUB_TOKEN is not configured in Vercel — you can browse the admin, but publishing will fail until it is set.');
-      enterApp();
-    })
-    .catch(function (e) {
-      err.textContent = e.message;
-      err.style.display = 'block';
-    })
-    .then(function () { btn.disabled = false; btn.textContent = 'Sign In'; });
-}
+var ME = null;
 
 function doLogout() {
   api('/api/admin/logout', { method: 'POST' }).then(function () { location.reload(); });
@@ -1111,13 +1106,23 @@ function enterApp() {
     });
 }
 
-// If a valid session cookie exists, skip the login screen.
-api('/api/admin/leads', { method: 'GET' })
-  .then(function () { enterApp(); })
-  .catch(function (e) {
-    if (e.status === 500) { enterApp(); banner(e.message); }
-    // 401 → stay on login screen
-  });
+// If a valid GitHub session exists, skip the sign-in screen.
+// Surface any OAuth error passed back in the URL (?err=...).
+(function () {
+  var err = new URLSearchParams(location.search).get('err');
+  if (err) {
+    var el = document.getElementById('loginErr');
+    el.textContent = err;
+    el.style.display = 'block';
+  }
+})();
+
+api('/api/admin/me', { method: 'GET' })
+  .then(function (r) {
+    if (r && r.ok) { ME = r; enterApp(); }
+    // not signed in → stay on the sign-in screen
+  })
+  .catch(function () { /* stay on sign-in screen */ });
 </script>
 </body>
 </html>

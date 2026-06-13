@@ -11,13 +11,8 @@ const MAX_FILE = 900 * 1024;    // keep the whole file well under GitHub's 1 MB 
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
-  if (!requireAuth(req, res)) return;
-
-  if (!process.env.GITHUB_TOKEN) {
-    return res.status(500).json({
-      error: 'GITHUB_TOKEN is not configured. Set it in Vercel → Project → Settings → Environment Variables (fine-grained PAT, Contents: Read and write, this repo only), then redeploy.'
-    });
-  }
+  const session = requireAuth(req, res);
+  if (!session) return;
 
   const body = parseBody(req);
   if (!body || typeof body.data !== 'object' || body.data === null || Array.isArray(body.data)) {
@@ -45,7 +40,7 @@ export default async function handler(req, res) {
   let lastErr = null;
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const file = await ghGetFile(DATA_PATH);
+      const file = await ghGetFile(session.token, DATA_PATH);
       let current = {};
       if (file.exists) {
         try { current = JSON.parse(file.text) || {}; } catch (e) { current = {}; }
@@ -64,6 +59,7 @@ export default async function handler(req, res) {
       }
 
       await ghPutFile(
+        session.token,
         DATA_PATH,
         Buffer.from(out, 'utf8').toString('base64'),
         'Update site content via admin panel',
@@ -79,7 +75,7 @@ export default async function handler(req, res) {
 
   const msg = (lastErr && lastErr.message) || 'Unknown error';
   const friendly = /resource not accessible|403/i.test(msg)
-    ? 'GitHub token lacks write permission. Edit the token: Contents must be "Read and write" for this repo.'
+    ? 'Your GitHub account lacks write permission on this repository.'
     : msg;
   return res.status(502).json({ error: friendly });
 }
