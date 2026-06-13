@@ -196,7 +196,7 @@
           Not promises. Not slides. Actual businesses rebuilt.
         </p>
       </div>
-      <div class="hero-img reveal-scale img-zoom upload-zone" id="hero-upload" style="border-radius: 20px; overflow: hidden; border: 1px dashed rgba(255,255,255,0.3); background: url('assets/case_studies_hero_new.webp') center/cover; aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); cursor: pointer; position: relative;">
+      <div class="hero-img reveal-scale img-zoom upload-zone" id="hero-upload" data-media-key="img_cs_hero" style="border-radius: 20px; overflow: hidden; border: 1px dashed rgba(255,255,255,0.3); background: url('assets/case_studies_hero_new.webp') center/cover; aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); cursor: pointer; position: relative;">
         <span class="upload-placeholder" style="font-size: 14px; text-align: center; display: none;">Click to upload hero banner image<br>(1400×400px)</span>
       </div>
     </div>
@@ -229,12 +229,12 @@
     <div class="footer-watermark">NUCLEUS</div>
     <div class="wrap" style="position:relative; z-index:10;">
       <div class="footer-top">
-        <h2 class="footer-tagline">Transforming <em class="gold-word">inner light</em><br>into outer impact.</h2>
+        <h2 class="footer-tagline" data-set="footer_tagline">Transforming <em class="gold-word">inner light</em><br>into outer impact.</h2>
       </div>
       <div class="footer-grid">
         <div class="footer-col">
           <a href="index.html" class="footer-logo"><img loading="eager" src="assets/logo.png" alt="Nucleus Logo" data-media-key="img_logo" style="height:38px; filter:brightness(0) invert(1); opacity:0.9; margin-bottom: 24px;" /></a>
-          <p class="muted" style="max-width:28ch; font-size:14px; line-height:1.7;">We help young minds and growing businesses clarify purpose and turn dreams into reality.</p>
+          <p class="muted" data-set="footer_desc" style="max-width:28ch; font-size:14px; line-height:1.7;">We help young minds and growing businesses clarify purpose and turn dreams into reality.</p>
         </div>
         <div class="footer-col">
           <h5>Explore</h5>
@@ -320,5 +320,6 @@
       setupImageUpload('hero-upload', 'nucleus_case_studies_hero');
     });
   </script>
+  <script src="assets/live.js?v=1"></script>
 </body>
 </html>

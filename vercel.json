@@ -15,6 +15,12 @@
       ]
     },
     {
+      "source": "/content/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
       "source": "/(.*\\.html)",
       "headers": [
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
