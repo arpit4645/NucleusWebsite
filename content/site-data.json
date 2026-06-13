@@ -1,8 +1,10 @@
 {
   "_comment": "Live site content. Written by the admin panel via /api/admin/save. Keys mirror localStorage keys read by assets/site.js and data-set/data-live attributes.",
   "_version": 2,
-  "_updated": "2026-06-13T04:18:06.196Z",
+  "_updated": "2026-06-13T04:30:36.447Z",
   "img_favicon_url": "/content/media/1781324029744_nucleus_logo_sun.webp",
   "img_favicon_type": "image",
-  "nucleus_site_settings": "{\"insta\":\"https://www.instagram.com/nucleusconsultant\",\"linkedin\":\"https://www.linkedin.com/company/nucleusconsultant/\"}"
+  "nucleus_site_settings": "{\"insta\":\"https://www.instagram.com/nucleusconsultant\",\"linkedin\":\"https://www.linkedin.com/company/nucleusconsultant/\"}",
+  "img_hero_bg_url": "/content/media/1781325034384_ChatGPT_Image_Jun_13__2026__10_00_21_AM.webp",
+  "img_hero_bg_type": "image"
 }
