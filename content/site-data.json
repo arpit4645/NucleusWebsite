@@ -1,5 +1,5 @@
 {
   "_comment": "Live site content. Written by the admin panel via /api/admin/save. Keys mirror localStorage keys read by assets/site.js and data-set/data-live attributes.",
   "_version": 2,
-  "_updated": "2026-06-13T04:10:45.778Z"
+  "_updated": "2026-06-13T04:10:48.537Z"
 }
