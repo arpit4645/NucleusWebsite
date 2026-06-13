@@ -1,5 +1,7 @@
 {
   "_comment": "Live site content. Written by the admin panel via /api/admin/save. Keys mirror localStorage keys read by assets/site.js and data-set/data-live attributes.",
   "_version": 2,
-  "_updated": "2026-06-13T04:08:36.001Z"
+  "_updated": "2026-06-13T04:09:59.334Z",
+  "img_hero_bg_url": "/content/media/1781323797687_WhatsApp_Image_2026-05-18_at_11.15.38_AM.webp",
+  "img_hero_bg_type": "image"
 }
