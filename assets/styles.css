@@ -320,7 +320,7 @@ body.nav-dark .nav-links a { color: var(--white); }
 .footer-watermark { position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-family: var(--sans); font-size: 22vw; font-weight: 900; color: rgba(255,255,255,0.02); line-height: 1; pointer-events: none; }
 .footer-tagline { font-size: clamp(32px, 5vw, 56px); margin-bottom: 80px; max-width: 20ch; }
 .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 64px; margin-bottom: 80px; }
-.footer h5 { font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-primary); margin-bottom: 24px; }
+.footer h3 { font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-primary); margin-bottom: 24px; font-weight: 600; }
 .footer ul { list-style: none; padding: 0; margin: 0; }
 .footer ul li { margin-bottom: 16px; }
 .footer ul a { color: rgba(255,255,255,0.7); font-size: 15px; }

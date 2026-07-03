@@ -463,7 +463,7 @@
           <p class="muted" data-set="footer_desc" style="max-width:28ch; font-size:14px; line-height:1.7;">We help young minds and growing businesses clarify purpose and turn dreams into reality.</p>
         </div>
         <div class="footer-col">
-          <h5>Explore</h5>
+          <h3>Explore</h3>
           <ul>
             <li><a href="index.html">Home</a></li>
             <li><a href="about.html">About</a></li>
@@ -475,7 +475,7 @@
           </ul>
         </div>
         <div class="footer-col">
-          <h5>Programs</h5>
+          <h3>Programs</h3>
           <ul>
             <li><a href="programs.html">Be Extraordinary</a></li>
             <li><a href="programs.html">Business Excellence</a></li>
@@ -484,7 +484,7 @@
           </ul>
         </div>
         <div class="footer-col">
-          <h5>Contact</h5>
+          <h3>Contact</h3>
           <ul>
             <li><a href="tel:+918156076680" data-set="phone" style="opacity:0.9;">+91 8156 076 680</a></li>
             <li><a href="mailto:hello@nucleusconsultant.in" data-set="email" style="opacity:0.9;">hello@nucleusconsultant.in</a></li>
@@ -567,7 +567,7 @@
 
       const svgMuted = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
       const svgUnmuted = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`;
-      const btnHtml = `<button class="universal-mute-btn" style="position:absolute;bottom:16px;right:16px;background:rgba(0,0,0,0.5);color:white;border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(4px);border-radius:50%;width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:20;transition:all 0.3s ease;">${svgMuted}</button>`;
+      const btnHtml = `<button type="button" class="universal-mute-btn" aria-label="Toggle sound" style="position:absolute;bottom:16px;right:16px;background:rgba(0,0,0,0.5);color:white;border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(4px);border-radius:50%;width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:20;transition:all 0.3s ease;">${svgMuted}</button>`;
 
       // YouTube
       if (src.includes('youtube.com') || src.includes('youtu.be')) {
@@ -617,7 +617,7 @@
           btn.innerHTML = video.muted ? svgMuted : svgUnmuted;
         });
       } else {
-        container.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;min-height:inherit;display:block;" width="800" height="600" />`;
+        container.innerHTML = `<img src="${src}" alt="" style="width:100%;height:100%;object-fit:cover;min-height:inherit;display:block;" width="800" height="600" />`;
       }
     }
 

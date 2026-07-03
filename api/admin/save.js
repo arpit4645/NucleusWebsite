@@ -46,10 +46,24 @@ export default async function handler(req, res) {
         try { current = JSON.parse(file.text) || {}; } catch (e) { current = {}; }
       }
 
+      // Snapshot the content keys (ignoring _meta) so we can detect a true no-op.
+      const stripMeta = (o) => JSON.stringify(
+        Object.keys(o).filter((k) => !k.startsWith('_')).sort()
+          .reduce((a, k) => { a[k] = o[k]; return a; }, {})
+      );
+      const before = stripMeta(current);
+
       for (const [k, v] of Object.entries(body.data)) {
         if (v === null || v === '') delete current[k];
         else current[k] = v;
       }
+
+      // Nothing actually changed → don't create a spurious commit / redeploy.
+      // (Empty-merge "health check" and re-saving unchanged content land here.)
+      if (stripMeta(current) === before) {
+        return res.status(200).json({ ok: true, updated: current._updated || null, noop: true });
+      }
+
       current._updated = new Date().toISOString();
       current._version = 2;
 
